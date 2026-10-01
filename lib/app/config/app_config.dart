@@ -1,4 +1,5 @@
 import '../../core/config/platform_configuration.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppConfig {
   const AppConfig({
@@ -29,3 +30,5 @@ class AppConfig {
 
   CountryConfiguration get countryConfiguration => PlatformCatalog.country(countryCode);
 }
+
+final appConfigProvider = Provider<AppConfig>((ref) => AppConfig.fromEnvironment());

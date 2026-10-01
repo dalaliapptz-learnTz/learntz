@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../app/config/app_config.dart';
@@ -108,8 +107,6 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-final appConfigProvider = Provider<AppConfig>((ref) => AppConfig.fromEnvironment());
 
 final authControllerProvider = ChangeNotifierProvider<AuthController>((ref) {
   final config = ref.watch(appConfigProvider);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/localization/app_localizations.dart';
 
@@ -39,7 +40,12 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 24),
           Text('Built for every learner', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
-          const _FeatureTile(icon: Icons.menu_book_outlined, title: 'Learn', subtitle: 'Structured lessons for every stage.'),
+          _FeatureTile(
+            icon: Icons.menu_book_outlined,
+            title: 'Learn',
+            subtitle: 'Structured lessons for every stage.',
+            onTap: () => context.go('/learn'),
+          ),
           const _FeatureTile(icon: Icons.edit_note, title: 'Practice', subtitle: 'Build confidence through practice.'),
           const _FeatureTile(icon: Icons.insights_outlined, title: 'Progress', subtitle: 'A foundation for meaningful progress tracking.'),
         ],
@@ -49,15 +55,16 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _FeatureTile extends StatelessWidget {
-  const _FeatureTile({required this.icon, required this.title, required this.subtitle});
+  const _FeatureTile({required this.icon, required this.title, required this.subtitle, this.onTap});
 
   final IconData icon;
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(leading: Icon(icon), title: Text(title), subtitle: Text(subtitle), contentPadding: EdgeInsets.zero);
+    return ListTile(leading: Icon(icon), title: Text(title), subtitle: Text(subtitle), contentPadding: EdgeInsets.zero, onTap: onTap);
   }
 }
 

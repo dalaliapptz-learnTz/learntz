@@ -50,3 +50,16 @@ supabase db push
 ```
 
 Stage 2 does not implement learning content, assessments, subscriptions, payments, or recommendations.
+
+## Stage 3
+
+Stage 3 adds the educational content foundation:
+
+- Content provenance metadata for licensed, Learn-original, teacher-created, third-party, and supplementary resources.
+- Resource, chapter, topic, lesson, and lesson-block models.
+- Local content repository with original sample lessons.
+- Supabase content repository boundary.
+- Browse and read lesson screens.
+- Published-content RLS migration.
+
+The included sample content is original Learn content. Official curriculum material is not reproduced without licensing. Exercises and assessments are reserved for Stage 5.
