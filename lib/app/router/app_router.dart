@@ -11,6 +11,7 @@ import '../../features/parent/parent_dashboard_screen.dart';
 import '../../features/parent/pupils_screen.dart';
 import '../../features/auth/state/auth_controller.dart';
 import '../../features/content/content_library_screen.dart';
+import '../../features/content/learner_selection_screen.dart';
 import '../../features/content/lesson_screen.dart';
 import '../../shared/widgets/app_shell.dart';
 import '../../shared/widgets/splash_screen.dart';
@@ -33,10 +34,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, _, child) => AppShell(child: child),
         routes: [
           GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-          GoRoute(path: '/learn', builder: (_, _) => const ContentLibraryScreen()),
+          GoRoute(path: '/learn', builder: (_, _) => const LearnerSelectionScreen()),
+          GoRoute(
+            path: '/learn/:learnerId',
+            builder: (_, state) => ContentLibraryScreen(learnerId: state.pathParameters['learnerId']),
+          ),
           GoRoute(
             path: '/learn/lesson/:lessonId',
-            builder: (_, state) => LessonScreen(lessonId: state.pathParameters['lessonId']!),
+            builder: (_, state) => LessonScreen(
+              lessonId: state.pathParameters['lessonId']!,
+              learnerId: state.uri.queryParameters['learnerId'],
+            ),
           ),
           GoRoute(path: '/auth', builder: (_, _) => const AuthPlaceholderScreen()),
           GoRoute(path: '/auth/login', builder: (_, _) => const LoginScreen()),

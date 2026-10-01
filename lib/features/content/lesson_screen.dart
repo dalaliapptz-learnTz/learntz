@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../progress/state/progress_controller.dart';
 import 'data/content_repository.dart';
 import 'models/content_models.dart';
 
 class LessonScreen extends ConsumerWidget {
-  const LessonScreen({super.key, required this.lessonId});
+  const LessonScreen({super.key, required this.lessonId, this.learnerId});
 
   final String lessonId;
+  final String? learnerId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final repository = ref.watch(contentRepositoryProvider);
+    final progressController = ref.watch(progressControllerProvider);
+    if (learnerId != null && !progressController.isLoaded(learnerId!)) {
+      progressController.load(learnerId!);
+    }
+    final progress = learnerId == null ? null : progressController.forLesson(learnerId!, lessonId);
     return Scaffold(
       appBar: AppBar(title: const Text('Lesson')),
       body: FutureBuilder<LearningLesson?>(
@@ -32,9 +39,56 @@ class LessonScreen extends ConsumerWidget {
               Text(lesson.summary, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 24),
               ...lesson.blocks.asMap().entries.map((entry) => _LessonBlock(index: entry.key + 1, block: entry.value)),
+              if (learnerId != null) ...[
+                const SizedBox(height: 8),
+                _ProgressCard(
+                  progressPercent: progress?.completionPercent ?? 0,
+                  isComplete: progress?.isComplete ?? false,
+                  onComplete: () async {
+                    await ref.read(progressControllerProvider.notifier).markCompleted(
+                          learnerId: learnerId!,
+                          lessonId: lesson.id,
+                          blockCount: lesson.blocks.length,
+                        );
+                  },
+                ),
+              ],
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _ProgressCard extends StatelessWidget {
+  const _ProgressCard({required this.progressPercent, required this.isComplete, required this.onComplete});
+
+  final int progressPercent;
+  final bool isComplete;
+  final VoidCallback onComplete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(isComplete ? 'Lesson complete' : 'Your progress', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(value: progressPercent / 100),
+            const SizedBox(height: 8),
+            Text('$progressPercent% complete'),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: isComplete ? null : onComplete,
+              icon: const Icon(Icons.check),
+              label: Text(isComplete ? 'Completed' : 'Mark lesson complete'),
+            ),
+          ],
+        ),
       ),
     );
   }

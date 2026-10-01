@@ -3,16 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/config/app_config.dart';
+import '../auth/models/account_models.dart';
+import '../auth/state/auth_controller.dart';
+import '../progress/state/progress_controller.dart';
+import '../progress/models/learning_progress.dart';
 import 'data/content_repository.dart';
 import 'models/content_models.dart';
 
 class ContentLibraryScreen extends ConsumerWidget {
-  const ContentLibraryScreen({super.key});
+  const ContentLibraryScreen({super.key, this.learnerId});
+
+  final String? learnerId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(appConfigProvider);
     final repository = ref.watch(contentRepositoryProvider);
+    final progress = ref.watch(progressControllerProvider);
+    if (learnerId != null && !progress.isLoaded(learnerId!)) {
+      progress.load(learnerId!);
+    }
+    final learner = learnerId == null ? null : _findLearner(ref.watch(authControllerProvider).learners, learnerId!);
     return Scaffold(
       appBar: AppBar(title: const Text('Learn')),
       body: FutureBuilder<List<LearningResource>>(
@@ -31,11 +42,11 @@ class ContentLibraryScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              Text('Explore lessons', style: Theme.of(context).textTheme.headlineSmall),
+              Text(learner == null ? 'Explore lessons' : '${learner.fullName}\'s learning', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text('Content for ${config.countryConfiguration.productName}', style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 24),
-              ...resources.map((resource) => _ResourceCard(resource: resource)),
+              ...resources.map((resource) => _ResourceCard(resource: resource, learnerId: learnerId, progress: progress)),
             ],
           );
         },
@@ -44,10 +55,19 @@ class ContentLibraryScreen extends ConsumerWidget {
   }
 }
 
+LearnerProfile? _findLearner(List<LearnerProfile> learners, String learnerId) {
+  for (final learner in learners) {
+    if (learner.id == learnerId) return learner;
+  }
+  return null;
+}
+
 class _ResourceCard extends StatelessWidget {
-  const _ResourceCard({required this.resource});
+  const _ResourceCard({required this.resource, required this.learnerId, required this.progress});
 
   final LearningResource resource;
+  final String? learnerId;
+  final ProgressController progress;
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +97,8 @@ class _ResourceCard extends StatelessWidget {
                 leading: const Icon(Icons.play_circle_outline),
                 title: Text(lesson.title),
                 subtitle: Text('${lesson.durationMinutes} min · ${lesson.summary}'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.go('/learn/lesson/${lesson.id}'),
+                trailing: _LessonStatus(progress: progress.forLesson(learnerId ?? '', lesson.id)),
+                onTap: () => context.go('/learn/lesson/${lesson.id}${learnerId == null ? '' : '?learnerId=${Uri.encodeComponent(learnerId!)}'}'),
               ),
             ),
           ],
@@ -100,5 +120,18 @@ class _ResourceCard extends StatelessWidget {
       case ContentSource.supplementary:
         return 'Supplementary';
     }
+  }
+}
+
+class _LessonStatus extends StatelessWidget {
+  const _LessonStatus({required this.progress});
+
+  final LearningProgress? progress;
+
+  @override
+  Widget build(BuildContext context) {
+    if (progress == null) return const Icon(Icons.chevron_right);
+    if (progress!.isComplete) return Icon(Icons.check_circle, color: Theme.of(context).colorScheme.secondary);
+    return SizedBox(width: 42, child: Text('${progress!.completionPercent}%', textAlign: TextAlign.end));
   }
 }

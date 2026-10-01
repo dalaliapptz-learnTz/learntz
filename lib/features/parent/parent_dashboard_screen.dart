@@ -41,6 +41,22 @@ class ParentDashboardScreen extends ConsumerWidget {
               onTap: () => context.go('/parent/pupils'),
             ),
           ),
+          if (auth.learners.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Text('Continue learning', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            ...auth.learners.map(
+              (learner) => Card(
+                child: ListTile(
+                  leading: const Icon(Icons.play_circle_outline),
+                  title: Text(learner.fullName),
+                  subtitle: Text(learner.grade),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.go('/learn/${learner.id}'),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: () => context.go('/parent/pupils/add'),
