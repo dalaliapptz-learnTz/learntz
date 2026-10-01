@@ -1,3 +1,5 @@
+import '../../core/config/platform_configuration.dart';
+
 class AppConfig {
   const AppConfig({
     required this.productName,
@@ -24,4 +26,6 @@ class AppConfig {
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 
   String get tagline => 'Learn Anywhere, Anytime.';
+
+  CountryConfiguration get countryConfiguration => PlatformCatalog.country(countryCode);
 }

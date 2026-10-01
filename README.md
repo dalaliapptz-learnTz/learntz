@@ -31,4 +31,22 @@ Stage 1 includes:
 - Pupil name and grade/form registration.
 - Route guards for parent and authentication routes.
 
-Learner and parent records are currently held behind repository/controller interfaces. Durable database schema, RLS policies, curriculum configuration, and profile synchronization are reserved for later stages.
+Learner and parent records are currently held behind repository/controller interfaces. Durable learner profile persistence, relationship authorization, and profile synchronization are reserved for later stages.
+
+## Stage 2
+
+Stage 2 adds the configuration-driven country and curriculum foundation:
+
+- LearnTZ, LearnKE, LearnUG, LearnRW, LearnBI, and LearnSS product configurations.
+- Country, curriculum, education system, education level, grade/form, subject, and language models.
+- Cascading curriculum selection during pupil setup.
+- Local catalog fallback and Supabase catalog repository boundaries.
+- Supabase migration with normalized catalog tables and read-only RLS policies for active configuration.
+
+Apply the migration through the Supabase CLI or dashboard when a Supabase project is available:
+
+```sh
+supabase db push
+```
+
+Stage 2 does not implement learning content, assessments, subscriptions, payments, or recommendations.

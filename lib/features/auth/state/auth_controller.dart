@@ -57,7 +57,16 @@ class AuthController extends ChangeNotifier {
     });
   }
 
-  Future<void> addLearner({required String fullName, required String grade}) async {
+  Future<void> addLearner({
+    required String fullName,
+    required String grade,
+    String? countryCode,
+    String? curriculumCode,
+    String? curriculum,
+    String? educationSystem,
+    String? educationLevel,
+    String? gradeCode,
+  }) async {
     final name = fullName.trim();
     final level = grade.trim();
     if (name.isEmpty || level.isEmpty) {
@@ -71,8 +80,12 @@ class AuthController extends ChangeNotifier {
         id: 'learner-${DateTime.now().microsecondsSinceEpoch}',
         fullName: name,
         grade: level,
-        countryCode: _config.countryCode,
-        curriculum: 'Default curriculum',
+        countryCode: countryCode ?? _config.countryCode,
+        curriculum: curriculum ?? 'Default curriculum',
+        curriculumCode: curriculumCode ?? '',
+        educationSystem: educationSystem ?? '',
+        educationLevel: educationLevel ?? '',
+        gradeCode: gradeCode ?? '',
       ),
     ];
     errorMessage = null;

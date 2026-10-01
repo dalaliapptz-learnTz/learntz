@@ -17,6 +17,10 @@ class LearnerProfile {
     required this.grade,
     required this.countryCode,
     required this.curriculum,
+    this.curriculumCode = '',
+    this.educationSystem = '',
+    this.educationLevel = '',
+    this.gradeCode = '',
   });
 
   final String id;
@@ -24,4 +28,8 @@ class LearnerProfile {
   final String grade;
   final String countryCode;
   final String curriculum;
+  final String curriculumCode;
+  final String educationSystem;
+  final String educationLevel;
+  final String gradeCode;
 }
