@@ -11,17 +11,21 @@ class AuthPlaceholderScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_outline, size: 48),
-              const SizedBox(height: 16),
-              Text('Account access', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              const Text('Authentication will be introduced in Stage 1.', textAlign: TextAlign.center),
-              const SizedBox(height: 24),
-              FilledButton(onPressed: () => context.go('/auth/login'), child: const Text('Open login placeholder')),
-            ],
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.family_restroom, size: 56),
+                const SizedBox(height: 16),
+                Text('Learning starts with your family', style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
+                const SizedBox(height: 8),
+                const Text('Create a parent account to add pupils and follow their learning journey.', textAlign: TextAlign.center),
+                const SizedBox(height: 24),
+                SizedBox(width: double.infinity, child: FilledButton(onPressed: () => context.go('/auth/register'), child: const Text('Create parent account'))),
+                TextButton(onPressed: () => context.go('/auth/login'), child: const Text('Sign in')),
+              ],
+            ),
           ),
         ),
       ),
