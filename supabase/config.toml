@@ -1,0 +1,32 @@
+project_id = "learntz"
+
+[api]
+enabled = true
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db.seed]
+enabled = false
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = [
+  "http://localhost:3000/auth/callback",
+  "learntz://login-callback/"
+]
+enable_signup = true
+minimum_password_length = 10
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = true
+
+[auth.rate_limit]
+email_sent = 2
+sign_in_sign_ups = 30
+token_verifications = 30
+token_refresh = 150

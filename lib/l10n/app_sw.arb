@@ -1,0 +1,198 @@
+{
+  "@@locale": "sw",
+  "appTitle": "{productName} — {tagline}",
+  "@appTitle": {
+    "placeholders": {
+      "productName": {},
+      "tagline": {}
+    }
+  },
+  "tagline": "Jifunze Popote, Wakati Wowote",
+  "language": "Badili lugha",
+  "navigationWelcome": "Karibu",
+  "navigationHome": "Mwanzo",
+  "navigationAbout": "Kuhusu",
+  "navigationCountry": "Nchi",
+  "navigationHelp": "Msaada",
+  "welcomeBadge": "Elimu yenye mizizi {countryName}",
+  "@welcomeBadge": {
+    "placeholders": {
+      "countryName": {}
+    }
+  },
+  "welcomeHeadline": "Elimu inayosonga pamoja na mtoto wako.",
+  "welcomeDescription": "{productName} inaandaliwa ili kufanya elimu inayolingana na mitaala ipatikane kwa urahisi zaidi kwa familia, popote wanapojifunza.",
+  "@welcomeDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "getStarted": "Gundua {productName}",
+  "@getStarted": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "learnAboutUs": "Kuhusu {productName}",
+  "@learnAboutUs": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "welcomePanelTitle": "Safari ya kujifunza kwa familia yako",
+  "welcomePanelDescription": "Msingi wa uzoefu wa kujifunza unaozingatia mitaala ya kitaifa na jamii za karibu.",
+  "homeTitle": "Karibu {productName}",
+  "@homeTitle": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "homeDescription": "{productName} inaandaliwa. Mwanzo huu utakua na kuwa nyenzo ya kujifunza kwa familia.",
+  "@homeDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "homeCardTitle": "Msingi wa kujifunza",
+  "homeCardDescription": "Masomo na shughuli zinazolingana na mtaala zimepangwa kwa hatua ijayo. Bado hazipatikani katika toleo hili la msingi.",
+  "aboutTitle": "Kuhusu {productName}",
+  "@aboutTitle": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "aboutDescription": "{productName} ni jukwaa la kujifunza kidijitali kwa usajili linaloanzishwa {countryName}, na limeundwa kusaidia nchi nyingine za Afrika kupitia usanidi badala ya programu tofauti.",
+  "@aboutDescription": {
+    "placeholders": {
+      "productName": {},
+      "countryName": {}
+    }
+  },
+  "aboutCurriculumNote": "{productName} inalenga kuongezea mitaala rasmi ya kitaifa, si kuibadilisha. Mtaala uliosanidiwa ni {educationSystem}.",
+  "@aboutCurriculumNote": {
+    "placeholders": {
+      "productName": {},
+      "educationSystem": {}
+    }
+  },
+  "countryTitle": "Chagua nchi",
+  "countryDescription": "Mipangilio ya nchi huelekeza mazingira ya kujifunza, mtaala, sarafu na lugha katika jukwaa moja la {productName}.",
+  "@countryDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "configuredMarket": "Soko la awali lililosanidiwa",
+  "countryConfigurationTitle": "Mipangilio ya soko",
+  "productLabel": "Bidhaa",
+  "currencyLabel": "Sarafu",
+  "educationSystemLabel": "Mtaala",
+  "futureCountriesNote": "Tanzania pekee ndiyo imesanidiwa katika msingi huu. Mipangilio ya nchi nyingine inaweza kuongezwa bila kuunda programu tofauti.",
+  "helpTitle": "Msaada na huduma",
+  "helpDescription": "Taarifa za msaada zitaongezwa baada ya njia za huduma za {productName} kuanzishwa. Msingi huu bado hauna huduma ya msaada.",
+  "@helpDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "welcomePageLabel": "Karibu LearnTZ",
+  "languageEnglish": "English",
+  "languageSwahili": "Kiswahili",
+  "accountTitle": "Akaunti yangu",
+  "navigationAccount": "Akaunti",
+  "parentDashboardTitle": "Dashibodi ya mzazi",
+  "parentDashboardDescription": "Dhibiti maelezo na mipangilio ya akaunti yako.",
+  "signInTitle": "Karibu tena",
+  "signInDescription": "Ingia kwenye akaunti yako ya mzazi.",
+  "signUpTitle": "Fungua akaunti ya mzazi",
+  "signUpDescription": "Fungua akaunti ili kuanza kutumia LearnTZ.",
+  "emailLabel": "Barua pepe",
+  "fullNameLabel": "Jina kamili",
+  "passwordLabel": "Nenosiri",
+  "confirmPasswordLabel": "Thibitisha nenosiri",
+  "signInAction": "Ingia",
+  "emailLinkProcessedTitle": "Kiungo cha barua pepe kimefunguliwa",
+  "emailLinkProcessedDescription": "Ikiwa umethibitisha barua pepe yako, ingia ili kuendelea.",
+  "createAccountAction": "Fungua akaunti",
+  "forgotPasswordAction": "Umesahau nenosiri?",
+  "noAccountPrompt": "Hujajiunga na LearnTZ?",
+  "haveAccountPrompt": "Tayari una akaunti?",
+  "requiredField": "Sehemu hii inahitajika.",
+  "invalidEmail": "Weka barua pepe sahihi.",
+  "nameTooLong": "Jina lazima liwe na herufi zisizozidi 120.",
+  "passwordMinimumLength": "Tumia angalau herufi 10.",
+  "passwordsDoNotMatch": "Manenosiri hayalingani.",
+  "verifyEmailTitle": "Thibitisha barua pepe yako",
+  "verifyEmailDescription": "Tumetuma kiungo cha uthibitishaji kwa {email}. Fungua ili uthibitishe anwani yako, kisha uingie.",
+  "@verifyEmailDescription": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "resendVerificationAction": "Tuma tena barua pepe ya uthibitishaji",
+  "verificationResent": "Ombi la barua pepe mpya ya uthibitishaji limetumwa.",
+  "alreadyVerifiedPrompt": "Umeshathibitisha barua pepe?",
+  "forgotPasswordTitle": "Weka upya nenosiri",
+  "forgotPasswordDescription": "Weka barua pepe yako. Tutatuma maelekezo ikiwa akaunti itapatikana.",
+  "sendResetLinkAction": "Tuma kiungo cha kuweka upya",
+  "passwordResetEmailSent": "Ikiwa akaunti inalingana na anwani hiyo, maelekezo ya kuweka upya nenosiri yatatumwa.",
+  "rememberPasswordPrompt": "Unakumbuka nenosiri lako?",
+  "passwordRecoveryTitle": "Chagua nenosiri jipya",
+  "passwordRecoveryDescription": "Chagua nenosiri jipya la akaunti yako.",
+  "openResetLinkFirst": "Fungua kiungo cha kuweka upya nenosiri kutoka kwenye barua pepe yako ili kuendelea.",
+  "newPasswordLabel": "Nenosiri jipya",
+  "updatePasswordAction": "Sasisha nenosiri",
+  "passwordUpdated": "Nenosiri lako limesasishwa.",
+  "authNotConfiguredTitle": "Uthibitishaji haujaunganishwa",
+  "authNotConfiguredDescription": "LearnTZ inahitaji mradi wa Supabase usanidiwe kabla ya kutumia akaunti.",
+  "authNotConfiguredAction": "Sanidi URL ya Supabase na ufunguo wa umma, tumia uhamishaji wa hifadhidata, na usanidi URL za barua pepe zinazoruhusiwa.",
+  "countriesNotConfigured": "Chaguo za nchi zinahitaji hifadhidata ya LearnTZ isanidiwe na ipatikane.",
+  "noCountriesAvailable": "Hakuna nchi zilizowezeshwa kwa sasa.",
+  "curriculumNotConfigured": "Mipangilio ya mtaala bado haipatikani.",
+  "tryAgainAction": "Jaribu tena",
+  "requestFailed": "Ombi halijakamilika. Tafadhali jaribu tena.",
+  "accountDescription": "Tazama na udhibiti akaunti yako ya mzazi.",
+  "editProfileAction": "Hariri wasifu",
+  "editProfileTitle": "Sasisha wasifu",
+  "saveChangesAction": "Hifadhi mabadiliko",
+  "accountSettingsAction": "Mipangilio ya akaunti",
+  "accountSettingsTitle": "Mipangilio ya akaunti",
+  "signOutAction": "Ondoka",
+  "signInRequired": "Ingia ili kuendelea.",
+  "changeEmailTitle": "Badili barua pepe",
+  "newEmailLabel": "Barua pepe mpya",
+  "requestEmailChangeAction": "Omba kubadili barua pepe",
+  "emailChangeRequested": "Angalia barua pepe mpya na ufuate kiungo cha uthibitishaji kabla ya mabadiliko kuanza.",
+  "changePasswordTitle": "Badili nenosiri",
+  "currentPasswordLabel": "Nenosiri la sasa",
+  "changePasswordAction": "Badili nenosiri",
+  "accountRequestsTitle": "Kusitisha au kufuta akaunti",
+  "accountRequestDescription": "Maombi hukaguliwa kabla ya akaunti kusitishwa au kufutwa. Kutuma ombi hakufuti data mara moja.",
+  "accountStatusLabel": "Hali ya sasa: {status}",
+  "@accountStatusLabel": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "accountStatusActive": "Inatumika",
+  "accountStatusDeactivationRequested": "Kusitishwa kumeombwa",
+  "accountStatusDeletionRequested": "Kufutwa kumeombwa",
+  "accountStatusDeactivated": "Imesitishwa",
+  "accountStatusDeleted": "Imefutwa",
+  "accountStatusUnknown": "Haijulikani",
+  "optionalRequestReasonLabel": "Sababu (si lazima)",
+  "requestReasonTooLong": "Sababu lazima iwe na herufi zisizozidi 500.",
+  "requestDeactivationAction": "Omba kusitisha akaunti",
+  "requestDeletionAction": "Omba kufuta akaunti",
+  "requestDeactivationTitle": "Uombe kusitisha akaunti?",
+  "requestDeletionTitle": "Uombe kufuta akaunti?",
+  "requestDeactivationConfirmation": "Akaunti yako itaendelea kutumika hadi ombi lako likaguliwe.",
+  "requestDeletionConfirmation": "Hili linatuma ombi la kufuta akaunti ili likaguliwe. Akaunti na data yako haitafutwa mara moja.",
+  "cancelAction": "Ghairi",
+  "submitRequestAction": "Tuma ombi",
+  "accountRequestReceived": "Ombi lako limehifadhiwa kwa ajili ya ukaguzi.",
+  "databaseConfigured": "Hifadhidata iko tayari",
+  "sessionHelp": "Vipindi vya kuingia vinasimamiwa na kusasishwa na Supabase Auth.",
+  "emailVerificationRequired": "Thibitisha barua pepe yako kabla ya kuingia.",
+  "adminRolesProtected": "Majukumu ya usimamizi yanaweza kutolewa tu kupitia mchakato ulioidhinishwa wa seva."
+}

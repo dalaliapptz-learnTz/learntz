@@ -1,0 +1,159 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/auth/auth_providers.dart';
+import '../../core/state/app_providers.dart';
+import '../../features/about/about_screen.dart';
+import '../../features/account/account_screens.dart';
+import '../../features/auth/auth_screens.dart';
+import '../../features/country/select_country_screen.dart';
+import '../../features/help/help_screen.dart';
+import '../../features/home/home_screen.dart';
+import '../../features/welcome/welcome_screen.dart';
+import '../../shared/widgets/app_scaffold.dart';
+
+abstract final class AppRoutes {
+  static const welcome = '/';
+  static const home = '/home';
+  static const about = '/about';
+  static const country = '/country';
+  static const help = '/help';
+  static const signIn = '/sign-in';
+  static const signUp = '/register';
+  static const verifyEmail = '/verify-email';
+  static const authCallback = '/auth/callback';
+  static const forgotPassword = '/forgot-password';
+  static const passwordRecovery = '/password-recovery';
+  static const account = '/account';
+  static const editParentProfile = '/account/profile';
+  static const accountSettings = '/account/settings';
+}
+
+final _routerAuthListenerProvider = Provider<_RouterAuthListener>((ref) {
+  final listener = _RouterAuthListener();
+  ref.listen(authStateChangesProvider, (previous, next) {
+    listener.refresh();
+  });
+  ref.listen(passwordRecoveryModeProvider, (previous, next) {
+    listener.refresh();
+  });
+  ref.onDispose(listener.dispose);
+  return listener;
+});
+
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final router = GoRouter(
+    initialLocation: AppRoutes.welcome,
+    refreshListenable: ref.watch(_routerAuthListenerProvider),
+    redirect: (context, state) {
+      final path = state.uri.path;
+      final client = ref.read(supabaseClientProvider);
+      final isSignedIn = client?.auth.currentSession != null;
+      final isPasswordRecovery = ref.read(passwordRecoveryModeProvider);
+
+      if (isPasswordRecovery && path != AppRoutes.passwordRecovery) {
+        return AppRoutes.passwordRecovery;
+      }
+      if (path == AppRoutes.passwordRecovery &&
+          isSignedIn &&
+          !isPasswordRecovery) {
+        return AppRoutes.accountSettings;
+      }
+
+      final isProtected =
+          path == AppRoutes.account || path.startsWith('${AppRoutes.account}/');
+      if (isProtected && !isSignedIn) {
+        return Uri(
+          path: AppRoutes.signIn,
+          queryParameters: {'next': path},
+        ).toString();
+      }
+
+      final isAuthenticationRoute = {
+        AppRoutes.signIn,
+        AppRoutes.signUp,
+        AppRoutes.verifyEmail,
+        AppRoutes.authCallback,
+        AppRoutes.forgotPassword,
+      }.contains(path);
+      if (isSignedIn && (isAuthenticationRoute || path == AppRoutes.welcome)) {
+        return AppRoutes.account;
+      }
+      return null;
+    },
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) =>
+            AppScaffold(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutes.welcome,
+            builder: (context, state) => const WelcomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.home,
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.about,
+            builder: (context, state) => const AboutScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.country,
+            builder: (context, state) => const SelectCountryScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.help,
+            builder: (context, state) => const HelpScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.signIn,
+            builder: (context, state) =>
+                SignInScreen(next: state.uri.queryParameters['next']),
+          ),
+          GoRoute(
+            path: AppRoutes.signUp,
+            builder: (context, state) => const SignUpScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.verifyEmail,
+            builder: (context, state) => EmailVerificationScreen(
+              email: state.uri.queryParameters['email'] ?? '',
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.authCallback,
+            builder: (context, state) => const AuthCallbackScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.forgotPassword,
+            builder: (context, state) => const ForgotPasswordScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.passwordRecovery,
+            builder: (context, state) => const PasswordRecoveryScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.account,
+            builder: (context, state) => const AccountScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.editParentProfile,
+            builder: (context, state) => const EditParentProfileScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.accountSettings,
+            builder: (context, state) => const AccountSettingsScreen(),
+          ),
+        ],
+      ),
+    ],
+  );
+  ref.onDispose(router.dispose);
+  return router;
+});
+
+class _RouterAuthListener extends ChangeNotifier {
+  void refresh() => notifyListeners();
+}

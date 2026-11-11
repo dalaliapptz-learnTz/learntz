@@ -1,0 +1,198 @@
+{
+  "@@locale": "en",
+  "appTitle": "{productName} — {tagline}",
+  "@appTitle": {
+    "placeholders": {
+      "productName": {},
+      "tagline": {}
+    }
+  },
+  "tagline": "Learn Anywhere, Anytime",
+  "language": "Change language",
+  "navigationWelcome": "Welcome",
+  "navigationHome": "Home",
+  "navigationAbout": "About",
+  "navigationCountry": "Country",
+  "navigationHelp": "Help",
+  "welcomeBadge": "Learning, rooted in {countryName}",
+  "@welcomeBadge": {
+    "placeholders": {
+      "countryName": {}
+    }
+  },
+  "welcomeHeadline": "Learning that moves with your child.",
+  "welcomeDescription": "{productName} is being prepared to make curriculum-aligned learning more accessible to families, wherever learning happens.",
+  "@welcomeDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "getStarted": "Explore {productName}",
+  "@getStarted": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "learnAboutUs": "About {productName}",
+  "@learnAboutUs": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "welcomePanelTitle": "A learning journey made for your family",
+  "welcomePanelDescription": "A foundation for learning experiences shaped by national curricula and local communities.",
+  "homeTitle": "Welcome to {productName}",
+  "@homeTitle": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "homeDescription": "{productName} is being prepared. This starting point will grow into a helpful learning companion for families.",
+  "@homeDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "homeCardTitle": "A foundation for learning",
+  "homeCardDescription": "Curriculum-aligned lessons and activities are planned for a future stage. They are not available in this foundation release.",
+  "aboutTitle": "About {productName}",
+  "@aboutTitle": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "aboutDescription": "{productName} is a subscription-based digital learning platform starting in {countryName}, designed to support additional African countries through configuration rather than separate apps.",
+  "@aboutDescription": {
+    "placeholders": {
+      "productName": {},
+      "countryName": {}
+    }
+  },
+  "aboutCurriculumNote": "{productName} is intended to supplement official national curricula, not replace them. The configured curriculum is {educationSystem}.",
+  "@aboutCurriculumNote": {
+    "placeholders": {
+      "productName": {},
+      "educationSystem": {}
+    }
+  },
+  "countryTitle": "Select country",
+  "countryDescription": "Country settings shape the learning context, curriculum, currency and language for the shared {productName} platform.",
+  "@countryDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "configuredMarket": "Configured initial market",
+  "countryConfigurationTitle": "Market configuration",
+  "productLabel": "Product",
+  "currencyLabel": "Currency",
+  "educationSystemLabel": "Curriculum",
+  "futureCountriesNote": "Only Tanzania is configured in this foundation. Other country configurations can be added without creating separate applications.",
+  "helpTitle": "Help and support",
+  "helpDescription": "Support information will be added when {productName} support channels are established. This foundation does not yet include a support service.",
+  "@helpDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
+  "welcomePageLabel": "LearnTZ welcome",
+  "languageEnglish": "English",
+  "languageSwahili": "Kiswahili",
+  "accountTitle": "My account",
+  "navigationAccount": "Account",
+  "parentDashboardTitle": "Parent dashboard",
+  "parentDashboardDescription": "Manage your account details and settings.",
+  "signInTitle": "Welcome back",
+  "signInDescription": "Sign in to your parent account.",
+  "signUpTitle": "Create a parent account",
+  "signUpDescription": "Create an account to get started with LearnTZ.",
+  "emailLabel": "Email address",
+  "fullNameLabel": "Full name",
+  "passwordLabel": "Password",
+  "confirmPasswordLabel": "Confirm password",
+  "signInAction": "Sign in",
+  "emailLinkProcessedTitle": "Email link opened",
+  "emailLinkProcessedDescription": "If you have verified your email, sign in to continue.",
+  "createAccountAction": "Create account",
+  "forgotPasswordAction": "Forgot password?",
+  "noAccountPrompt": "New to LearnTZ?",
+  "haveAccountPrompt": "Already have an account?",
+  "requiredField": "This field is required.",
+  "invalidEmail": "Enter a valid email address.",
+  "nameTooLong": "Name must be 120 characters or fewer.",
+  "passwordMinimumLength": "Use at least 10 characters.",
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "verifyEmailTitle": "Verify your email",
+  "verifyEmailDescription": "We sent a verification link to {email}. Open it to verify your address, then sign in.",
+  "@verifyEmailDescription": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "resendVerificationAction": "Resend verification email",
+  "verificationResent": "A new verification email has been requested.",
+  "alreadyVerifiedPrompt": "Verified your email?",
+  "forgotPasswordTitle": "Reset your password",
+  "forgotPasswordDescription": "Enter your email address and we will send instructions if an account can be found.",
+  "sendResetLinkAction": "Send reset link",
+  "passwordResetEmailSent": "If an account matches that address, password reset instructions will be sent.",
+  "rememberPasswordPrompt": "Remember your password?",
+  "passwordRecoveryTitle": "Choose a new password",
+  "passwordRecoveryDescription": "Choose a new password for your account.",
+  "openResetLinkFirst": "Open the password reset link from your email to continue.",
+  "newPasswordLabel": "New password",
+  "updatePasswordAction": "Update password",
+  "passwordUpdated": "Your password has been updated.",
+  "authNotConfiguredTitle": "Authentication is not connected",
+  "authNotConfiguredDescription": "LearnTZ needs a configured Supabase project before account access can be used.",
+  "authNotConfiguredAction": "Configure the Supabase URL and publishable key, apply the database migrations, and configure allowed email redirect URLs.",
+  "countriesNotConfigured": "Country options require the LearnTZ database to be configured and available.",
+  "noCountriesAvailable": "No countries are currently enabled.",
+  "curriculumNotConfigured": "Curriculum configuration is not available yet.",
+  "tryAgainAction": "Try again",
+  "requestFailed": "The request could not be completed. Please try again.",
+  "accountDescription": "View and manage your parent account.",
+  "editProfileAction": "Edit profile",
+  "editProfileTitle": "Update profile",
+  "saveChangesAction": "Save changes",
+  "accountSettingsAction": "Account settings",
+  "accountSettingsTitle": "Account settings",
+  "signOutAction": "Sign out",
+  "signInRequired": "Sign in to continue.",
+  "changeEmailTitle": "Change email address",
+  "newEmailLabel": "New email address",
+  "requestEmailChangeAction": "Request email change",
+  "emailChangeRequested": "Check the new email address and follow its verification link before the change takes effect.",
+  "changePasswordTitle": "Change password",
+  "currentPasswordLabel": "Current password",
+  "changePasswordAction": "Change password",
+  "accountRequestsTitle": "Account deactivation or deletion",
+  "accountRequestDescription": "Requests are reviewed before any account is deactivated or deleted. Submitting a request does not delete data immediately.",
+  "accountStatusLabel": "Current status: {status}",
+  "@accountStatusLabel": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "accountStatusActive": "Active",
+  "accountStatusDeactivationRequested": "Deactivation requested",
+  "accountStatusDeletionRequested": "Deletion requested",
+  "accountStatusDeactivated": "Deactivated",
+  "accountStatusDeleted": "Deleted",
+  "accountStatusUnknown": "Unknown",
+  "optionalRequestReasonLabel": "Reason (optional)",
+  "requestReasonTooLong": "Reason must be 500 characters or fewer.",
+  "requestDeactivationAction": "Request deactivation",
+  "requestDeletionAction": "Request account deletion",
+  "requestDeactivationTitle": "Request account deactivation?",
+  "requestDeletionTitle": "Request account deletion?",
+  "requestDeactivationConfirmation": "Your account will remain active until your request is reviewed.",
+  "requestDeletionConfirmation": "This submits a deletion request for review. Your account and data will not be deleted immediately.",
+  "cancelAction": "Cancel",
+  "submitRequestAction": "Submit request",
+  "accountRequestReceived": "Your request has been recorded for review.",
+  "databaseConfigured": "Database ready",
+  "sessionHelp": "Sessions are managed and refreshed by Supabase Auth.",
+  "emailVerificationRequired": "Verify your email before signing in.",
+  "adminRolesProtected": "Administrative roles can only be assigned through an authorized backend process."
+}
