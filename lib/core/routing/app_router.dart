@@ -8,6 +8,7 @@ import '../../features/about/about_screen.dart';
 import '../../features/account/account_screens.dart';
 import '../../features/auth/auth_screens.dart';
 import '../../features/country/select_country_screen.dart';
+import '../../features/curriculum/curriculum_providers.dart';
 import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
@@ -46,6 +47,9 @@ final _routerAuthListenerProvider = Provider<_RouterAuthListener>((ref) {
   ref.listen(passwordRecoveryModeProvider, (previous, next) {
     listener.refresh();
   });
+  ref.listen(curriculumStaffCapabilitiesProvider, (previous, next) {
+    listener.refresh();
+  });
   ref.onDispose(listener.dispose);
   return listener;
 });
@@ -69,10 +73,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return AppRoutes.accountSettings;
       }
 
+      final isAdminRoute =
+          path == AppRoutes.curriculumAdmin || path.startsWith('/admin/');
+      if (isAdminRoute) {
+        if (!isSignedIn) {
+          return Uri(
+            path: AppRoutes.signIn,
+            queryParameters: {'next': path},
+          ).toString();
+        }
+        final staffCapabilities =
+            ref.read(curriculumStaffCapabilitiesProvider).asData?.value;
+        if (staffCapabilities != null && !staffCapabilities.canAccess) {
+          return AppRoutes.account;
+        }
+      }
+
       final isProtected =
           path == AppRoutes.account ||
-          path.startsWith('${AppRoutes.account}/') ||
-          path.startsWith('/admin/');
+          path.startsWith('${AppRoutes.account}/');
       if (isProtected && !isSignedIn) {
         return Uri(
           path: AppRoutes.signIn,
