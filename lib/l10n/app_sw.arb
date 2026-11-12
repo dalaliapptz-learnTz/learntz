@@ -194,5 +194,140 @@
   "databaseConfigured": "Hifadhidata iko tayari",
   "sessionHelp": "Vipindi vya kuingia vinasimamiwa na kusasishwa na Supabase Auth.",
   "emailVerificationRequired": "Thibitisha barua pepe yako kabla ya kuingia.",
-  "adminRolesProtected": "Majukumu ya usimamizi yanaweza kutolewa tu kupitia mchakato ulioidhinishwa wa seva."
+  "adminRolesProtected": "Majukumu ya usimamizi yanaweza kutolewa tu kupitia mchakato ulioidhinishwa wa seva.",
+  "learnersSectionTitle": "Wanafunzi",
+  "learnerCount": "Wanafunzi waliosajiliwa: {count}",
+  "@learnerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noLearnersTitle": "Bado hakuna wasifu wa mwanafunzi",
+  "noLearnersDescription": "Ongeza mtoto ili kuunda wasifu wake binafsi wa kujifunza.",
+  "addLearnerAction": "Ongeza mwanafunzi",
+  "addLearnerTitle": "Sajili mwanafunzi",
+  "editLearnerAction": "Hariri mwanafunzi",
+  "editLearnerTitle": "Sasisha wasifu wa mwanafunzi",
+  "learnerFormDescription": "Mzazi au mlezi anasimamia wasifu huu. Taarifa za mtoto zinaonekana kwa walezi walioidhinishwa pekee.",
+  "firstNameLabel": "Jina la kwanza",
+  "middleNameLabel": "Jina la kati (si lazima)",
+  "lastNameLabel": "Jina la mwisho",
+  "dateOfBirthLabel": "Tarehe ya kuzaliwa",
+  "selectDateAction": "Chagua tarehe",
+  "genderLabel": "Jinsia (si lazima)",
+  "genderFemale": "Mwanamke",
+  "genderMale": "Mwanaume",
+  "genderOther": "Nyingine",
+  "preferNotToSayLabel": "Sipendi kusema",
+  "countryLabel": "Nchi",
+  "educationSystemNameLabel": "Mfumo wa elimu",
+  "curriculumLabel": "Mtaala",
+  "educationLevelLabel": "Kiwango cha elimu",
+  "gradeLabel": "Darasa au kidato cha sasa",
+  "schoolOptionalLabel": "Shule ya sasa (si lazima)",
+  "noSchoolSelected": "Hakuna shule iliyochaguliwa",
+  "activeLearnerLabel": "Amechaguliwa",
+  "learnerStatusLabel": "Hali ya mwanafunzi",
+  "learnerStatusActive": "Anatumika",
+  "learnerStatusInactive": "Hajasajiliwa kwa sasa",
+  "learnerStatusDeletionRequested": "Ombi la kufuta limetumwa",
+  "notProvidedLabel": "Haijatolewa",
+  "learnerHistoryTitle": "Historia ya usajili na kupandishwa darasa",
+  "noLearnerHistory": "Bado hakuna historia.",
+  "deactivateLearnerAction": "Sitisha wasifu wa mwanafunzi",
+  "deactivateLearnerTitle": "Usitishe mwanafunzi huyu?",
+  "learnerDeactivationConfirmation": "Wasifu utasitishwa lakini utahifadhiwa pamoja na historia yake.",
+  "requestLearnerDeletionAction": "Omba kufuta wasifu",
+  "learnerDeletionConfirmation": "Hili linarekodi ombi la kufuta ili likaguliwe. Wasifu hautafutwa mara moja.",
+  "confirmAction": "Thibitisha",
+  "recordPromotionAction": "Rekodi kupandishwa darasa",
+  "promotionFailed": "Kupandishwa darasa hakukurekodiwa. Hakikisha darasa lililochaguliwa limewekwa kama hatua inayofuata.",
+  "promotionTypePromoted": "Amepandishwa darasa",
+  "promotionTypeRepeated": "Amerudia darasa",
+  "promotionTypeSystemChanged": "Mfumo wa elimu umebadilika",
+  "promotionHistoryItem": "{fromGrade} → {toGrade}",
+  "@promotionHistoryItem": {
+    "placeholders": {
+      "fromGrade": {},
+      "toGrade": {}
+    }
+  },
+  "switchLearnerAction": "Badili mwanafunzi",
+  "learnerNameTooLong": "Jina lazima liwe na herufi zisizozidi 80.",
+  "profileRegistered": "Wasifu wa mwanafunzi umesajiliwa",
+  "profileUpdated": "Wasifu wa mwanafunzi umesasishwa",
+  "curriculumAdminTitle": "Usimamizi wa mtaala",
+  "curriculumAdminDescription": "Kagua chanzo cha mtaala wa msingi wa TIE, thibitisha haki za matumizi, na udhibiti uingizaji unaofuatilika hadi chanzo.",
+  "curriculumAccessDenied": "Akaunti yako haina jukumu la usimamizi wa mitaala.",
+  "curriculumSourceTitle": "Chanzo cha mtaala wa msingi wa TIE",
+  "curriculumVerificationLabel": "Uthibitishaji wa chanzo",
+  "curriculumRightsStatusLabel": "Haki za matumizi",
+  "curriculumVersionLabel": "Toleo la majaribio",
+  "curriculumChecksumLabel": "SHA-256 iliyosajiliwa",
+  "curriculumRightsWarning": "Maandishi ya mtaala wa TIE hayawezi kutolewa, kuhifadhiwa au kuchapishwa hadi haki za matumizi ziandikwe na zikaguliwe kwa kujitegemea.",
+  "curriculumVerifyAction": "Thibitisha utambulisho wa chanzo",
+  "curriculumRightsAction": "Kagua haki za matumizi",
+  "curriculumRightsUnknown": "Haijulikani",
+  "curriculumRightsPending": "Ruhusa inasubiri",
+  "curriculumRightsAuthorized": "Imeidhinishwa",
+  "curriculumRightsPublicDomain": "Matumizi ya umma",
+  "curriculumRightsRestricted": "Matumizi yamezuiwa",
+  "curriculumRightsEvidenceLabel": "URL ya ushahidi wa haki (HTTPS)",
+  "curriculumReviewNoteLabel": "Maelezo ya ukaguzi",
+  "curriculumSaveRightsAction": "Rekodi uamuzi wa haki",
+  "curriculumHttpsRequired": "Weka URL halali ya HTTPS.",
+  "curriculumNoteTooLong": "Maelezo ni marefu mno.",
+  "curriculumImportsTitle": "Historia ya uingizaji na ukaguzi",
+  "curriculumNoImports": "Hakuna uingizaji wa mtaala ulioanzishwa.",
+  "curriculumImportAction": "Chagua hati ya chanzo",
+  "curriculumImportProcessing": "Inapakia kwenye foleni salama ya uchakataji…",
+  "curriculumImportAlreadyRegistered": "Faili hili la chanzo limesajiliwa tayari kwenye toleo la majaribio.",
+  "curriculumImportSucceeded": "Hati imehifadhiwa kwa faragha na kuwekwa kwenye foleni ya uchakataji wa seva.",
+  "curriculumImportJobLabel": "Uingizaji",
+  "curriculumAttemptLabel": "Jaribio",
+  "curriculumExtractedPages": "{count, plural, =1{Ukurasa 1 uliotolewa} other{{count} kurasa zilizotolewa}}",
+  "@curriculumExtractedPages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "curriculumPageLabel": "Ukurasa",
+  "curriculumPageNoText": "Hakuna maandishi yaliyotolewa kwenye ukurasa huu.",
+  "curriculumReprocessPageAction": "Chakata ukurasa tena",
+  "curriculumAddItemAction": "Ongeza kipengee kilichosanifishwa",
+  "curriculumItemTypeLabel": "Aina ya kipengee cha mtaala",
+  "curriculumOfficialTermLabel": "Neno rasmi (si lazima)",
+  "curriculumSourcePageLabel": "Ukurasa wa chanzo",
+  "curriculumSourceTextLabel": "Maandishi halisi ya chanzo",
+  "curriculumNormalizedTextLabel": "Maandishi yaliyosanifishwa",
+  "curriculumValidateAction": "Thibitisha na tuma kwa ukaguzi",
+  "curriculumValidationSummary": "Uthibitishaji: makosa {errors}, maonyo {warnings}",
+  "@curriculumValidationSummary": {
+    "placeholders": {
+      "errors": {
+        "type": "int"
+      },
+      "warnings": {
+        "type": "int"
+      }
+    }
+  },
+  "curriculumDuplicateMatchesTitle": "Vipengee vinavyoweza kujirudia",
+  "curriculumDuplicateCandidateLabel": "Kipengee kilichopo",
+  "curriculumDuplicateReviewTitle": "Kagua ulinganifu wa nakala",
+  "curriculumNotDuplicateAction": "Si nakala",
+  "curriculumDeferDuplicateAction": "Ahirisha",
+  "curriculumConfirmDuplicateAction": "Thibitisha nakala",
+  "curriculumApproveItemAction": "Idhinisha kipengee",
+  "curriculumRejectItemAction": "Kataa kipengee",
+  "curriculumStatusLabel": "Hali",
+  "curriculumVersionReviewTitle": "Mchakato wa kuidhinisha toleo",
+  "curriculumSubmitVersionAction": "Tuma toleo likaguliwe",
+  "curriculumApproveVersionAction": "Idhinisha toleo",
+  "curriculumPublishVersionAction": "Chapisha toleo",
+  "curriculumRightsHistoryTitle": "Historia ya ukaguzi wa haki za matumizi"
 }

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68,<76"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "learntz-curriculum-import-worker"
+version = "1.0.0"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "httpx==0.28.1",
+  "pdfplumber==0.11.5",
+  "pypdfium2==4.30.0",
+  "Pillow==11.1.0",
+  "pytesseract==0.3.13",
+  "python-docx==1.1.2",
+  "openpyxl==3.1.5",
+]
+
+[project.optional-dependencies]
+test = ["pytest==8.3.4", "reportlab==4.2.5"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

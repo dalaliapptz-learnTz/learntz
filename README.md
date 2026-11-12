@@ -2,9 +2,9 @@
 
 **Learn Anywhere, Anytime**
 
-LearnTZ is a Flutter learning platform for families, starting in Tanzania and designed for data-driven expansion across African countries. The product supplements official national curricula. The Stage 1 foundation includes responsive Android/Web app structure, English/Kiswahili localization, Supabase Auth parent account flows, country configuration, and database-enforced roles and access policies.
+LearnTZ is a Flutter learning platform for families, starting in Tanzania and designed for data-driven expansion across African countries. The product supplements official national curricula. Stages 0-2 provide a responsive Android/Web app, English/Kiswahili localization, Supabase Auth parent accounts, and database-enforced learner management and access policies. Stage 3.2 adds a protected TIE primary curriculum source/review workflow, but curriculum text remains blocked until source rights are documented.
 
-Stage 1 does not include learner profiles, curriculum content, lessons, assessments, subscriptions, payments, schools, or teachers. Live authentication and database behavior require a configured Supabase project and have not been verified in this workspace.
+Stage 2 provides parent-managed learner profiles and switching, profile editing/deactivation/deletion requests, guardian relationship primitives, education configuration, and manual promotion history. Only Tanzania's TIE education structure is seeded. There is no automatic promotion policy. Lessons, assessments, progress tracking, subscriptions/payments, school management, and teacher accounts remain out of scope. Live authentication and database behavior require a configured Supabase project.
 
 ## Requirements
 
@@ -26,6 +26,9 @@ Without backend compile-time values, account and database screens show a clear u
 - [Development](DEVELOPMENT.md)
 - [Environment configuration](ENVIRONMENT.md)
 - [Changelog](CHANGELOG.md)
+- [Stage 2 completion report](STAGE2_COMPLETION.md)
+- [TIE source inventory](TIE_SOURCE_INVENTORY.md)
+- [Stage 3.2 completion report](STAGE3_2_COMPLETION.md)
 
 ## Quality checks
 
@@ -37,4 +40,4 @@ flutter build apk
 flutter build web
 ```
 
-Database policy tests are in `supabase/tests/stage1_security.test.sql`; run them with `supabase test db` against the local Supabase stack.
+Database policy tests are in `supabase/tests/`; run `supabase db reset`, `supabase migration up`, and `supabase test db` against a clean local Supabase stack.

@@ -8,8 +8,10 @@ import '../../features/about/about_screen.dart';
 import '../../features/account/account_screens.dart';
 import '../../features/auth/auth_screens.dart';
 import '../../features/country/select_country_screen.dart';
+import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/learners/learner_screens.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 
@@ -28,6 +30,12 @@ abstract final class AppRoutes {
   static const account = '/account';
   static const editParentProfile = '/account/profile';
   static const accountSettings = '/account/settings';
+  static const curriculumAdmin = '/admin/curriculum';
+  static const addLearner = '/account/learners/add';
+  static String learnerProfile(String learnerId) =>
+      '/account/learners/$learnerId';
+  static String editLearner(String learnerId) =>
+      '/account/learners/$learnerId/edit';
 }
 
 final _routerAuthListenerProvider = Provider<_RouterAuthListener>((ref) {
@@ -62,7 +70,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       final isProtected =
-          path == AppRoutes.account || path.startsWith('${AppRoutes.account}/');
+          path == AppRoutes.account ||
+          path.startsWith('${AppRoutes.account}/') ||
+          path.startsWith('/admin/');
       if (isProtected && !isSignedIn) {
         return Uri(
           path: AppRoutes.signIn,
@@ -145,6 +155,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.accountSettings,
             builder: (context, state) => const AccountSettingsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.curriculumAdmin,
+            builder: (context, state) => const CurriculumAdminScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.addLearner,
+            builder: (context, state) => const LearnerFormScreen(),
+          ),
+          GoRoute(
+            path: '/account/learners/:learnerId',
+            builder: (context, state) => LearnerProfileScreen(
+              learnerId: state.pathParameters['learnerId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/account/learners/:learnerId/edit',
+            builder: (context, state) => LearnerFormScreen(
+              learnerId: state.pathParameters['learnerId']!,
+            ),
           ),
         ],
       ),

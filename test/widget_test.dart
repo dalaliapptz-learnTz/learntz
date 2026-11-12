@@ -84,7 +84,7 @@ void main() {
     tester.view.resetDevicePixelRatio();
   });
 
-  testWidgets('unauthenticated users are redirected from account routes', (
+  testWidgets('unauthenticated users are redirected from protected routes', (
     tester,
   ) async {
     final container = ProviderContainer();
@@ -99,6 +99,14 @@ void main() {
 
     expect(find.text('Authentication is not connected'), findsOneWidget);
     expect(find.text('Parent dashboard'), findsNothing);
+    container.read(appRouterProvider).go(AppRoutes.addLearner);
+    await tester.pumpAndSettle();
+    expect(find.text('Authentication is not connected'), findsOneWidget);
+    expect(find.text('Register a learner'), findsNothing);
+    container.read(appRouterProvider).go(AppRoutes.curriculumAdmin);
+    await tester.pumpAndSettle();
+    expect(find.text('Authentication is not connected'), findsOneWidget);
+    expect(find.text('Curriculum administration'), findsNothing);
     expect(tester.takeException(), isNull);
 
     container.dispose();

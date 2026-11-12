@@ -7,9 +7,12 @@ import '../../core/auth/auth_providers.dart';
 import '../../core/auth/auth_repository.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/state/app_providers.dart';
+import '../curriculum/curriculum_providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
+import '../learners/learner_models.dart';
+import '../learners/learner_providers.dart';
 import '../auth/auth_screens.dart';
 import 'account_providers.dart';
 import 'account_repository.dart';
@@ -21,6 +24,9 @@ class AccountScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(supabaseClientProvider)?.auth.currentUser;
+    final profile = ref.watch(parentProfileProvider);
+    final learners = ref.watch(parentLearnersProvider);
+    final curriculumAccess = ref.watch(curriculumStaffCapabilitiesProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -40,48 +46,175 @@ class AccountScreen extends ConsumerWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 24),
-              ref
-                  .watch(parentProfileProvider)
-                  .when(
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (error, stackTrace) => AppCard(
-                      child: AuthInlineMessage(
-                        message: _accountErrorMessage(error, l10n),
-                        isError: true,
-                      ),
-                    ),
-                    data: (profile) => AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profile.fullName,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(user?.email ?? ''),
-                          const SizedBox(height: 4),
-                          Text(
-                            profile.countryCode,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(height: 16),
-                          OutlinedButton.icon(
-                            onPressed: () =>
-                                context.go(AppRoutes.editParentProfile),
-                            icon: const Icon(Icons.edit_outlined),
-                            label: Text(l10n.editProfileAction),
-                          ),
-                        ],
-                      ),
-                    ),
+              profile.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) => AppCard(
+                  child: AuthInlineMessage(
+                    message: _accountErrorMessage(error, l10n),
+                    isError: true,
                   ),
+                ),
+                data: (value) => AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        value.fullName,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(user?.email ?? ''),
+                      const SizedBox(height: 4),
+                      Text(
+                        value.countryCode,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        onPressed: () =>
+                            context.go(AppRoutes.editParentProfile),
+                        icon: const Icon(Icons.edit_outlined),
+                        label: Text(l10n.editProfileAction),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () => context.go(AppRoutes.accountSettings),
                 icon: const Icon(Icons.settings_outlined),
                 label: Text(l10n.accountSettingsAction),
+              ),
+              if (curriculumAccess.asData?.value.canAccess ?? false) ...[
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => context.go(AppRoutes.curriculumAdmin),
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: Text(l10n.curriculumAdminTitle),
+                ),
+              ],
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.learnersSectionTitle,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () => context.go(AppRoutes.addLearner),
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.addLearnerAction),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.learnerCount(learners.asData?.value.length ?? 0),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              learners.when(
+                loading: () => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                error: (error, stackTrace) => AppCard(
+                  child: AuthInlineMessage(
+                    message: _accountErrorMessage(error, l10n),
+                    isError: true,
+                  ),
+                ),
+                data: (items) => items.isEmpty
+                    ? AppCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.noLearnersTitle,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(l10n.noLearnersDescription),
+                            const SizedBox(height: 16),
+                            OutlinedButton.icon(
+                              onPressed: () => context.go(AppRoutes.addLearner),
+                              icon: const Icon(Icons.person_add_alt_1),
+                              label: Text(l10n.addLearnerAction),
+                            ),
+                          ],
+                        ),
+                      )
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          final columns = constraints.maxWidth >= 820
+                              ? 3
+                              : constraints.maxWidth >= 540
+                              ? 2
+                              : 1;
+                          final cardWidth =
+                              (constraints.maxWidth - (columns - 1) * 12) /
+                              columns;
+                          return Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              for (final learner in items)
+                                SizedBox(
+                                  width: cardWidth,
+                                  child: _LearnerCard(
+                                    learner: learner,
+                                    onSelected: () async {
+                                      try {
+                                        await ref
+                                            .read(
+                                              activeLearnerProvider.notifier,
+                                            )
+                                            .select(learner.id);
+                                        if (context.mounted) {
+                                          context.go(
+                                            AppRoutes.learnerProfile(
+                                              learner.id,
+                                            ),
+                                          );
+                                        }
+                                      } on PostgrestException {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(l10n.requestFailed),
+                                            ),
+                                          );
+                                        }
+                                      } on NotSignedInException {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                l10n.signInRequired,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    onEdit: () => context.go(
+                                      AppRoutes.editLearner(learner.id),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
               ),
               const SizedBox(height: 24),
               Align(
@@ -104,6 +237,79 @@ class AccountScreen extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LearnerCard extends ConsumerWidget {
+  const _LearnerCard({
+    required this.learner,
+    required this.onSelected,
+    required this.onEdit,
+  });
+
+  final Learner learner;
+  final VoidCallback onSelected;
+  final VoidCallback onEdit;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final catalog = ref.watch(educationCatalogProvider).asData?.value;
+    final activeLearner = ref.watch(activeLearnerProvider);
+    final isSelected = activeLearner?.id == learner.id;
+    final countryName =
+        catalog?.country(learner.countryCode)?.name ?? learner.countryCode;
+    final grade = catalog?.grade(learner.gradeId)?.name ?? '';
+    final level = catalog?.level(learner.educationLevelId)?.name ?? '';
+    final system = catalog?.system(learner.educationSystemId)?.name ?? '';
+
+    return AppCard(
+      child: InkWell(
+        onTap: onSelected,
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    learner.fullName,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                IconButton(
+                  tooltip: l10n.editLearnerAction,
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit_outlined),
+                ),
+              ],
+            ),
+            Text([level, grade].where((part) => part.isNotEmpty).join(' • ')),
+            const SizedBox(height: 4),
+            Text('$countryName${system.isEmpty ? '' : ' • $system'}'),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Chip(
+                  label: Text(_learnerStatus(learner.status, l10n)),
+                  visualDensity: VisualDensity.compact,
+                ),
+                const Spacer(),
+                if (isSelected)
+                  Text(
+                    l10n.activeLearnerLabel,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -597,5 +803,12 @@ String _localizedStatus(String value, AppLocalizations l10n) => switch (value) {
   'deletion_requested' => l10n.accountStatusDeletionRequested,
   'deactivated' => l10n.accountStatusDeactivated,
   'deleted' => l10n.accountStatusDeleted,
+  _ => l10n.accountStatusUnknown,
+};
+
+String _learnerStatus(String value, AppLocalizations l10n) => switch (value) {
+  'active' => l10n.learnerStatusActive,
+  'inactive' => l10n.learnerStatusInactive,
+  'deletion_requested' => l10n.learnerStatusDeletionRequested,
   _ => l10n.accountStatusUnknown,
 };

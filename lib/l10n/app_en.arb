@@ -194,5 +194,140 @@
   "databaseConfigured": "Database ready",
   "sessionHelp": "Sessions are managed and refreshed by Supabase Auth.",
   "emailVerificationRequired": "Verify your email before signing in.",
-  "adminRolesProtected": "Administrative roles can only be assigned through an authorized backend process."
+  "adminRolesProtected": "Administrative roles can only be assigned through an authorized backend process.",
+  "learnersSectionTitle": "Learners",
+  "learnerCount": "Registered learners: {count}",
+  "@learnerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noLearnersTitle": "No learner profiles yet",
+  "noLearnersDescription": "Add a child to create an independent learning profile.",
+  "addLearnerAction": "Add learner",
+  "addLearnerTitle": "Register a learner",
+  "editLearnerAction": "Edit learner",
+  "editLearnerTitle": "Update learner profile",
+  "learnerFormDescription": "A parent or guardian manages this profile. Child information is visible only to authorized guardians.",
+  "firstNameLabel": "First name",
+  "middleNameLabel": "Middle name (optional)",
+  "lastNameLabel": "Last name",
+  "dateOfBirthLabel": "Date of birth",
+  "selectDateAction": "Select date",
+  "genderLabel": "Gender (optional)",
+  "genderFemale": "Female",
+  "genderMale": "Male",
+  "genderOther": "Other",
+  "preferNotToSayLabel": "Prefer not to say",
+  "countryLabel": "Country",
+  "educationSystemNameLabel": "Education system",
+  "curriculumLabel": "Curriculum",
+  "educationLevelLabel": "Education level",
+  "gradeLabel": "Current grade or form",
+  "schoolOptionalLabel": "Current school (optional)",
+  "noSchoolSelected": "No school selected",
+  "activeLearnerLabel": "Selected",
+  "learnerStatusLabel": "Learner status",
+  "learnerStatusActive": "Active",
+  "learnerStatusInactive": "Inactive",
+  "learnerStatusDeletionRequested": "Deletion requested",
+  "notProvidedLabel": "Not provided",
+  "learnerHistoryTitle": "Registration and promotion history",
+  "noLearnerHistory": "No history is available yet.",
+  "deactivateLearnerAction": "Deactivate learner",
+  "deactivateLearnerTitle": "Deactivate this learner?",
+  "learnerDeactivationConfirmation": "The profile will be deactivated but retained with its history.",
+  "requestLearnerDeletionAction": "Request learner deletion",
+  "learnerDeletionConfirmation": "This records a deletion request for review. The profile is not deleted immediately.",
+  "confirmAction": "Confirm",
+  "recordPromotionAction": "Record manual promotion",
+  "promotionFailed": "The promotion could not be recorded. Check that the selected grade progression is configured.",
+  "promotionTypePromoted": "Promoted",
+  "promotionTypeRepeated": "Repeated grade",
+  "promotionTypeSystemChanged": "Education system changed",
+  "promotionHistoryItem": "{fromGrade} → {toGrade}",
+  "@promotionHistoryItem": {
+    "placeholders": {
+      "fromGrade": {},
+      "toGrade": {}
+    }
+  },
+  "switchLearnerAction": "Switch learner",
+  "learnerNameTooLong": "Name must be 80 characters or fewer.",
+  "profileRegistered": "Learner profile registered",
+  "profileUpdated": "Learner profile updated",
+  "curriculumAdminTitle": "Curriculum administration",
+  "curriculumAdminDescription": "Review the TIE primary-curriculum source, document usage rights, and manage the source-traceable import workflow.",
+  "curriculumAccessDenied": "Your account does not have a curriculum administration role.",
+  "curriculumSourceTitle": "TIE primary curriculum source",
+  "curriculumVerificationLabel": "Source verification",
+  "curriculumRightsStatusLabel": "Usage rights",
+  "curriculumVersionLabel": "Pilot version",
+  "curriculumChecksumLabel": "Registered SHA-256",
+  "curriculumRightsWarning": "No TIE curriculum text may be extracted, stored, or published until usage rights are documented and independently reviewed.",
+  "curriculumVerifyAction": "Verify source identity",
+  "curriculumRightsAction": "Review usage rights",
+  "curriculumRightsUnknown": "Unknown",
+  "curriculumRightsPending": "Permission pending",
+  "curriculumRightsAuthorized": "Authorized",
+  "curriculumRightsPublicDomain": "Public domain",
+  "curriculumRightsRestricted": "Restricted",
+  "curriculumRightsEvidenceLabel": "Rights evidence URL (HTTPS)",
+  "curriculumReviewNoteLabel": "Review note",
+  "curriculumSaveRightsAction": "Record rights decision",
+  "curriculumHttpsRequired": "Enter a valid HTTPS URL.",
+  "curriculumNoteTooLong": "The note is too long.",
+  "curriculumImportsTitle": "Import and review history",
+  "curriculumNoImports": "No curriculum imports have been started.",
+  "curriculumImportAction": "Select source document",
+  "curriculumImportProcessing": "Uploading to secure processing queue…",
+  "curriculumImportAlreadyRegistered": "This source file is already registered in the pilot.",
+  "curriculumImportSucceeded": "The document is stored privately and queued for server-side processing.",
+  "curriculumImportJobLabel": "Import",
+  "curriculumAttemptLabel": "Attempt",
+  "curriculumExtractedPages": "{count, plural, =1{1 extracted page} other{{count} extracted pages}}",
+  "@curriculumExtractedPages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "curriculumPageLabel": "Page",
+  "curriculumPageNoText": "No text was extracted from this page.",
+  "curriculumReprocessPageAction": "Reprocess page",
+  "curriculumAddItemAction": "Add normalized item",
+  "curriculumItemTypeLabel": "Curriculum item type",
+  "curriculumOfficialTermLabel": "Official term (optional)",
+  "curriculumSourcePageLabel": "Source page",
+  "curriculumSourceTextLabel": "Exact source text",
+  "curriculumNormalizedTextLabel": "Normalized text",
+  "curriculumValidateAction": "Validate and send for review",
+  "curriculumValidationSummary": "Validation: {errors} errors, {warnings} warnings",
+  "@curriculumValidationSummary": {
+    "placeholders": {
+      "errors": {
+        "type": "int"
+      },
+      "warnings": {
+        "type": "int"
+      }
+    }
+  },
+  "curriculumDuplicateMatchesTitle": "Potential duplicate matches",
+  "curriculumDuplicateCandidateLabel": "Existing candidate",
+  "curriculumDuplicateReviewTitle": "Review duplicate match",
+  "curriculumNotDuplicateAction": "Not a duplicate",
+  "curriculumDeferDuplicateAction": "Defer",
+  "curriculumConfirmDuplicateAction": "Confirm duplicate",
+  "curriculumApproveItemAction": "Approve item",
+  "curriculumRejectItemAction": "Reject item",
+  "curriculumStatusLabel": "Status",
+  "curriculumVersionReviewTitle": "Version approval workflow",
+  "curriculumSubmitVersionAction": "Submit version for review",
+  "curriculumApproveVersionAction": "Approve version",
+  "curriculumPublishVersionAction": "Publish version",
+  "curriculumRightsHistoryTitle": "Usage-rights review history"
 }

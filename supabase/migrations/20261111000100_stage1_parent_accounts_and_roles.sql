@@ -179,6 +179,7 @@ revoke all on function public.has_role(text, text) from public, anon;
 revoke all on function public.has_country_access(text) from public, anon;
 grant execute on function public.has_role(text, text) to authenticated;
 grant execute on function public.has_country_access(text) to authenticated;
+grant execute on function public.has_role(text, text) to anon;
 
 alter table public.countries enable row level security;
 alter table public.profiles enable row level security;

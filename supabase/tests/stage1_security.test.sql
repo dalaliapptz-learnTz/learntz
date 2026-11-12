@@ -109,8 +109,8 @@ select ok(
 );
 select is(
   (select count(*)::integer from public.audit_logs),
-  1,
-  'parent can read own registration audit event'
+  2,
+  'parent can read own registration and trusted role-assignment audit events'
 );
 
 select throws_ok(
