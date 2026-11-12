@@ -199,3 +199,28 @@ def test_page_reprocessing_keeps_original_page_number():
     assert DocumentProcessor.process_page(extraction, 1).pages[0]["page_number"] == 1
     with pytest.raises(DocumentValidationError, match="does not exist"):
         DocumentProcessor.process_page(extraction, 2)
+
+
+def test_malware_scanner_rejects_eicar_before_parsing():
+    eicar = (
+        b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$"
+        b"EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+    )
+
+    def fail_on_eicar(payload: bytes) -> None:
+        if eicar in payload:
+            raise DocumentValidationError(
+                "malware_detected",
+                "The uploaded file failed antivirus scanning and was rejected.",
+            )
+
+    processor = DocumentProcessor(antivirus_scanner=fail_on_eicar)
+    with pytest.raises(DocumentValidationError) as exc_info:
+        processor.process(
+            eicar,
+            filename="infected.json",
+            declared_content_type="application/json",
+            expected_sha256=hashlib.sha256(eicar).hexdigest(),
+            expected_size_bytes=len(eicar),
+        )
+    assert exc_info.value.code == "malware_detected"

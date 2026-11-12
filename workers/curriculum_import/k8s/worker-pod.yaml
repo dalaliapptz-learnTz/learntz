@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curriculum-import-worker
+  labels:
+    app: curriculum-import-worker
+spec:
+  restartPolicy: Always
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: worker
+      image: learntz-curriculum-import-worker:1.0.0
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "250m"
+        limits:
+          memory: "1Gi"
+          cpu: "1000m"
+      env:
+        - name: SUPABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: curriculum-import-worker-secrets
+              key: supabase-url
+        - name: SUPABASE_SERVICE_ROLE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: curriculum-import-worker-secrets
+              key: supabase-service-role-key
+        - name: CLAMAV_HOST
+          value: "127.0.0.1"
+        - name: CLAMAV_PORT
+          value: "3310"
+        - name: CLAMAV_REQUIRED
+          value: "true"
+        - name: OCR_LANGUAGES
+          value: "swa+eng"
+      volumeMounts:
+        - name: worker-tmp
+          mountPath: /tmp
+    - name: clamav
+      image: clamav/clamav-debian:stable
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "250m"
+        limits:
+          memory: "1536Mi"
+          cpu: "1000m"
+      ports:
+        - containerPort: 3310
+          protocol: TCP
+      readinessProbe:
+        tcpSocket:
+          port: 3310
+        initialDelaySeconds: 60
+        periodSeconds: 15
+      volumeMounts:
+        - name: clamav-tmp
+          mountPath: /tmp
+        - name: clamav-run
+          mountPath: /run/clamav
+        - name: clamav-db
+          mountPath: /var/lib/clamav
+  volumes:
+    - name: worker-tmp
+      emptyDir:
+        sizeLimit: 64Mi
+    - name: clamav-tmp
+      emptyDir:
+        sizeLimit: 64Mi
+    - name: clamav-run
+      emptyDir:
+        sizeLimit: 16Mi
+    - name: clamav-db
+      emptyDir:
+        sizeLimit: 1Gi

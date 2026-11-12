@@ -50,13 +50,17 @@ Run one or more worker replicas on the private network with:
 - `SUPABASE_URL`: internal Supabase API URL reachable from the worker.
 - `SUPABASE_SERVICE_ROLE_KEY`: the local or deployment service-role secret,
   injected by the deployment secret manager at runtime.
+- `CLAMAV_HOST` / `CLAMAV_SOCKET` and `CLAMAV_PORT` (default `3310`): ClamAV
+  `clamd` endpoint used for `INSTREAM` malware scanning before extraction.
+- `CLAMAV_REQUIRED` (default `true`): fail closed if ClamAV is unconfigured or
+  unreachable.
 - Optional `POLL_INTERVAL_SECONDS` and `OCR_LANGUAGES` (default `swa+eng`).
 
-Do not commit a populated environment file. Run the container with a read-only
-root filesystem, no Linux capabilities, a no-new-privileges policy, memory/CPU
-limits, and a bounded writable `/tmp`. Restrict worker egress to the Supabase
-API/storage endpoints. Keep service-role credentials out of build arguments
-and logs.
+Deployment security manifests are provided in `docker-compose.yml` (worker +
+`clamav` daemon container) and `k8s/worker-pod.yaml` (non-root `UID 10001`,
+`readOnlyRootFilesystem: true`, `drop ALL` capabilities, and `1Gi` worker memory
+limit). Keep service-role credentials out of build arguments and logs, and
+restrict worker egress to the Supabase API/storage endpoints and ClamAV daemon.
 
 The database lease is renewed during processing. Jobs are claimed with
 `FOR UPDATE SKIP LOCKED`, have bounded retries, and become recoverable after a
@@ -65,10 +69,11 @@ RPCs are granted only to the `service_role`.
 
 ## Limits and operations
 
-The worker does not provide malware scanning, password-protected document
-support, handwritten-text recognition, or legal review. Treat a parser/OCR
-failure as a reviewable job error; do not silently substitute empty text.
-Before production, add deployment-specific malware scanning, retention and
-backup policies, monitoring/alerts, secret rotation, resource sizing, and
-regional data-residency review. Retain the source only as permitted by the
+ClamAV scanning validates incoming payloads prior to extraction when configured;
+the worker still does not provide password-protected document support,
+handwritten-text recognition, or legal review. Treat a parser/OCR failure as a
+reviewable job error; do not silently substitute empty text. Before production,
+ensure ClamAV signature database updates, retention and backup policies,
+monitoring/alerts, secret rotation, resource sizing, and regional
+data-residency review are configured. Retain the source only as permitted by the
 document's recorded rights.

@@ -6,6 +6,7 @@ import threading
 import time
 
 from . import __version__
+from .antivirus import ClamdScanner
 from .client import SupabaseWorkerClient
 from .processor import DocumentProcessor, DocumentValidationError
 
@@ -19,8 +20,10 @@ logger = logging.getLogger("learntz.curriculum.worker")
 
 def main() -> None:
     client = SupabaseWorkerClient.from_environment()
+    scanner = ClamdScanner.from_environment()
     processor = DocumentProcessor(
-        ocr_languages=os.environ.get("OCR_LANGUAGES", "swa+eng")
+        ocr_languages=os.environ.get("OCR_LANGUAGES", "swa+eng"),
+        antivirus_scanner=scanner.scan_bytes if scanner is not None else None,
     )
     poll_interval = max(1, int(os.environ.get("POLL_INTERVAL_SECONDS", "5")))
     logger.info("Starting curriculum import worker version=%s", __version__)

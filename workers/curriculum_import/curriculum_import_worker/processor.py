@@ -17,6 +17,8 @@ from openpyxl import load_workbook
 from PIL import Image
 from pytesseract import Output
 
+from .antivirus import AntivirusScanner
+from .errors import DocumentValidationError
 
 MAX_FILE_BYTES = 25 * 1024 * 1024
 MAX_PAGES = 500
@@ -34,13 +36,6 @@ SUPPORTED_TYPES = {
 }
 
 
-class DocumentValidationError(ValueError):
-    def __init__(self, code: str, message: str, *, page_number: int | None = None):
-        super().__init__(message)
-        self.code = code
-        self.page_number = page_number
-
-
 @dataclass(frozen=True)
 class Extraction:
     pages: list[dict[str, Any]]
@@ -56,9 +51,11 @@ class DocumentProcessor:
         *,
         ocr_languages: str = "swa+eng",
         ocr_function: OcrFunction | None = None,
+        antivirus_scanner: AntivirusScanner | None = None,
     ) -> None:
         self.ocr_languages = ocr_languages
         self._ocr_function = ocr_function or self._ocr_image
+        self._antivirus_scanner = antivirus_scanner
 
     def process(
         self,
@@ -69,6 +66,8 @@ class DocumentProcessor:
         expected_sha256: str,
         expected_size_bytes: int | None = None,
     ) -> Extraction:
+        if self._antivirus_scanner is not None:
+            self._antivirus_scanner(payload)
         self._validate_file(
             payload, filename, declared_content_type, expected_sha256,
             expected_size_bytes,
