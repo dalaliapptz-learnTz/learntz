@@ -63,6 +63,20 @@ final learnerChangeHistoryProvider = FutureProvider.autoDispose
       return repository.getChangeHistory(learnerId);
     });
 
+final sentGuardianInvitationsProvider = FutureProvider.autoDispose
+    .family<List<GuardianInvitation>, String>((ref, learnerId) async {
+      final repository = ref.watch(learnerRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.listSentGuardianInvitations(learnerId);
+    });
+
+final incomingGuardianInvitationsProvider =
+    FutureProvider.autoDispose<List<IncomingGuardianInvitation>>((ref) async {
+      final repository = ref.watch(learnerRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.listIncomingGuardianInvitations();
+    });
+
 final activeLearnerProvider = NotifierProvider<ActiveLearnerNotifier, Learner?>(
   ActiveLearnerNotifier.new,
 );

@@ -354,5 +354,29 @@
   "curriculumSubmitVersionAction": "Submit version for review",
   "curriculumApproveVersionAction": "Approve version",
   "curriculumPublishVersionAction": "Publish version",
-  "curriculumRightsHistoryTitle": "Usage-rights review history"
+  "curriculumRightsHistoryTitle": "Usage-rights review history",
+  "guardiansSectionTitle": "Guardians",
+  "inviteGuardianAction": "Invite guardian",
+  "inviteGuardianTitle": "Invite a co-parent or guardian",
+  "inviteGuardianDescription": "Enter the email address of the parent or guardian you want to invite to co-manage this learner profile.",
+  "inviteSentMessage": "Invitation sent to {email}.",
+  "@inviteSentMessage": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "pendingInvitationsLabel": "Pending invitations",
+  "noPendingInvitations": "No pending guardian invitations.",
+  "revokeInvitationAction": "Revoke",
+  "incomingInvitationsTitle": "Guardian invitations",
+  "incomingInvitationPrompt": "{inviterName} invited you to co-manage {learnerName}.",
+  "@incomingInvitationPrompt": {
+    "placeholders": {
+      "inviterName": {},
+      "learnerName": {}
+    }
+  },
+  "acceptInvitationAction": "Accept",
+  "declineInvitationAction": "Decline",
+  "sendInvitationAction": "Send invitation"
 }

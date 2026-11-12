@@ -387,3 +387,64 @@ class LearnerPromotion {
   final DateTime effectiveOn;
   final String? note;
 }
+
+class GuardianInvitation {
+  const GuardianInvitation({
+    required this.id,
+    required this.learnerId,
+    required this.inviteeEmail,
+    required this.status,
+    required this.expiresAt,
+    required this.createdAt,
+  });
+
+  factory GuardianInvitation.fromJson(Map<String, dynamic> json) {
+    return GuardianInvitation(
+      id: json['id'] as String,
+      learnerId: json['learner_id'] as String,
+      inviteeEmail: json['invitee_email'] as String,
+      status: json['status'] as String,
+      expiresAt: DateTime.parse(json['expires_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  final String id;
+  final String learnerId;
+  final String inviteeEmail;
+  final String status;
+  final DateTime expiresAt;
+  final DateTime createdAt;
+}
+
+class IncomingGuardianInvitation {
+  const IncomingGuardianInvitation({
+    required this.id,
+    required this.learnerId,
+    required this.learnerName,
+    required this.inviterName,
+    required this.inviteeEmail,
+    required this.expiresAt,
+    required this.createdAt,
+  });
+
+  factory IncomingGuardianInvitation.fromJson(Map<String, dynamic> json) {
+    return IncomingGuardianInvitation(
+      id: json['id'] as String,
+      learnerId: json['learner_id'] as String,
+      learnerName: json['learner_name'] as String,
+      inviterName: json['inviter_name'] as String,
+      inviteeEmail: json['invitee_email'] as String,
+      expiresAt: DateTime.parse(json['expires_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  final String id;
+  final String learnerId;
+  final String learnerName;
+  final String inviterName;
+  final String inviteeEmail;
+  final DateTime expiresAt;
+  final DateTime createdAt;
+}

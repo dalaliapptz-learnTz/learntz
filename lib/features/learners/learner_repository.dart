@@ -174,6 +174,65 @@ class LearnerRepository {
     );
   }
 
+  Future<List<GuardianInvitation>> listSentGuardianInvitations(
+    String learnerId,
+  ) async {
+    if (_client.auth.currentUser == null) throw const NotSignedInException();
+    final rows = await _client
+        .from('guardian_invitations')
+        .select('id, learner_id, invitee_email, status, expires_at, created_at')
+        .eq('learner_id', learnerId)
+        .eq('status', 'pending')
+        .order('created_at', ascending: false);
+    return rows
+        .map((row) => GuardianInvitation.fromJson(row))
+        .toList(growable: false);
+  }
+
+  Future<GuardianInvitation> inviteGuardianByEmail({
+    required String learnerId,
+    required String email,
+  }) async {
+    if (_client.auth.currentUser == null) throw const NotSignedInException();
+    final row = await _client.rpc(
+      'invite_learner_guardian_by_email',
+      params: {'p_learner_id': learnerId, 'p_invitee_email': email.trim()},
+    );
+    return GuardianInvitation.fromJson(row as Map<String, dynamic>);
+  }
+
+  Future<void> revokeGuardianInvitation(String invitationId) async {
+    if (_client.auth.currentUser == null) throw const NotSignedInException();
+    await _client.rpc(
+      'revoke_guardian_invitation',
+      params: {'p_invitation_id': invitationId},
+    );
+  }
+
+  Future<List<IncomingGuardianInvitation>>
+      listIncomingGuardianInvitations() async {
+    if (_client.auth.currentUser == null) throw const NotSignedInException();
+    final rows = await _client.rpc('list_incoming_guardian_invitations');
+    return (rows as List)
+        .map(
+          (row) =>
+              IncomingGuardianInvitation.fromJson(row as Map<String, dynamic>),
+        )
+        .toList(growable: false);
+  }
+
+  Future<GuardianInvitation> respondGuardianInvitation({
+    required String invitationId,
+    required bool accept,
+  }) async {
+    if (_client.auth.currentUser == null) throw const NotSignedInException();
+    final row = await _client.rpc(
+      'respond_guardian_invitation',
+      params: {'p_invitation_id': invitationId, 'p_accept': accept},
+    );
+    return GuardianInvitation.fromJson(row as Map<String, dynamic>);
+  }
+
   Future<LearnerRelationship> inviteGuardian({
     required String learnerId,
     required String guardianUserId,

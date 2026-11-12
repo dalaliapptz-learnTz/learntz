@@ -27,6 +27,7 @@ class AccountScreen extends ConsumerWidget {
     final profile = ref.watch(parentProfileProvider);
     final learners = ref.watch(parentLearnersProvider);
     final curriculumAccess = ref.watch(curriculumStaffCapabilitiesProvider);
+    final incomingInvitations = ref.watch(incomingGuardianInvitationsProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -92,6 +93,12 @@ class AccountScreen extends ConsumerWidget {
                   onPressed: () => context.go(AppRoutes.curriculumAdmin),
                   icon: const Icon(Icons.menu_book_outlined),
                   label: Text(l10n.curriculumAdminTitle),
+                ),
+              ],
+              if (incomingInvitations.asData?.value.isNotEmpty ?? false) ...[
+                const SizedBox(height: 20),
+                _IncomingInvitationsCard(
+                  invitations: incomingInvitations.requireValue,
                 ),
               ],
               const SizedBox(height: 24),
@@ -812,3 +819,81 @@ String _learnerStatus(String value, AppLocalizations l10n) => switch (value) {
   'deletion_requested' => l10n.learnerStatusDeletionRequested,
   _ => l10n.accountStatusUnknown,
 };
+
+class _IncomingInvitationsCard extends ConsumerWidget {
+  const _IncomingInvitationsCard({required this.invitations});
+
+  final List<IncomingGuardianInvitation> invitations;
+
+  Future<void> _respond(
+    BuildContext context,
+    WidgetRef ref,
+    String invitationId,
+    bool accept,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final repo = ref.read(learnerRepositoryProvider);
+    if (repo == null) return;
+    try {
+      await repo.respondGuardianInvitation(
+        invitationId: invitationId,
+        accept: accept,
+      );
+      ref.invalidate(incomingGuardianInvitationsProvider);
+      ref.invalidate(parentLearnersProvider);
+    } on Exception catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.requestFailed)),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.group_add_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.incomingInvitationsTitle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          for (final inv in invitations) ...[
+            Text(
+              l10n.incomingInvitationPrompt(inv.inviterName, inv.learnerName),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: [
+                FilledButton(
+                  onPressed: () => _respond(context, ref, inv.id, true),
+                  child: Text(l10n.acceptInvitationAction),
+                ),
+                OutlinedButton(
+                  onPressed: () => _respond(context, ref, inv.id, false),
+                  child: Text(l10n.declineInvitationAction),
+                ),
+              ],
+            ),
+            if (inv != invitations.last) const Divider(height: 24),
+          ],
+        ],
+      ),
+    );
+  }
+}

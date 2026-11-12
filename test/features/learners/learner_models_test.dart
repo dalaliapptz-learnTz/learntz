@@ -94,4 +94,31 @@ void main() {
     expect(uuidV4.hasMatch(second), isTrue);
     expect(first, isNot(second));
   });
+
+  test('guardian invitation models parse email and metadata correctly', () {
+    final sent = GuardianInvitation.fromJson({
+      'id': 'inv-1',
+      'learner_id': 'learner-1',
+      'invitee_email': 'guardian@example.test',
+      'status': 'pending',
+      'expires_at': '2026-11-19T10:00:00Z',
+      'created_at': '2026-11-12T10:00:00Z',
+    });
+
+    expect(sent.inviteeEmail, 'guardian@example.test');
+    expect(sent.status, 'pending');
+
+    final incoming = IncomingGuardianInvitation.fromJson({
+      'id': 'inv-2',
+      'learner_id': 'learner-1',
+      'learner_name': 'Asha Mushi',
+      'inviter_name': 'Juma Mushi',
+      'invitee_email': 'guardian@example.test',
+      'expires_at': '2026-11-19T10:00:00Z',
+      'created_at': '2026-11-12T10:00:00Z',
+    });
+
+    expect(incoming.learnerName, 'Asha Mushi');
+    expect(incoming.inviterName, 'Juma Mushi');
+  });
 }

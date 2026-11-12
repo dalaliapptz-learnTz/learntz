@@ -638,6 +638,34 @@ class _LearnerProfileScreenState extends ConsumerState<LearnerProfileScreen> {
     }
   }
 
+  Future<void> _inviteGuardian(Learner learner) async {
+    final l10n = AppLocalizations.of(context)!;
+    final email = await showDialog<String>(
+      context: context,
+      builder: (context) => const _InviteGuardianDialog(),
+    );
+    if (email == null || !mounted) return;
+
+    final repository = ref.read(learnerRepositoryProvider);
+    if (repository == null) return;
+    try {
+      await repository.inviteGuardianByEmail(
+        learnerId: learner.id,
+        email: email,
+      );
+      ref.invalidate(sentGuardianInvitationsProvider(learner.id));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.inviteSentMessage(email))),
+        );
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) _showError(error.message);
+    } on NotSignedInException {
+      if (mounted) _showError(l10n.signInRequired);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -751,6 +779,12 @@ class _LearnerProfileScreenState extends ConsumerState<LearnerProfileScreen> {
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 20),
+              _GuardianInvitationsSection(
+                learnerId: learner.id,
+                isActive: isActive,
+                onInvite: () => _inviteGuardian(learner),
               ),
               const SizedBox(height: 20),
               Text(
@@ -1008,3 +1042,164 @@ String _promotionType(String value, AppLocalizations l10n) => switch (value) {
   'system_changed' => l10n.promotionTypeSystemChanged,
   _ => value,
 };
+
+class _GuardianInvitationsSection extends ConsumerWidget {
+  const _GuardianInvitationsSection({
+    required this.learnerId,
+    required this.isActive,
+    required this.onInvite,
+  });
+
+  final String learnerId;
+  final bool isActive;
+  final VoidCallback onInvite;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final invitations = ref.watch(sentGuardianInvitationsProvider(learnerId));
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.guardiansSectionTitle,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              if (isActive)
+                OutlinedButton.icon(
+                  onPressed: onInvite,
+                  icon: const Icon(Icons.person_add_outlined),
+                  label: Text(l10n.inviteGuardianAction),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          invitations.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => Text(l10n.requestFailed),
+            data: (items) {
+              if (items.isEmpty) {
+                return Text(
+                  l10n.noPendingInvitations,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.pendingInvitationsLabel,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  for (final inv in items)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Expanded(child: Text(inv.inviteeEmail)),
+                          TextButton(
+                            onPressed: () async {
+                              final repo = ref.read(learnerRepositoryProvider);
+                              if (repo == null) return;
+                              try {
+                                await repo.revokeGuardianInvitation(inv.id);
+                                ref.invalidate(
+                                  sentGuardianInvitationsProvider(learnerId),
+                                );
+                              } on Exception catch (_) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(l10n.requestFailed)),
+                                  );
+                                }
+                              }
+                            },
+                            child: Text(l10n.revokeInvitationAction),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InviteGuardianDialog extends StatefulWidget {
+  const _InviteGuardianDialog();
+
+  @override
+  State<_InviteGuardianDialog> createState() => _InviteGuardianDialogState();
+}
+
+class _InviteGuardianDialogState extends State<_InviteGuardianDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+
+  @override
+  void dispose() {
+    _email.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Text(l10n.inviteGuardianTitle),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.inviteGuardianDescription),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _email,
+                decoration: InputDecoration(labelText: l10n.emailLabel),
+                keyboardType: TextInputType.emailAddress,
+                autofocus: true,
+                validator: (value) {
+                  final text = value?.trim() ?? '';
+                  if (text.isEmpty) return l10n.requiredField;
+                  if (!text.contains('@') || !text.contains('.')) {
+                    return l10n.invalidEmail;
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancelAction),
+        ),
+        FilledButton(
+          onPressed: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              Navigator.pop(context, _email.text.trim());
+            }
+          },
+          child: Text(l10n.sendInvitationAction),
+        ),
+      ],
+    );
+  }
+}

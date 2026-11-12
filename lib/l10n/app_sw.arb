@@ -354,5 +354,29 @@
   "curriculumSubmitVersionAction": "Tuma toleo likaguliwe",
   "curriculumApproveVersionAction": "Idhinisha toleo",
   "curriculumPublishVersionAction": "Chapisha toleo",
-  "curriculumRightsHistoryTitle": "Historia ya ukaguzi wa haki za matumizi"
+  "curriculumRightsHistoryTitle": "Historia ya ukaguzi wa haki za matumizi",
+  "guardiansSectionTitle": "Walezi",
+  "inviteGuardianAction": "Alika mlezi",
+  "inviteGuardianTitle": "Alika mzazi mwenza au mlezi",
+  "inviteGuardianDescription": "Weka barua pepe ya mzazi au mlezi unayemtaka ajiunge kusimamia wasifu wa mwanafunzi huyu.",
+  "inviteSentMessage": "Mwaliko umetumwa kwa {email}.",
+  "@inviteSentMessage": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "pendingInvitationsLabel": "Mialiko inayosubiri",
+  "noPendingInvitations": "Hakuna mialiko ya ulezi inayosubiri.",
+  "revokeInvitationAction": "Batilisha",
+  "incomingInvitationsTitle": "Mialiko ya ulezi",
+  "incomingInvitationPrompt": "{inviterName} amekualika kusimamia kwa pamoja wasifu wa {learnerName}.",
+  "@incomingInvitationPrompt": {
+    "placeholders": {
+      "inviterName": {},
+      "learnerName": {}
+    }
+  },
+  "acceptInvitationAction": "Kubali",
+  "declineInvitationAction": "Kataa",
+  "sendInvitationAction": "Tuma mwaliko"
 }
