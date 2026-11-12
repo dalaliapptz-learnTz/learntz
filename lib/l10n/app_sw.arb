@@ -95,7 +95,12 @@
       "productName": {}
     }
   },
-  "welcomePageLabel": "Karibu LearnTZ",
+  "welcomePageLabel": "Karibu {productName}",
+  "@welcomePageLabel": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "languageEnglish": "English",
   "languageSwahili": "Kiswahili",
   "accountTitle": "Akaunti yangu",
@@ -105,7 +110,12 @@
   "signInTitle": "Karibu tena",
   "signInDescription": "Ingia kwenye akaunti yako ya mzazi.",
   "signUpTitle": "Fungua akaunti ya mzazi",
-  "signUpDescription": "Fungua akaunti ili kuanza kutumia LearnTZ.",
+  "signUpDescription": "Fungua akaunti ili kuanza kutumia {productName}.",
+  "@signUpDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "emailLabel": "Barua pepe",
   "fullNameLabel": "Jina kamili",
   "passwordLabel": "Nenosiri",
@@ -115,7 +125,12 @@
   "emailLinkProcessedDescription": "Ikiwa umethibitisha barua pepe yako, ingia ili kuendelea.",
   "createAccountAction": "Fungua akaunti",
   "forgotPasswordAction": "Umesahau nenosiri?",
-  "noAccountPrompt": "Hujajiunga na LearnTZ?",
+  "noAccountPrompt": "Hujajiunga na {productName}?",
+  "@noAccountPrompt": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "haveAccountPrompt": "Tayari una akaunti?",
   "requiredField": "Sehemu hii inahitajika.",
   "invalidEmail": "Weka barua pepe sahihi.",
@@ -144,9 +159,19 @@
   "updatePasswordAction": "Sasisha nenosiri",
   "passwordUpdated": "Nenosiri lako limesasishwa.",
   "authNotConfiguredTitle": "Uthibitishaji haujaunganishwa",
-  "authNotConfiguredDescription": "LearnTZ inahitaji mradi wa Supabase usanidiwe kabla ya kutumia akaunti.",
+  "authNotConfiguredDescription": "{productName} inahitaji mradi wa Supabase usanidiwe kabla ya kutumia akaunti.",
+  "@authNotConfiguredDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "authNotConfiguredAction": "Sanidi URL ya Supabase na ufunguo wa umma, tumia uhamishaji wa hifadhidata, na usanidi URL za barua pepe zinazoruhusiwa.",
-  "countriesNotConfigured": "Chaguo za nchi zinahitaji hifadhidata ya LearnTZ isanidiwe na ipatikane.",
+  "countriesNotConfigured": "Chaguo za nchi zinahitaji hifadhidata ya {productName} isanidiwe na ipatikane.",
+  "@countriesNotConfigured": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "noCountriesAvailable": "Hakuna nchi zilizowezeshwa kwa sasa.",
   "curriculumNotConfigured": "Mipangilio ya mtaala bado haipatikani.",
   "tryAgainAction": "Jaribu tena",

@@ -39,7 +39,7 @@ class SelectCountryScreen extends ConsumerWidget {
                 children: [
                   Text(
                     error is CountriesBackendNotConfiguredException
-                        ? l10n.countriesNotConfigured
+                        ? l10n.countriesNotConfigured(selectedCountry.productName)
                         : error is PostgrestException
                         ? l10n.requestFailed
                         : l10n.requestFailed,

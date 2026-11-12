@@ -95,7 +95,12 @@
       "productName": {}
     }
   },
-  "welcomePageLabel": "LearnTZ welcome",
+  "welcomePageLabel": "{productName} welcome",
+  "@welcomePageLabel": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "languageEnglish": "English",
   "languageSwahili": "Kiswahili",
   "accountTitle": "My account",
@@ -105,7 +110,12 @@
   "signInTitle": "Welcome back",
   "signInDescription": "Sign in to your parent account.",
   "signUpTitle": "Create a parent account",
-  "signUpDescription": "Create an account to get started with LearnTZ.",
+  "signUpDescription": "Create an account to get started with {productName}.",
+  "@signUpDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "emailLabel": "Email address",
   "fullNameLabel": "Full name",
   "passwordLabel": "Password",
@@ -115,7 +125,12 @@
   "emailLinkProcessedDescription": "If you have verified your email, sign in to continue.",
   "createAccountAction": "Create account",
   "forgotPasswordAction": "Forgot password?",
-  "noAccountPrompt": "New to LearnTZ?",
+  "noAccountPrompt": "New to {productName}?",
+  "@noAccountPrompt": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "haveAccountPrompt": "Already have an account?",
   "requiredField": "This field is required.",
   "invalidEmail": "Enter a valid email address.",
@@ -144,9 +159,19 @@
   "updatePasswordAction": "Update password",
   "passwordUpdated": "Your password has been updated.",
   "authNotConfiguredTitle": "Authentication is not connected",
-  "authNotConfiguredDescription": "LearnTZ needs a configured Supabase project before account access can be used.",
+  "authNotConfiguredDescription": "{productName} needs a configured Supabase project before account access can be used.",
+  "@authNotConfiguredDescription": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "authNotConfiguredAction": "Configure the Supabase URL and publishable key, apply the database migrations, and configure allowed email redirect URLs.",
-  "countriesNotConfigured": "Country options require the LearnTZ database to be configured and available.",
+  "countriesNotConfigured": "Country options require the {productName} database to be configured and available.",
+  "@countriesNotConfigured": {
+    "placeholders": {
+      "productName": {}
+    }
+  },
   "noCountriesAvailable": "No countries are currently enabled.",
   "curriculumNotConfigured": "Curriculum configuration is not available yet.",
   "tryAgainAction": "Try again",

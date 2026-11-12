@@ -26,7 +26,9 @@ class CurriculumRepository {
 
   final SupabaseClient _client;
 
-  Future<CurriculumStaffCapabilities> getStaffCapabilities() async {
+  Future<CurriculumStaffCapabilities> getStaffCapabilities({
+    String countryCode = 'TZ',
+  }) async {
     if (_client.auth.currentUser == null) {
       return const CurriculumStaffCapabilities(
         canAccess: false,
@@ -36,16 +38,16 @@ class CurriculumRepository {
       );
     }
 
-    final access = await _hasRole([
+    final access = await _hasRole(countryCode, [
       'curriculum_editor',
       'curriculum_reviewer',
       'curriculum_approver',
       'curriculum_admin',
       'country_admin',
     ]);
-    final edit = await _hasRole(['curriculum_editor', 'curriculum_admin']);
-    final review = await _hasRole(['curriculum_reviewer', 'curriculum_admin']);
-    final approve = await _hasRole(['curriculum_approver', 'curriculum_admin']);
+    final edit = await _hasRole(countryCode, ['curriculum_editor', 'curriculum_admin']);
+    final review = await _hasRole(countryCode, ['curriculum_reviewer', 'curriculum_admin']);
+    final approve = await _hasRole(countryCode, ['curriculum_approver', 'curriculum_admin']);
 
     return CurriculumStaffCapabilities(
       canAccess: access,
@@ -319,10 +321,10 @@ class CurriculumRepository {
     );
   }
 
-  Future<bool> _hasRole(List<String> roles) async {
+  Future<bool> _hasRole(String countryCode, List<String> roles) async {
     final result = await _client.rpc(
       'has_curriculum_role',
-      params: {'p_country_code': 'TZ', 'p_roles': roles},
+      params: {'p_country_code': countryCode, 'p_roles': roles},
     );
     return result as bool;
   }

@@ -69,4 +69,18 @@ void main() {
       'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
     );
   });
+
+  test('staff capabilities default to false when unauthenticated or unprivileged', () {
+    const capabilities = CurriculumStaffCapabilities(
+      canAccess: false,
+      canEdit: false,
+      canReview: false,
+      canApprove: false,
+    );
+
+    expect(capabilities.canAccess, isFalse);
+    expect(capabilities.canEdit, isFalse);
+    expect(capabilities.canReview, isFalse);
+    expect(capabilities.canApprove, isFalse);
+  });
 }

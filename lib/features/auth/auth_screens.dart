@@ -57,6 +57,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final country = ref.watch(selectedCountryProvider);
     if (ref.watch(supabaseClientProvider) == null) {
       return const AuthBackendNotice();
     }
@@ -101,7 +102,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           child: Text(l10n.forgotPasswordAction),
         ),
         AuthLink(
-          text: l10n.noAccountPrompt,
+          text: l10n.noAccountPrompt(country.productName),
           label: l10n.createAccountAction,
           onPressed: () => context.go(AppRoutes.signUp),
         ),
@@ -173,6 +174,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final country = ref.watch(selectedCountryProvider);
     if (ref.watch(supabaseClientProvider) == null) {
       return const AuthBackendNotice();
     }
@@ -182,11 +184,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stackTrace) => AuthFormFrame(
             title: l10n.signUpTitle,
-            description: l10n.signUpDescription,
+            description: l10n.signUpDescription(country.productName),
             children: [
               AuthInlineMessage(
                 message: error is CountriesBackendNotConfiguredException
-                    ? l10n.countriesNotConfigured
+                    ? l10n.countriesNotConfigured(country.productName)
                     : l10n.requestFailed,
                 isError: true,
               ),
@@ -205,17 +207,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     AppLocalizations l10n,
     List<CountryConfiguration> countries,
   ) {
+    final country = ref.watch(selectedCountryProvider);
     if (_countryCode == null && countries.isNotEmpty) {
       _countryCode = countries
           .firstWhere(
-            (country) => country.isDefault,
+            (c) => c.isDefault,
             orElse: () => countries.first,
           )
           .countryCode;
     }
     return AuthFormFrame(
       title: l10n.signUpTitle,
-      description: l10n.signUpDescription,
+      description: l10n.signUpDescription(country.productName),
       children: [
         Form(
           key: _formKey,
@@ -600,15 +603,16 @@ class AuthFormFrame extends StatelessWidget {
   }
 }
 
-class AuthBackendNotice extends StatelessWidget {
+class AuthBackendNotice extends ConsumerWidget {
   const AuthBackendNotice({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final country = ref.watch(selectedCountryProvider);
     return AuthFormFrame(
       title: l10n.authNotConfiguredTitle,
-      description: l10n.authNotConfiguredDescription,
+      description: l10n.authNotConfiguredDescription(country.productName),
       children: [
         AuthInlineMessage(message: l10n.authNotConfiguredAction, isError: true),
       ],

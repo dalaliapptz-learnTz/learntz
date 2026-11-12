@@ -14,7 +14,8 @@ final curriculumStaffCapabilitiesProvider =
     FutureProvider.autoDispose<CurriculumStaffCapabilities>((ref) async {
       final repository = ref.watch(curriculumRepositoryProvider);
       if (repository == null) throw const AuthNotConfiguredException();
-      return repository.getStaffCapabilities();
+      final country = ref.watch(selectedCountryProvider);
+      return repository.getStaffCapabilities(countryCode: country.countryCode);
     });
 
 final curriculumPilotProvider =
