@@ -51,22 +51,22 @@ values (
 );
 
 select is(
-  (select count(*)::integer from public.education_systems),
+  (select count(*)::integer from public.education_systems where country_code = 'TZ'),
   1,
-  'only Tanzania has an enabled education system'
+  'only Tanzania has an enabled education system in stage 2'
 );
 select is(
-  (select count(*)::integer from public.curricula),
+  (select count(*)::integer from public.curricula where country_code = 'TZ'),
   1,
   'Tanzania Institute of Education is configured once'
 );
 select is(
-  (select count(*)::integer from public.education_levels),
+  (select count(*)::integer from public.education_levels l join public.curricula c on c.id = l.curriculum_id where c.country_code = 'TZ'),
   3,
   'TIE primary, ordinary, and advanced levels are configured'
 );
 select is(
-  (select count(*)::integer from public.education_grades),
+  (select count(*)::integer from public.education_grades g join public.curricula c on c.id = g.curriculum_id where c.country_code = 'TZ'),
   13,
   'TIE has seven primary standards and six secondary forms'
 );

@@ -346,6 +346,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
                   DropdownButtonFormField<String>(
                     key: ValueKey('country-$selectedCountryCode'),
                     initialValue: selectedCountryCode,
+                    isExpanded: true,
                     decoration: InputDecoration(labelText: l10n.countryLabel),
                     items: [
                       for (final country in availableCountries)
@@ -369,6 +370,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
                   DropdownButtonFormField<String>(
                     key: ValueKey('system-$selectedSystemId'),
                     initialValue: selectedSystemId,
+                    isExpanded: true,
                     decoration: InputDecoration(
                       labelText: l10n.educationSystemNameLabel,
                     ),
@@ -393,6 +395,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
                   DropdownButtonFormField<String>(
                     key: ValueKey('curriculum-$selectedCurriculumId'),
                     initialValue: selectedCurriculumId,
+                    isExpanded: true,
                     decoration: InputDecoration(
                       labelText: l10n.curriculumLabel,
                     ),
@@ -415,6 +418,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
                   DropdownButtonFormField<String>(
                     key: ValueKey('level-$selectedLevelId'),
                     initialValue: selectedLevelId,
+                    isExpanded: true,
                     decoration: InputDecoration(
                       labelText: l10n.educationLevelLabel,
                     ),
@@ -436,6 +440,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
                   DropdownButtonFormField<String>(
                     key: ValueKey('grade-$selectedGradeId'),
                     initialValue: selectedGradeId,
+                    isExpanded: true,
                     decoration: InputDecoration(labelText: l10n.gradeLabel),
                     items: [
                       for (final grade in grades)
@@ -452,6 +457,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
                   DropdownButtonFormField<String>(
                     key: ValueKey('school-${selectedSchoolId ?? ''}'),
                     initialValue: selectedSchoolId ?? '',
+                    isExpanded: true,
                     decoration: InputDecoration(
                       labelText: l10n.schoolOptionalLabel,
                     ),

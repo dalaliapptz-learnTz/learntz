@@ -239,7 +239,7 @@ values
 
 -- Provision Kenya (KE) multi-country test fixtures for Storage RLS testing
 insert into public.education_systems (id, country_code, name, code, is_enabled)
-values ('80000000-0000-0000-0000-000000000001', 'KE', 'Kenya CBC System', 'KE_CBC', true);
+values ('80000000-0000-0000-0000-000000000001', 'KE', 'Kenya CBC System', 'KE_CBC_TEST', true);
 
 insert into public.curriculum_authorities (
   id, country_code, education_system_id, name, code, website_url, is_enabled
@@ -249,7 +249,7 @@ values (
   'KE',
   '80000000-0000-0000-0000-000000000001',
   'Kenya Institute of Curriculum Development',
-  'KICD',
+  'KICD_TEST',
   'https://kicd.ac.ke',
   true
 );
