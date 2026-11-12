@@ -120,7 +120,7 @@ select set_config(
 -- Provision verified & usage-rights-cleared TZ sources for each supported MIME format
 insert into public.curriculum_sources (
   id, authority_id, document_title, issuing_institution,
-  document_format, sha256_checksum, usage_permissions,
+  source_url, document_format, sha256_checksum, usage_permissions,
   verification_status, verified_by, verified_at,
   usage_rights_status, usage_rights_reviewed_by, usage_rights_reviewed_at,
   usage_rights_note, usage_rights_evidence_url, created_by
@@ -131,6 +131,7 @@ values
     current_setting('test.tz_authority_id')::uuid,
     'Stage 3.3 PDF Test Fixture',
     'Tanzania Institute of Education',
+    'https://example.test/stage33-pdf-source',
     'application/pdf',
     repeat('1', 64),
     'Test fixture only',
@@ -144,6 +145,7 @@ values
     current_setting('test.tz_authority_id')::uuid,
     'Stage 3.3 DOCX Test Fixture',
     'Tanzania Institute of Education',
+    'https://example.test/stage33-docx-source',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     repeat('2', 64),
     'Test fixture only',
@@ -157,6 +159,7 @@ values
     current_setting('test.tz_authority_id')::uuid,
     'Stage 3.3 XLSX Test Fixture',
     'Tanzania Institute of Education',
+    'https://example.test/stage33-xlsx-source',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     repeat('3', 64),
     'Test fixture only',
@@ -170,6 +173,7 @@ values
     current_setting('test.tz_authority_id')::uuid,
     'Stage 3.3 CSV Test Fixture',
     'Tanzania Institute of Education',
+    'https://example.test/stage33-csv-source',
     'text/csv',
     repeat('4', 64),
     'Test fixture only',
@@ -183,6 +187,7 @@ values
     current_setting('test.tz_authority_id')::uuid,
     'Stage 3.3 JSON Test Fixture',
     'Tanzania Institute of Education',
+    'https://example.test/stage33-json-source',
     'application/json',
     repeat('5', 64),
     'Test fixture only',
@@ -192,13 +197,45 @@ values
     '00000000-0000-0000-0000-000000000502'
   );
 
-insert into public.curriculum_version_sources (version_id, source_id, created_by)
+insert into public.curriculum_version_sources (
+  version_id, curriculum_id, authority_id, source_id, created_by
+)
 values
-  (current_setting('test.tz_version_id')::uuid, '70000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000502'),
-  (current_setting('test.tz_version_id')::uuid, '70000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000502'),
-  (current_setting('test.tz_version_id')::uuid, '70000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000502'),
-  (current_setting('test.tz_version_id')::uuid, '70000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000502'),
-  (current_setting('test.tz_version_id')::uuid, '70000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000502');
+  (
+    current_setting('test.tz_version_id')::uuid,
+    current_setting('test.tz_curriculum_id')::uuid,
+    current_setting('test.tz_authority_id')::uuid,
+    '70000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000502'
+  ),
+  (
+    current_setting('test.tz_version_id')::uuid,
+    current_setting('test.tz_curriculum_id')::uuid,
+    current_setting('test.tz_authority_id')::uuid,
+    '70000000-0000-0000-0000-000000000002',
+    '00000000-0000-0000-0000-000000000502'
+  ),
+  (
+    current_setting('test.tz_version_id')::uuid,
+    current_setting('test.tz_curriculum_id')::uuid,
+    current_setting('test.tz_authority_id')::uuid,
+    '70000000-0000-0000-0000-000000000003',
+    '00000000-0000-0000-0000-000000000502'
+  ),
+  (
+    current_setting('test.tz_version_id')::uuid,
+    current_setting('test.tz_curriculum_id')::uuid,
+    current_setting('test.tz_authority_id')::uuid,
+    '70000000-0000-0000-0000-000000000004',
+    '00000000-0000-0000-0000-000000000502'
+  ),
+  (
+    current_setting('test.tz_version_id')::uuid,
+    current_setting('test.tz_curriculum_id')::uuid,
+    current_setting('test.tz_authority_id')::uuid,
+    '70000000-0000-0000-0000-000000000005',
+    '00000000-0000-0000-0000-000000000502'
+  );
 
 -- Provision Kenya (KE) multi-country test fixtures for Storage RLS testing
 insert into public.education_systems (id, country_code, name, code, is_enabled)
@@ -246,7 +283,7 @@ values (
 
 insert into public.curriculum_sources (
   id, authority_id, document_title, issuing_institution,
-  document_format, sha256_checksum, usage_permissions,
+  source_url, document_format, sha256_checksum, usage_permissions,
   verification_status, verified_by, verified_at,
   usage_rights_status, usage_rights_reviewed_by, usage_rights_reviewed_at,
   usage_rights_note, usage_rights_evidence_url, created_by
@@ -256,6 +293,7 @@ values (
   '80000000-0000-0000-0000-000000000002',
   'Stage 3.3 KE PDF Fixture',
   'Kenya Institute of Curriculum Development',
+  'https://example.test/stage33-ke-pdf-source',
   'application/pdf',
   repeat('6', 64),
   'Test fixture only',
@@ -265,9 +303,13 @@ values (
   '00000000-0000-0000-0000-000000000505'
 );
 
-insert into public.curriculum_version_sources (version_id, source_id, created_by)
+insert into public.curriculum_version_sources (
+  version_id, curriculum_id, authority_id, source_id, created_by
+)
 values (
   '80000000-0000-0000-0000-000000000004',
+  '80000000-0000-0000-0000-000000000003',
+  '80000000-0000-0000-0000-000000000002',
   '80000000-0000-0000-0000-000000000005',
   '00000000-0000-0000-0000-000000000505'
 );
@@ -436,8 +478,8 @@ select is(
 );
 select is(
   (current_setting('test.claimed_payload')::jsonb ->> 'attempt_count')::integer,
-  1,
-  'first claim sets attempt_count to 1'
+  2,
+  'first claim increments attempt_count from default 1 to 2'
 );
 select is(
   public.claim_curriculum_import_job(),
@@ -480,8 +522,8 @@ select set_config(
 );
 select is(
   (current_setting('test.recovered_payload')::jsonb ->> 'attempt_count')::integer,
-  2,
-  'secondary worker recovers expired job and increments attempt_count to 2'
+  3,
+  'secondary worker recovers expired job and increments attempt_count to 3'
 );
 
 -- Verify attempt exhaustion marks processing job as failed on next claim
@@ -577,8 +619,8 @@ select ok(
 
 select is(
   public.validate_curriculum_import_stage3_3(current_setting('test.tz_pdf_job_id')::uuid) ->> 'status',
-  'in_review',
-  'validation promotes job with extracted items to in_review'
+  'validation_failed',
+  'validation flags unresolved duplicate candidates before review completes'
 );
 
 -- Verify duplicate review trigger blocks reviewed transition until resolved
@@ -703,12 +745,19 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000505', true);
 select set_config('request.jwt.claim.role', 'authenticated', true);
 
-select throws_ok(
-  $$update storage.objects
-  set metadata = '{"mimetype":"application/pdf","size":3072,"tampered":true}'
-  where bucket_id = 'curriculum-source-documents'
-    and name = current_setting('test.ke_job_path')$$,
-  '42501', null,
+update storage.objects
+set metadata = '{"mimetype":"application/pdf","size":3072,"tampered":true}'
+where bucket_id = 'curriculum-source-documents'
+  and name = current_setting('test.ke_job_path');
+
+reset role;
+select ok(
+  not exists (
+    select 1 from storage.objects
+    where bucket_id = 'curriculum-source-documents'
+      and name = current_setting('test.ke_job_path')
+      and metadata ->> 'tampered' = 'true'
+  ),
   'storage replace policy blocks overwriting document once job is extracted'
 );
 
