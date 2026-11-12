@@ -84,10 +84,26 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => context.go(AppRoutes.accountSettings),
-                icon: const Icon(Icons.settings_outlined),
-                label: Text(l10n.accountSettingsAction),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () => context.go(AppRoutes.learn),
+                    icon: const Icon(Icons.school_outlined),
+                    label: Text(l10n.learningHubTitle),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => context.go(AppRoutes.subscriptions),
+                    icon: const Icon(Icons.payments_outlined),
+                    label: Text(l10n.viewSubscriptionsAction),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => context.go(AppRoutes.accountSettings),
+                    icon: const Icon(Icons.settings_outlined),
+                    label: Text(l10n.accountSettingsAction),
+                  ),
+                ],
               ),
               if (adminAccess.asData?.value.canAccessAdmin ?? false) ...[
                 const SizedBox(height: 8),

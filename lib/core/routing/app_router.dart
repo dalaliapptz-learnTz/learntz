@@ -9,12 +9,14 @@ import '../../features/account/account_screens.dart';
 import '../../features/admin/admin_providers.dart';
 import '../../features/admin/admin_screens.dart';
 import '../../features/auth/auth_screens.dart';
+import '../../features/billing/subscription_screen.dart';
 import '../../features/country/select_country_screen.dart';
 import '../../features/curriculum/curriculum_providers.dart';
 import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learners/learner_screens.dart';
+import '../../features/learning/learning_screens.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 
@@ -33,6 +35,10 @@ abstract final class AppRoutes {
   static const account = '/account';
   static const editParentProfile = '/account/profile';
   static const accountSettings = '/account/settings';
+  static const subscriptions = '/account/subscriptions';
+  static const learn = '/learn';
+  static String lessonReader(String lessonId) => '/learn/lessons/$lessonId';
+  static String lessonQuiz(String lessonId) => '/learn/lessons/$lessonId/quiz';
   static const admin = '/admin';
   static const curriculumAdmin = '/admin/curriculum';
   static const addLearner = '/account/learners/add';
@@ -107,7 +113,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       final isProtected =
           path == AppRoutes.account ||
-          path.startsWith('${AppRoutes.account}/');
+          path.startsWith('${AppRoutes.account}/') ||
+          path == AppRoutes.learn ||
+          path.startsWith('${AppRoutes.learn}/');
       if (isProtected && !isSignedIn) {
         return Uri(
           path: AppRoutes.signIn,
@@ -190,6 +198,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.accountSettings,
             builder: (context, state) => const AccountSettingsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.subscriptions,
+            builder: (context, state) => const SubscriptionsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.learn,
+            builder: (context, state) => const LearningHubScreen(),
+          ),
+          GoRoute(
+            path: '/learn/lessons/:lessonId',
+            builder: (context, state) => LessonReaderScreen(
+              lessonId: state.pathParameters['lessonId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/learn/lessons/:lessonId/quiz',
+            builder: (context, state) => PracticeQuizScreen(
+              lessonId: state.pathParameters['lessonId']!,
+            ),
           ),
           GoRoute(
             path: AppRoutes.admin,

@@ -399,5 +399,89 @@
   "adminAuditLogsTitle": "Recent administrative audit log",
   "adminAuditFilterHint": "Filter by action prefix (e.g. role, admin, account)",
   "adminNoAuditLogs": "No audit log entries match the current filter.",
-  "adminRefreshAction": "Refresh"
+  "adminRefreshAction": "Refresh",
+  "subscriptionsTitle": "Subscriptions & Mobile Money",
+  "subscriptionsSubtitle": "Choose a family plan and pay securely using M-Pesa, Airtel Money, or Tigo Pesa.",
+  "checkoutPendingTitle": "Mobile Money Checkout Initiated",
+  "checkoutPendingDescription": "Reference {reference} via {provider}. Complete the prompt on your phone; access activates once confirmed.",
+  "@checkoutPendingDescription": {
+    "placeholders": {
+      "reference": {},
+      "provider": {}
+    }
+  },
+  "mobileMoneyGatewayLabel": "Payment gateway details",
+  "mobileMoneyProviderField": "Mobile money provider",
+  "mobilePhoneNumberLabel": "Mobile phone number (optional)",
+  "availablePlansTitle": "Available plans",
+  "subscribeWithMobileMoneyAction": "Subscribe with mobile money",
+  "currentSubscriptionsTitle": "Your subscriptions",
+  "noSubscriptionsYet": "No active or pending subscriptions yet.",
+  "cancelSubscriptionAction": "Cancel",
+  "paymentHistoryTitle": "Payment history",
+  "noPaymentTransactions": "No mobile money payment transactions yet.",
+  "viewSubscriptionsAction": "Subscriptions",
+  "learningHubTitle": "Learning Hub",
+  "learningHubSubtitle": "Browse curriculum subjects, read interactive lessons, and track mastery progress.",
+  "switchLearnerAction": "Switch learner",
+  "selectActiveLearnerTitle": "Select a learner to begin",
+  "learningMasteryTitle": "Curriculum Mastery Progress",
+  "learningMasteryStats": "{completed} of {total} lessons completed • Avg quiz {avgScore}%",
+  "@learningMasteryStats": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" },
+      "avgScore": { "type": "int" }
+    }
+  },
+  "learningPreviewBanner": "Free preview lessons are unlocked. Subscribe to unlock the full curriculum library.",
+  "noSubjectsPublished": "No published subjects are available for this grade yet.",
+  "freePreviewLabel": "Free preview",
+  "bestScoreLabel": "Best score: {score}%",
+  "@bestScoreLabel": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
+  "readingProgressLabel": "Reading progress: {percent}%",
+  "@readingProgressLabel": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "saveProgressAction": "Save progress",
+  "markLessonCompletedAction": "Mark lesson completed",
+  "takePracticeQuizAction": "Take practice quiz",
+  "lessonCompletedMessage": "Lesson marked as completed!",
+  "lessonProgressSavedMessage": "Progress saved at {percent}%.",
+  "@lessonProgressSavedMessage": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "noQuizForLesson": "No practice quiz is attached to this lesson yet.",
+  "backToLessonAction": "Back to lesson",
+  "answerAllQuestionsError": "Please answer every question before submitting.",
+  "quizPassedTitle": "Quiz Passed ({score}%)",
+  "@quizPassedTitle": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
+  "quizTryAgainTitle": "Keep Practicing ({score}%)",
+  "@quizTryAgainTitle": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
+  "quizScoreSummary": "Score: {correct}/{total} correct • Best recorded score: {bestScore}%",
+  "@quizScoreSummary": {
+    "placeholders": {
+      "correct": { "type": "int" },
+      "total": { "type": "int" },
+      "bestScore": { "type": "int" }
+    }
+  },
+  "backToLearningHubAction": "Back to Learning Hub",
+  "submitQuizAction": "Submit quiz"
 }

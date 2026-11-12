@@ -30,3 +30,6 @@ email_sent = 2
 sign_in_sign_ups = 30
 token_verifications = 30
 token_refresh = 150
+
+[functions.mobile-money-webhook]
+verify_jwt = false
