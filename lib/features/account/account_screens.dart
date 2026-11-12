@@ -7,6 +7,7 @@ import '../../core/auth/auth_providers.dart';
 import '../../core/auth/auth_repository.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/state/app_providers.dart';
+import '../admin/admin_providers.dart';
 import '../curriculum/curriculum_providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
@@ -26,6 +27,7 @@ class AccountScreen extends ConsumerWidget {
     final user = ref.watch(supabaseClientProvider)?.auth.currentUser;
     final profile = ref.watch(parentProfileProvider);
     final learners = ref.watch(parentLearnersProvider);
+    final adminAccess = ref.watch(adminCapabilitiesProvider);
     final curriculumAccess = ref.watch(curriculumStaffCapabilitiesProvider);
     final incomingInvitations = ref.watch(incomingGuardianInvitationsProvider);
 
@@ -87,6 +89,14 @@ class AccountScreen extends ConsumerWidget {
                 icon: const Icon(Icons.settings_outlined),
                 label: Text(l10n.accountSettingsAction),
               ),
+              if (adminAccess.asData?.value.canAccessAdmin ?? false) ...[
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => context.go(AppRoutes.admin),
+                  icon: const Icon(Icons.admin_panel_settings_outlined),
+                  label: Text(l10n.adminPortalAction),
+                ),
+              ],
               if (curriculumAccess.asData?.value.canAccess ?? false) ...[
                 const SizedBox(height: 8),
                 OutlinedButton.icon(

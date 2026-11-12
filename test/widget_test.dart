@@ -103,6 +103,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Authentication is not connected'), findsOneWidget);
     expect(find.text('Register a learner'), findsNothing);
+    container.read(appRouterProvider).go(AppRoutes.admin);
+    await tester.pumpAndSettle();
+    expect(find.text('Authentication is not connected'), findsOneWidget);
+    expect(find.text('Admin Dashboard'), findsNothing);
     container.read(appRouterProvider).go(AppRoutes.curriculumAdmin);
     await tester.pumpAndSettle();
     expect(find.text('Authentication is not connected'), findsOneWidget);

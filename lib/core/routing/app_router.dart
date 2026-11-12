@@ -6,6 +6,8 @@ import '../../core/auth/auth_providers.dart';
 import '../../core/state/app_providers.dart';
 import '../../features/about/about_screen.dart';
 import '../../features/account/account_screens.dart';
+import '../../features/admin/admin_providers.dart';
+import '../../features/admin/admin_screens.dart';
 import '../../features/auth/auth_screens.dart';
 import '../../features/country/select_country_screen.dart';
 import '../../features/curriculum/curriculum_providers.dart';
@@ -31,6 +33,7 @@ abstract final class AppRoutes {
   static const account = '/account';
   static const editParentProfile = '/account/profile';
   static const accountSettings = '/account/settings';
+  static const admin = '/admin';
   static const curriculumAdmin = '/admin/curriculum';
   static const addLearner = '/account/learners/add';
   static String learnerProfile(String learnerId) =>
@@ -48,6 +51,9 @@ final _routerAuthListenerProvider = Provider<_RouterAuthListener>((ref) {
     listener.refresh();
   });
   ref.listen(curriculumStaffCapabilitiesProvider, (previous, next) {
+    listener.refresh();
+  });
+  ref.listen(adminCapabilitiesProvider, (previous, next) {
     listener.refresh();
   });
   ref.onDispose(listener.dispose);
@@ -74,7 +80,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       final isAdminRoute =
-          path == AppRoutes.curriculumAdmin || path.startsWith('/admin/');
+          path == AppRoutes.admin ||
+          path == AppRoutes.curriculumAdmin ||
+          path.startsWith('/admin/');
       if (isAdminRoute) {
         if (!isSignedIn) {
           return Uri(
@@ -82,10 +90,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             queryParameters: {'next': path},
           ).toString();
         }
-        final staffCapabilities =
-            ref.read(curriculumStaffCapabilitiesProvider).asData?.value;
-        if (staffCapabilities != null && !staffCapabilities.canAccess) {
-          return AppRoutes.account;
+        if (path == AppRoutes.curriculumAdmin) {
+          final staffCapabilities =
+              ref.read(curriculumStaffCapabilitiesProvider).asData?.value;
+          if (staffCapabilities != null && !staffCapabilities.canAccess) {
+            return AppRoutes.account;
+          }
+        } else {
+          final adminCapabilities =
+              ref.read(adminCapabilitiesProvider).asData?.value;
+          if (adminCapabilities != null && !adminCapabilities.canAccessAdmin) {
+            return AppRoutes.account;
+          }
         }
       }
 
@@ -174,6 +190,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.accountSettings,
             builder: (context, state) => const AccountSettingsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.admin,
+            builder: (context, state) => const AdminDashboardScreen(),
           ),
           GoRoute(
             path: AppRoutes.curriculumAdmin,
