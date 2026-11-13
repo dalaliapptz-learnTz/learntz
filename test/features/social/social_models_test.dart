@@ -151,5 +151,63 @@ void main() {
       final serialized = comment.toJson();
       expect(serialized['post_id'], 'post-101');
     });
+
+    test('Community model serialization and deserialization', () {
+      final json = {
+        'id': 'comm-1',
+        'community_tier': 'school',
+        'name': 'Mlimani Primary Community',
+        'description': 'School club',
+        'country_code': 'TZ',
+        'school_id': 'sch-1',
+        'grade_id': null,
+        'icon_name': 'school',
+        'members_count': 120,
+        'posts_count': 35,
+        'is_official': true,
+        'learner_role': 'member',
+        'is_member': true,
+      };
+
+      final comm = Community.fromJson(json);
+      expect(comm.id, 'comm-1');
+      expect(comm.communityTier, 'school');
+      expect(comm.name, 'Mlimani Primary Community');
+      expect(comm.isMember, isTrue);
+      expect(comm.membersCount, 120);
+
+      final serialized = comm.toJson();
+      expect(serialized['community_tier'], 'school');
+    });
+
+    test('CommunityChannel model serialization', () {
+      final json = {
+        'id': 'ch-1',
+        'community_id': 'comm-1',
+        'name': 'general',
+        'channel_type': 'general',
+        'description': 'General chat',
+      };
+
+      final channel = CommunityChannel.fromJson(json);
+      expect(channel.name, 'general');
+      expect(channel.channelType, 'general');
+    });
+
+    test('ChannelMessage model serialization', () {
+      final json = {
+        'id': 'msg-1',
+        'channel_id': 'ch-1',
+        'author_learner_id': 'l-1',
+        'author_display_name': 'Upendo S.',
+        'author_avatar_preset': 'owl_scholar',
+        'content': 'Hello classmates!',
+        'created_at': now.toIso8601String(),
+      };
+
+      final msg = ChannelMessage.fromJson(json);
+      expect(msg.authorDisplayName, 'Upendo S.');
+      expect(msg.content, 'Hello classmates!');
+    });
   });
 }

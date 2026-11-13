@@ -42,3 +42,35 @@ final postCommentsProvider = FutureProvider.family<
     viewerLearnerId: args.viewerId,
   );
 });
+
+final learnerCommunitiesProvider =
+    FutureProvider.family<List<Community>, String>((ref, learnerId) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getLearnerCommunities(learnerId);
+});
+
+final discoverableCommunitiesProvider = FutureProvider.family<
+    List<Community>,
+    ({String learnerId, String? tier})>((ref, args) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getDiscoverableCommunities(
+    learnerId: args.learnerId,
+    tier: args.tier,
+  );
+});
+
+final communityChannelsProvider =
+    FutureProvider.family<List<CommunityChannel>, String>((ref, communityId) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getCommunityChannels(communityId);
+});
+
+final channelMessagesProvider = FutureProvider.family<
+    List<ChannelMessage>,
+    ({String channelId, String? viewerId})>((ref, args) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getChannelMessages(
+    channelId: args.channelId,
+    viewerLearnerId: args.viewerId,
+  );
+});

@@ -184,6 +184,53 @@ void main() {
         return;
       }
 
+      if (path == '/rest/v1/rpc/get_learner_communities') {
+        recordedCalls['get_communities'] = body;
+        _writeJson(request, 200, [
+          {
+            'id': 'comm-1',
+            'community_tier': 'national',
+            'name': 'Tanzania National Learning Community',
+            'country_code': 'TZ',
+            'members_count': 1000,
+            'is_official': true,
+            'learner_role': 'member',
+          }
+        ]);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/join_community') {
+        recordedCalls['join'] = body;
+        _writeJson(request, 200, true);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/get_community_channels') {
+        recordedCalls['channels'] = body;
+        _writeJson(request, 200, [
+          {
+            'id': 'ch-1',
+            'community_id': body['p_community_id'],
+            'name': 'general',
+            'channel_type': 'general',
+          }
+        ]);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/send_channel_message') {
+        recordedCalls['send_msg'] = body;
+        _writeJson(request, 200, {
+          'id': 'msg-1',
+          'channel_id': body['p_channel_id'],
+          'author_learner_id': body['p_author_learner_id'],
+          'content': body['p_content'],
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        return;
+      }
+
       _writeJson(request, 404, {'message': 'Not found: $path'});
     });
 
@@ -309,5 +356,35 @@ void main() {
     expect(blocked, isTrue);
     expect(recordedCalls['block']['p_blocker_learner_id'], 'learner-1');
     expect(recordedCalls['block']['p_blocked_learner_id'], 'learner-2');
+  });
+
+  test('getLearnerCommunities invokes RPC and returns communities', () async {
+    final communities = await repository.getLearnerCommunities('learner-1');
+    expect(communities.length, 1);
+    expect(communities.first.communityTier, 'national');
+    expect(recordedCalls['get_communities']['p_learner_id'], 'learner-1');
+  });
+
+  test('joinCommunity invokes join RPC', () async {
+    final success = await repository.joinCommunity(
+      communityId: 'comm-1',
+      learnerId: 'learner-1',
+    );
+    expect(success, isTrue);
+    expect(recordedCalls['join']['p_community_id'], 'comm-1');
+  });
+
+  test('getCommunityChannels and sendChannelMessage invoke RPCs', () async {
+    final channels = await repository.getCommunityChannels('comm-1');
+    expect(channels.length, 1);
+    expect(channels.first.name, 'general');
+
+    final msg = await repository.sendChannelMessage(
+      channelId: 'ch-1',
+      authorLearnerId: 'learner-1',
+      content: 'Study session at 4pm!',
+    );
+    expect(msg.content, 'Study session at 4pm!');
+    expect(recordedCalls['send_msg']['p_content'], 'Study session at 4pm!');
   });
 }

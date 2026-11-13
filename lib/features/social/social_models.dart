@@ -371,3 +371,163 @@ class PostComment {
       };
 }
 
+/// Hierarchical learning community model.
+class Community {
+  final String id;
+  final String communityTier; // 'school' | 'class' | 'district' | 'region' | 'national' | 'subject'
+  final String name;
+  final String? description;
+  final String countryCode;
+  final String? schoolId;
+  final String? gradeId;
+  final String? districtName;
+  final String? regionName;
+  final String? subjectId;
+  final String iconName;
+  final int membersCount;
+  final int postsCount;
+  final bool isOfficial;
+  final String? learnerRole;
+  final bool isMember;
+
+  const Community({
+    required this.id,
+    required this.communityTier,
+    required this.name,
+    this.description,
+    required this.countryCode,
+    this.schoolId,
+    this.gradeId,
+    this.districtName,
+    this.regionName,
+    this.subjectId,
+    this.iconName = 'school',
+    this.membersCount = 0,
+    this.postsCount = 0,
+    this.isOfficial = true,
+    this.learnerRole,
+    this.isMember = false,
+  });
+
+  factory Community.fromJson(Map<String, dynamic> json) {
+    return Community(
+      id: json['id'] as String? ?? '',
+      communityTier: json['community_tier'] as String? ?? 'school',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String?,
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      schoolId: json['school_id'] as String?,
+      gradeId: json['grade_id'] as String?,
+      districtName: json['district_name'] as String?,
+      regionName: json['region_name'] as String?,
+      subjectId: json['subject_id'] as String?,
+      iconName: json['icon_name'] as String? ?? 'school',
+      membersCount: (json['members_count'] as num?)?.toInt() ?? 0,
+      postsCount: (json['posts_count'] as num?)?.toInt() ?? 0,
+      isOfficial: json['is_official'] as bool? ?? true,
+      learnerRole: json['learner_role'] as String?,
+      isMember: json['is_member'] as bool? ?? (json['learner_role'] != null),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'community_tier': communityTier,
+        'name': name,
+        'description': description,
+        'country_code': countryCode,
+        'school_id': schoolId,
+        'grade_id': gradeId,
+        'district_name': districtName,
+        'region_name': regionName,
+        'subject_id': subjectId,
+        'icon_name': iconName,
+        'members_count': membersCount,
+        'posts_count': postsCount,
+        'is_official': isOfficial,
+        'learner_role': learnerRole,
+        'is_member': isMember,
+      };
+}
+
+/// Channel inside a community (e.g. #general, #q-and-a, #announcements).
+class CommunityChannel {
+  final String id;
+  final String communityId;
+  final String name;
+  final String channelType;
+  final String? description;
+
+  const CommunityChannel({
+    required this.id,
+    required this.communityId,
+    required this.name,
+    required this.channelType,
+    this.description,
+  });
+
+  factory CommunityChannel.fromJson(Map<String, dynamic> json) {
+    return CommunityChannel(
+      id: json['id'] as String? ?? '',
+      communityId: json['community_id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      channelType: json['channel_type'] as String? ?? 'general',
+      description: json['description'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'community_id': communityId,
+        'name': name,
+        'channel_type': channelType,
+        'description': description,
+      };
+}
+
+/// Message in a community channel.
+class ChannelMessage {
+  final String id;
+  final String channelId;
+  final String authorLearnerId;
+  final String authorDisplayName;
+  final String authorAvatarPreset;
+  final String content;
+  final DateTime createdAt;
+
+  const ChannelMessage({
+    required this.id,
+    required this.channelId,
+    required this.authorLearnerId,
+    required this.authorDisplayName,
+    required this.authorAvatarPreset,
+    required this.content,
+    required this.createdAt,
+  });
+
+  factory ChannelMessage.fromJson(Map<String, dynamic> json) {
+    return ChannelMessage(
+      id: json['id'] as String? ?? '',
+      channelId: json['channel_id'] as String? ?? '',
+      authorLearnerId: json['author_learner_id'] as String? ?? '',
+      authorDisplayName: json['author_display_name'] as String? ?? 'Learner',
+      authorAvatarPreset:
+          json['author_avatar_preset'] as String? ?? 'owl_scholar',
+      content: json['content'] as String? ?? '',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'channel_id': channelId,
+        'author_learner_id': authorLearnerId,
+        'author_display_name': authorDisplayName,
+        'author_avatar_preset': authorAvatarPreset,
+        'content': content,
+        'created_at': createdAt.toIso8601String(),
+      };
+}
+

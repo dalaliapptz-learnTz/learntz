@@ -255,4 +255,138 @@ class SocialRepository {
 
     return response as bool? ?? false;
   }
+
+  /// Fetches communities the learner is a member of (class, school, national, subject).
+  Future<List<Community>> getLearnerCommunities(String learnerId) async {
+    final response = await _supabase.rpc(
+      'get_learner_communities',
+      params: {'p_learner_id': learnerId},
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              Community.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Fetches discoverable communities for learner's country.
+  Future<List<Community>> getDiscoverableCommunities({
+    required String learnerId,
+    String? tier,
+  }) async {
+    final response = await _supabase.rpc(
+      'get_discoverable_communities',
+      params: {
+        'p_learner_id': learnerId,
+        'p_tier': ?tier,
+      },
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              Community.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Joins a discoverable community (e.g. subject club).
+  Future<bool> joinCommunity({
+    required String communityId,
+    required String learnerId,
+  }) async {
+    final response = await _supabase.rpc(
+      'join_community',
+      params: {
+        'p_community_id': communityId,
+        'p_learner_id': learnerId,
+      },
+    );
+
+    return response as bool? ?? false;
+  }
+
+  /// Leaves an optional community.
+  Future<bool> leaveCommunity({
+    required String communityId,
+    required String learnerId,
+  }) async {
+    final response = await _supabase.rpc(
+      'leave_community',
+      params: {
+        'p_community_id': communityId,
+        'p_learner_id': learnerId,
+      },
+    );
+
+    return response as bool? ?? false;
+  }
+
+  /// Fetches channels in a community (#general, #q-and-a, #announcements).
+  Future<List<CommunityChannel>> getCommunityChannels(
+      String communityId) async {
+    final response = await _supabase.rpc(
+      'get_community_channels',
+      params: {'p_community_id': communityId},
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              CommunityChannel.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Fetches messages in a channel.
+  Future<List<ChannelMessage>> getChannelMessages({
+    required String channelId,
+    String? viewerLearnerId,
+    int limit = 50,
+  }) async {
+    final response = await _supabase.rpc(
+      'get_channel_messages',
+      params: {
+        'p_channel_id': channelId,
+        'p_viewer_learner_id': ?viewerLearnerId,
+        'p_limit': limit,
+      },
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              ChannelMessage.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Sends a child-safe educational message in a channel.
+  Future<ChannelMessage> sendChannelMessage({
+    required String channelId,
+    required String authorLearnerId,
+    required String content,
+  }) async {
+    final response = await _supabase.rpc(
+      'send_channel_message',
+      params: {
+        'p_channel_id': channelId,
+        'p_author_learner_id': authorLearnerId,
+        'p_content': content,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return ChannelMessage.fromJson(response);
+    } else if (response is Map) {
+      return ChannelMessage.fromJson(Map<String, dynamic>.from(response));
+    }
+    throw StateError('Invalid response when sending channel message: $response');
+  }
 }
