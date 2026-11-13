@@ -1,0 +1,154 @@
+/**
+ * LearnTZ Design System 2.0 — Web CSS Custom Properties
+ * Single Source of Truth: tokens/learntz_design_tokens.json
+ */
+
+:root {
+  /* Brand Identity */
+  --learntz-color-primary: #0F4C81;
+  --learntz-color-primary-variant: #1E3A8A;
+  --learntz-color-secondary: #15803D;
+  --learntz-color-accent: #F59E0B;
+  --learntz-color-bg: #F8FAFC;
+  --learntz-color-surface: #FFFFFF;
+  --learntz-color-border: #E2E8F0;
+  --learntz-color-text-primary: #0F172A;
+  --learntz-color-text-secondary: #64748B;
+
+  /* Primary Scale */
+  --learntz-primary-50: #EFF6FF;
+  --learntz-primary-100: #DBEAFE;
+  --learntz-primary-200: #BFDBFE;
+  --learntz-primary-300: #93C5FD;
+  --learntz-primary-400: #60A5FA;
+  --learntz-primary-500: #0F4C81;
+  --learntz-primary-600: #0D3E6A;
+  --learntz-primary-700: #0B3154;
+  --learntz-primary-800: #1E3A8A;
+  --learntz-primary-900: #061B30;
+
+  /* Secondary Scale */
+  --learntz-secondary-50: #F0FDF4;
+  --learntz-secondary-100: #DCFCE7;
+  --learntz-secondary-200: #BBF7D0;
+  --learntz-secondary-300: #86EFAC;
+  --learntz-secondary-400: #4ADE80;
+  --learntz-secondary-500: #22C55E;
+  --learntz-secondary-600: #16A34A;
+  --learntz-secondary-700: #15803D;
+  --learntz-secondary-800: #166534;
+  --learntz-secondary-900: #14532D;
+
+  /* Accent Scale */
+  --learntz-accent-50: #FFFBEB;
+  --learntz-accent-100: #FEF3C7;
+  --learntz-accent-200: #FDE68A;
+  --learntz-accent-300: #FCD34D;
+  --learntz-accent-400: #FBBF24;
+  --learntz-accent-500: #F59E0B;
+  --learntz-accent-600: #D97706;
+  --learntz-accent-700: #B45309;
+  --learntz-accent-800: #92400E;
+  --learntz-accent-900: #78350F;
+
+  /* Neutral Scale */
+  --learntz-neutral-50: #F8FAFC;
+  --learntz-neutral-100: #F1F5F9;
+  --learntz-neutral-200: #E2E8F0;
+  --learntz-neutral-300: #CBD5E1;
+  --learntz-neutral-400: #94A3B8;
+  --learntz-neutral-500: #64748B;
+  --learntz-neutral-600: #475569;
+  --learntz-neutral-700: #334155;
+  --learntz-neutral-800: #1E293B;
+  --learntz-neutral-900: #0F172A;
+
+  /* Semantic Status Tokens */
+  --learntz-color-success: #15803D;
+  --learntz-color-success-bg: #DCFCE7;
+  --learntz-color-success-border: #86EFAC;
+  --learntz-color-success-text: #14532D;
+
+  --learntz-color-warning: #D97706;
+  --learntz-color-warning-bg: #FEF3C7;
+  --learntz-color-warning-border: #FCD34D;
+  --learntz-color-warning-text: #78350F;
+
+  --learntz-color-error: #DC2626;
+  --learntz-color-error-bg: #FEE2E2;
+  --learntz-color-error-border: #FCA5A5;
+  --learntz-color-error-text: #7F1D1D;
+
+  --learntz-color-info: #0284C7;
+  --learntz-color-info-bg: #E0F2FE;
+  --learntz-color-info-border: #7DD3FC;
+  --learntz-color-info-text: #0C4A6E;
+
+  --learntz-color-disabled: #94A3B8;
+  --learntz-color-disabled-bg: #F1F5F9;
+  --learntz-color-disabled-border: #CBD5E1;
+  --learntz-color-disabled-text: #64748B;
+
+  /* Spacing Scale (8px Grid) */
+  --learntz-space-xxs: 4px;
+  --learntz-space-xs: 8px;
+  --learntz-space-sm: 12px;
+  --learntz-space-md: 16px;
+  --learntz-space-lg: 24px;
+  --learntz-space-xl: 32px;
+  --learntz-space-xxl: 48px;
+  --learntz-space-xxxl: 64px;
+
+  /* Border Radii */
+  --learntz-radius-none: 0px;
+  --learntz-radius-xs: 4px;
+  --learntz-radius-sm: 6px;
+  --learntz-radius-md: 8px;
+  --learntz-radius-lg: 16px;
+  --learntz-radius-xl: 20px;
+  --learntz-radius-xxl: 24px;
+  --learntz-radius-full: 9999px;
+
+  /* Typography Font Stacks */
+  --learntz-font-heading: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --learntz-font-body: 'Inter', 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --learntz-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+
+  /* Elevations & Shadows */
+  --learntz-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --learntz-shadow-md: 0 3px 8px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --learntz-shadow-lg: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --learntz-shadow-xl: 0 12px 24px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.05);
+
+  /* Touch Targets (WCAG 2.2 AA) */
+  --learntz-touch-target-min: 44px;
+  --learntz-button-height-sm: 36px;
+  --learntz-button-height-md: 44px;
+  --learntz-button-height-lg: 52px;
+  --learntz-input-height: 52px;
+  --learntz-header-height: 72px;
+  --learntz-content-max-width: 1120px;
+}
+
+/* Dark Theme Overrides */
+[data-theme='dark'] {
+  --learntz-color-bg: #0B132B;
+  --learntz-color-surface: #1C2541;
+  --learntz-color-border: #3A4B75;
+  --learntz-color-text-primary: #F8FAFC;
+  --learntz-color-text-secondary: #94A3B8;
+  --learntz-color-primary: #3B82F6;
+  --learntz-color-primary-variant: #60A5FA;
+}
+
+/* High Contrast Theme Overrides */
+[data-theme='high-contrast'] {
+  --learntz-color-bg: #000000;
+  --learntz-color-surface: #121212;
+  --learntz-color-border: #FFFFFF;
+  --learntz-color-text-primary: #FFFFFF;
+  --learntz-color-text-secondary: #E2E8F0;
+  --learntz-color-primary: #FFD700;
+  --learntz-color-secondary: #00FF00;
+  --learntz-color-accent: #FFFF00;
+}
