@@ -22,6 +22,7 @@ import '../../features/learning/learning_screens.dart';
 import '../../features/learning/parent_dashboard_screen.dart';
 import '../../features/learning/resource_library_screen.dart';
 import '../../features/learning/revision_centre_screen.dart';
+import '../../features/social/screens/learner_social_profile_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 
@@ -53,6 +54,9 @@ abstract final class AppRoutes {
   static const admin = '/admin';
   static const curriculumAdmin = '/admin/curriculum';
   static const addLearner = '/account/learners/add';
+  static const socialProfile = '/social/profile';
+  static String socialProfileFor(String learnerId) =>
+      '/social/profile?learnerId=$learnerId';
   static String learnerProfile(String learnerId) =>
       '/account/learners/$learnerId';
   static String editLearner(String learnerId) =>
@@ -265,6 +269,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.addLearner,
             builder: (context, state) => const LearnerFormScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.socialProfile,
+            builder: (context, state) => LearnerSocialProfileScreen(
+              learnerId: state.uri.queryParameters['learnerId'],
+            ),
           ),
           GoRoute(
             path: '/account/learners/:learnerId',

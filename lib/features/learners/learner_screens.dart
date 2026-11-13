@@ -714,6 +714,12 @@ class _LearnerProfileScreenState extends ConsumerState<LearnerProfileScreen> {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'Academic Identity & Social',
+                    icon: const Icon(Icons.badge_outlined),
+                    onPressed: () =>
+                        context.go(AppRoutes.socialProfileFor(learner.id)),
+                  ),
+                  IconButton(
                     tooltip: l10n.editLearnerAction,
                     onPressed: isActive
                         ? () => context.go(AppRoutes.editLearner(learner.id))
