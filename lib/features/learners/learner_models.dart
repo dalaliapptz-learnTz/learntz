@@ -448,3 +448,82 @@ class IncomingGuardianInvitation {
   final DateTime expiresAt;
   final DateTime createdAt;
 }
+
+class AcademicTerm {
+  const AcademicTerm({
+    required this.id,
+    required this.termNumber,
+    required this.name,
+    required this.startsOn,
+    required this.endsOn,
+    this.isBreak = false,
+    this.isCurrent = false,
+  });
+
+  factory AcademicTerm.fromJson(Map<String, dynamic> json) {
+    return AcademicTerm(
+      id: json['id'] as String,
+      termNumber: json['term_number'] as int,
+      name: json['name'] as String,
+      startsOn: DateTime.parse(json['starts_on'] as String),
+      endsOn: DateTime.parse(json['ends_on'] as String),
+      isBreak: json['is_break'] as bool? ?? false,
+      isCurrent: json['is_current'] as bool? ?? false,
+    );
+  }
+
+  final String id;
+  final int termNumber;
+  final String name;
+  final DateTime startsOn;
+  final DateTime endsOn;
+  final bool isBreak;
+  final bool isCurrent;
+}
+
+class AcademicCalendar {
+  const AcademicCalendar({
+    required this.id,
+    required this.countryCode,
+    required this.educationSystemId,
+    required this.name,
+    required this.startsOn,
+    required this.endsOn,
+    this.isEnabled = true,
+    this.terms = const [],
+  });
+
+  factory AcademicCalendar.fromJson(Map<String, dynamic> json) {
+    final rawTerms = json['terms'] as List<dynamic>? ?? const [];
+    return AcademicCalendar(
+      id: json['id'] as String,
+      countryCode: json['country_code'] as String,
+      educationSystemId: json['education_system_id'] as String,
+      name: json['name'] as String,
+      startsOn: DateTime.parse(json['starts_on'] as String),
+      endsOn: DateTime.parse(json['ends_on'] as String),
+      isEnabled: json['is_enabled'] as bool? ?? true,
+      terms: rawTerms
+          .map((t) => AcademicTerm.fromJson(t as Map<String, dynamic>))
+          .toList(growable: false),
+    );
+  }
+
+  final String id;
+  final String countryCode;
+  final String educationSystemId;
+  final String name;
+  final DateTime startsOn;
+  final DateTime endsOn;
+  final bool isEnabled;
+  final List<AcademicTerm> terms;
+
+  AcademicTerm? get currentTerm {
+    try {
+      return terms.firstWhere((t) => t.isCurrent);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+

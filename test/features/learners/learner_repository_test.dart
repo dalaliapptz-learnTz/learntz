@@ -297,5 +297,77 @@ void main() {
         ),
       );
     });
+
+    test(
+      'getActiveAcademicCalendar and listAcademicTerms invoke RPCs with expected parameters',
+      () async {
+        final server = await _FakeSupabaseServer.start((request, body) async {
+          if (request.uri.path == '/auth/v1/token') {
+            _writeJson(request, 200, _sessionPayload());
+            return;
+          }
+          if (request.uri.path == '/rest/v1/rpc/get_active_academic_calendar') {
+            _writeJson(request, 200, {
+              'id': 'cal-1',
+              'country_code': 'TZ',
+              'education_system_id': 'sys-1',
+              'name': 'Mwaka wa Masomo 2026',
+              'starts_on': '2026-01-05',
+              'ends_on': '2026-12-04',
+              'is_enabled': true,
+              'terms': [
+                {
+                  'id': 'term-1',
+                  'term_number': 1,
+                  'name': 'Muhula wa Kwanza',
+                  'starts_on': '2026-01-05',
+                  'ends_on': '2026-06-19',
+                  'is_break': false,
+                  'is_current': true,
+                },
+              ],
+            });
+            return;
+          }
+          if (request.uri.path == '/rest/v1/rpc/list_academic_terms') {
+            _writeJson(request, 200, [
+              {
+                'id': 'term-1',
+                'term_number': 1,
+                'name': 'Muhula wa Kwanza',
+                'starts_on': '2026-01-05',
+                'ends_on': '2026-06-19',
+                'is_break': false,
+                'is_current': true,
+              },
+            ]);
+            return;
+          }
+          _writeJson(request, 404, {'message': 'Not found'});
+        });
+
+        final client = await _signedInClient(server);
+        addTearDown(() async {
+          client.dispose();
+          await server.close();
+        });
+
+        final repo = LearnerRepository(client);
+        final calendar = await repo.getActiveAcademicCalendar(
+          countryCode: 'TZ',
+          educationSystemId: 'sys-1',
+          referenceDate: DateTime(2026, 3, 15),
+        );
+
+        expect(calendar, isNotNull);
+        expect(calendar!.name, 'Mwaka wa Masomo 2026');
+        expect(calendar.terms.length, 1);
+        expect(calendar.terms.first.isCurrent, isTrue);
+
+        final terms = await repo.listAcademicTerms('cal-1');
+        expect(terms.length, 1);
+        expect(terms.first.name, 'Muhula wa Kwanza');
+      },
+    );
   });
 }

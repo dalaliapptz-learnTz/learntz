@@ -121,4 +121,42 @@ void main() {
     expect(incoming.learnerName, 'Asha Mushi');
     expect(incoming.inviterName, 'Juma Mushi');
   });
+
+  test('academic calendar and terms parse properly and compute current term', () {
+    final calendar = AcademicCalendar.fromJson({
+      'id': 'cal-1',
+      'country_code': 'TZ',
+      'education_system_id': 'sys-1',
+      'name': 'Mwaka wa Masomo 2026',
+      'starts_on': '2026-01-05',
+      'ends_on': '2026-12-04',
+      'is_enabled': true,
+      'terms': [
+        {
+          'id': 'term-1',
+          'term_number': 1,
+          'name': 'Muhula wa Kwanza',
+          'starts_on': '2026-01-05',
+          'ends_on': '2026-06-19',
+          'is_break': false,
+          'is_current': true,
+        },
+        {
+          'id': 'term-2',
+          'term_number': 2,
+          'name': 'Muhula wa Pili',
+          'starts_on': '2026-07-06',
+          'ends_on': '2026-12-04',
+          'is_break': false,
+          'is_current': false,
+        },
+      ],
+    });
+
+    expect(calendar.name, 'Mwaka wa Masomo 2026');
+    expect(calendar.terms.length, 2);
+    expect(calendar.currentTerm?.name, 'Muhula wa Kwanza');
+    expect(calendar.currentTerm?.termNumber, 1);
+    expect(calendar.terms[1].isCurrent, isFalse);
+  });
 }

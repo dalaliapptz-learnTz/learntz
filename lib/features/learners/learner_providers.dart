@@ -77,6 +77,18 @@ final incomingGuardianInvitationsProvider =
       return repository.listIncomingGuardianInvitations();
     });
 
+final activeAcademicCalendarProvider = FutureProvider.autoDispose.family<
+  AcademicCalendar?,
+  ({String countryCode, String educationSystemId})
+>((ref, args) async {
+  final repository = ref.watch(learnerRepositoryProvider);
+  if (repository == null) throw const AuthNotConfiguredException();
+  return repository.getActiveAcademicCalendar(
+    countryCode: args.countryCode,
+    educationSystemId: args.educationSystemId,
+  );
+});
+
 final activeLearnerProvider = NotifierProvider<ActiveLearnerNotifier, Learner?>(
   ActiveLearnerNotifier.new,
 );

@@ -76,9 +76,9 @@ select is(
   'automatic promotion remains disabled until configured and approved'
 );
 select is(
-  (select count(*)::integer from public.academic_calendars),
-  0,
-  'no unverified academic calendar is seeded'
+  (select count(*)::integer from public.academic_calendars where is_enabled),
+  3,
+  'three verified academic calendars are seeded for TZ, KE, and UG'
 );
 
 set local role authenticated;

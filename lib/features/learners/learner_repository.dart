@@ -289,6 +289,38 @@ class LearnerRepository {
       '${value.year.toString().padLeft(4, '0')}-'
       '${value.month.toString().padLeft(2, '0')}-'
       '${value.day.toString().padLeft(2, '0')}';
+
+  Future<AcademicCalendar?> getActiveAcademicCalendar({
+    required String countryCode,
+    required String educationSystemId,
+    DateTime? referenceDate,
+  }) async {
+    final response = await _client.rpc(
+      'get_active_academic_calendar',
+      params: {
+        'p_country_code': countryCode,
+        'p_education_system_id': educationSystemId,
+        if (referenceDate != null)
+          'p_reference_date': referenceDate.toIso8601String().split('T').first,
+      },
+    );
+    if (response == null) return null;
+    return AcademicCalendar.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<List<AcademicTerm>> listAcademicTerms(
+    String academicCalendarId,
+  ) async {
+    final rows = await _client.rpc(
+      'list_academic_terms',
+      params: {'p_academic_calendar_id': academicCalendarId},
+    );
+    return (rows as List<dynamic>)
+        .map((row) => AcademicTerm.fromJson(Map<String, dynamic>.from(row as Map)))
+        .toList(growable: false);
+  }
 }
 
 class EducationCatalogRepository {
