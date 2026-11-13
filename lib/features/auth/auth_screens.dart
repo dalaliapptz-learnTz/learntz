@@ -54,6 +54,28 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
+  Future<void> _submitSuperAdminDemo() async {
+    final repository = ref.read(authRepositoryProvider);
+    if (repository == null) return;
+    _email.text = 'superadmin@learntz.com';
+    _password.text = 'SuperAdmin1234!';
+    setState(() {
+      _isSubmitting = true;
+      _error = null;
+    });
+    try {
+      await repository.signIn(
+        email: _email.text,
+        password: _password.text,
+      );
+      if (mounted) context.go(widget.next ?? AppRoutes.admin);
+    } on AuthException catch (error) {
+      if (mounted) setState(() => _error = error.message);
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -96,6 +118,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         AppButton(
           label: l10n.signInAction,
           onPressed: _isSubmitting ? null : _submit,
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          key: const Key('super-admin-demo-sign-in'),
+          icon: const Icon(Icons.admin_panel_settings_outlined),
+          label: const Text('Super Admin Demo Sign-In'),
+          onPressed: _isSubmitting ? null : _submitSuperAdminDemo,
         ),
         TextButton(
           onPressed: () => context.go(AppRoutes.forgotPassword),
@@ -699,10 +728,9 @@ String? _validatePassword(String? value, AppLocalizations l10n) {
 }
 
 String _safeNextPath(String? path) {
-  if (path == AppRoutes.account ||
-      path == AppRoutes.editParentProfile ||
-      path == AppRoutes.accountSettings) {
-    return path!;
+  if (path == null || path.isEmpty) return AppRoutes.account;
+  if (path.startsWith('/') && !path.startsWith('//')) {
+    return path;
   }
   return AppRoutes.account;
 }

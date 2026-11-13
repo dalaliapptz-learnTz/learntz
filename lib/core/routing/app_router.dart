@@ -155,7 +155,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         AppRoutes.authCallback,
         AppRoutes.forgotPassword,
       }.contains(path);
-      if (isSignedIn && (isAuthenticationRoute || path == AppRoutes.welcome)) {
+      if (isSignedIn && isAuthenticationRoute) {
+        final next = state.uri.queryParameters['next'];
+        if (next != null &&
+            next.isNotEmpty &&
+            next.startsWith('/') &&
+            !next.startsWith('//')) {
+          return next;
+        }
+        return AppRoutes.account;
+      }
+      if (isSignedIn && path == AppRoutes.welcome) {
         return AppRoutes.account;
       }
       return null;

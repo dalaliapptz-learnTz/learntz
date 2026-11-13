@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/design_system/components/components.dart';
+import '../../core/design_system/tokens/design_tokens.dart';
 import '../../core/routing/app_router.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../shared/widgets/app_card.dart';
 import '../auth/auth_screens.dart';
 import 'admin_models.dart';
 import 'admin_providers.dart';
@@ -175,12 +176,12 @@ class _AdminPortalContentState extends ConsumerState<_AdminPortalContent> {
                       runSpacing: 8,
                       children: [
                         for (final assignment in widget.capabilities.roles)
-                          Chip(
-                            label: Text(
-                              assignment.countryCode == null
-                                  ? assignment.role
-                                  : '${assignment.role} (${assignment.countryCode})',
-                            ),
+                          AppBadge(
+                            label: assignment.countryCode == null
+                                ? assignment.role.toUpperCase()
+                                : '${assignment.role.toUpperCase()} (${assignment.countryCode})',
+                            variant: AppBadgeVariant.primary,
+                            size: AppBadgeSize.md,
                           ),
                       ],
                     ),
@@ -208,28 +209,58 @@ class _AdminPortalContentState extends ConsumerState<_AdminPortalContent> {
                   isError: true,
                 ),
                 data: (data) => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
+                  spacing: LearnTzSpacing.md,
+                  runSpacing: LearnTzSpacing.md,
                   children: [
-                    _MetricCard(
-                      label: l10n.adminMetricCountries,
-                      value: data.enabledCountries.toString(),
+                    SizedBox(
+                      width: 176,
+                      child: AppStatCard(
+                        label: l10n.adminMetricCountries,
+                        value: data.enabledCountries.toString(),
+                        icon: Icons.public,
+                        iconColor: LearnTzColors.primary,
+                        iconBackgroundColor: LearnTzColors.primary50,
+                      ),
                     ),
-                    _MetricCard(
-                      label: l10n.adminMetricParents,
-                      value: data.parentAccounts.toString(),
+                    SizedBox(
+                      width: 176,
+                      child: AppStatCard(
+                        label: l10n.adminMetricParents,
+                        value: data.parentAccounts.toString(),
+                        icon: Icons.people_outline,
+                        iconColor: LearnTzColors.secondary,
+                        iconBackgroundColor: LearnTzColors.secondary50,
+                      ),
                     ),
-                    _MetricCard(
-                      label: l10n.adminMetricLearners,
-                      value: data.activeLearners.toString(),
+                    SizedBox(
+                      width: 176,
+                      child: AppStatCard(
+                        label: l10n.adminMetricLearners,
+                        value: data.activeLearners.toString(),
+                        icon: Icons.school_outlined,
+                        iconColor: LearnTzColors.accent,
+                        iconBackgroundColor: LearnTzColors.accent50,
+                      ),
                     ),
-                    _MetricCard(
-                      label: l10n.adminMetricAccountRequests,
-                      value: data.pendingAccountRequests.toString(),
+                    SizedBox(
+                      width: 176,
+                      child: AppStatCard(
+                        label: l10n.adminMetricAccountRequests,
+                        value: data.pendingAccountRequests.toString(),
+                        icon: Icons.pending_actions_outlined,
+                        iconColor: LearnTzColors.warning,
+                        iconBackgroundColor: LearnTzColors.warningBg,
+                      ),
                     ),
-                    _MetricCard(
-                      label: l10n.adminMetricCurriculumImports,
-                      value: data.pendingCurriculumImports.toString(),
+                    SizedBox(
+                      width: 176,
+                      child: AppStatCard(
+                        label: l10n.adminMetricCurriculumImports,
+                        value: data.pendingCurriculumImports.toString(),
+                        icon: Icons.menu_book_outlined,
+                        iconColor: LearnTzColors.primary,
+                        iconBackgroundColor: LearnTzColors.primary50,
+                      ),
                     ),
                   ],
                 ),
@@ -253,31 +284,6 @@ class _AdminPortalContentState extends ConsumerState<_AdminPortalContent> {
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SizedBox(
-      width: 180,
-      child: AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(value, style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 4),
-            Text(label, style: theme.textTheme.bodySmall),
-          ],
         ),
       ),
     );
