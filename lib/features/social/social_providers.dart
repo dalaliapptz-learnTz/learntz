@@ -21,3 +21,24 @@ final publicLearnerSocialProfileProvider = FutureProvider.family<
     viewerLearnerId: args.viewerId,
   );
 });
+
+final socialFeedProvider = FutureProvider.family<
+    List<SocialPost>,
+    ({String viewerId, String? postType, String? subjectId})>((ref, args) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getSocialFeed(
+    viewerLearnerId: args.viewerId,
+    postType: args.postType,
+    subjectId: args.subjectId,
+  );
+});
+
+final postCommentsProvider = FutureProvider.family<
+    List<PostComment>,
+    ({String postId, String? viewerId})>((ref, args) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getPostComments(
+    postId: args.postId,
+    viewerLearnerId: args.viewerId,
+  );
+});

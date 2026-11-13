@@ -227,3 +227,147 @@ class LearnerSocialProfile {
     );
   }
 }
+
+/// Educational post model representing a question, explanation, or learning tip.
+class SocialPost {
+  final String id;
+  final String authorLearnerId;
+  final String authorDisplayName;
+  final String authorAvatarPreset;
+  final String? communityId;
+  final String? subjectId;
+  final String? subjectName;
+  final String? topicId;
+  final String postType; // 'question' | 'concept_explanation' | 'study_tip' | 'revision_notes' | 'discovery' | 'resource_share'
+  final String title;
+  final String content;
+  final List<String> tags;
+  final int likesCount;
+  final int commentsCount;
+  final int bookmarksCount;
+  final bool viewerHasReacted;
+  final bool viewerHasSaved;
+  final DateTime createdAt;
+
+  const SocialPost({
+    required this.id,
+    required this.authorLearnerId,
+    required this.authorDisplayName,
+    required this.authorAvatarPreset,
+    this.communityId,
+    this.subjectId,
+    this.subjectName,
+    this.topicId,
+    required this.postType,
+    required this.title,
+    required this.content,
+    this.tags = const [],
+    this.likesCount = 0,
+    this.commentsCount = 0,
+    this.bookmarksCount = 0,
+    this.viewerHasReacted = false,
+    this.viewerHasSaved = false,
+    required this.createdAt,
+  });
+
+  factory SocialPost.fromJson(Map<String, dynamic> json) {
+    return SocialPost(
+      id: json['id'] as String? ?? '',
+      authorLearnerId: json['author_learner_id'] as String? ?? '',
+      authorDisplayName: json['author_display_name'] as String? ?? 'Learner',
+      authorAvatarPreset:
+          json['author_avatar_preset'] as String? ?? 'owl_scholar',
+      communityId: json['community_id'] as String?,
+      subjectId: json['subject_id'] as String?,
+      subjectName: json['subject_name'] as String?,
+      topicId: json['topic_id'] as String?,
+      postType: json['post_type'] as String? ?? 'question',
+      title: json['title'] as String? ?? '',
+      content: json['content'] as String? ?? '',
+      tags: (json['tags'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
+      likesCount: (json['likes_count'] as num?)?.toInt() ?? 0,
+      commentsCount: (json['comments_count'] as num?)?.toInt() ?? 0,
+      bookmarksCount: (json['bookmarks_count'] as num?)?.toInt() ?? 0,
+      viewerHasReacted: json['viewer_has_reacted'] as bool? ?? false,
+      viewerHasSaved: json['viewer_has_saved'] as bool? ?? false,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'author_learner_id': authorLearnerId,
+        'author_display_name': authorDisplayName,
+        'author_avatar_preset': authorAvatarPreset,
+        'community_id': communityId,
+        'subject_id': subjectId,
+        'subject_name': subjectName,
+        'topic_id': topicId,
+        'post_type': postType,
+        'title': title,
+        'content': content,
+        'tags': tags,
+        'likes_count': likesCount,
+        'comments_count': commentsCount,
+        'bookmarks_count': bookmarksCount,
+        'viewer_has_reacted': viewerHasReacted,
+        'viewer_has_saved': viewerHasSaved,
+        'created_at': createdAt.toIso8601String(),
+      };
+}
+
+/// Comment on an educational post.
+class PostComment {
+  final String id;
+  final String postId;
+  final String authorLearnerId;
+  final String authorDisplayName;
+  final String authorAvatarPreset;
+  final String? parentCommentId;
+  final String content;
+  final DateTime createdAt;
+
+  const PostComment({
+    required this.id,
+    required this.postId,
+    required this.authorLearnerId,
+    required this.authorDisplayName,
+    required this.authorAvatarPreset,
+    this.parentCommentId,
+    required this.content,
+    required this.createdAt,
+  });
+
+  factory PostComment.fromJson(Map<String, dynamic> json) {
+    return PostComment(
+      id: json['id'] as String? ?? '',
+      postId: json['post_id'] as String? ?? '',
+      authorLearnerId: json['author_learner_id'] as String? ?? '',
+      authorDisplayName: json['author_display_name'] as String? ?? 'Learner',
+      authorAvatarPreset:
+          json['author_avatar_preset'] as String? ?? 'owl_scholar',
+      parentCommentId: json['parent_comment_id'] as String?,
+      content: json['content'] as String? ?? '',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'post_id': postId,
+        'author_learner_id': authorLearnerId,
+        'author_display_name': authorDisplayName,
+        'author_avatar_preset': authorAvatarPreset,
+        'parent_comment_id': parentCommentId,
+        'content': content,
+        'created_at': createdAt.toIso8601String(),
+      };
+}
+

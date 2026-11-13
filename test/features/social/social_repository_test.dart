@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:learntz/features/social/social_models.dart';
 import 'package:learntz/features/social/social_repository.dart';
 
 class _FakeSupabaseServer {
@@ -107,6 +106,84 @@ void main() {
         return;
       }
 
+      if (path == '/rest/v1/rpc/get_social_feed') {
+        recordedCalls['get_feed'] = body;
+        _writeJson(request, 200, [
+          {
+            'id': 'post-1',
+            'author_learner_id': 'learner-1',
+            'author_display_name': 'Amani B.',
+            'author_avatar_preset': 'owl_scholar',
+            'post_type': 'question',
+            'title': 'Photosynthesis question',
+            'content': 'How does light intensity affect growth?',
+            'tags': ['biology'],
+            'likes_count': 3,
+            'comments_count': 1,
+            'bookmarks_count': 0,
+            'viewer_has_reacted': false,
+            'viewer_has_saved': false,
+            'created_at': DateTime.now().toIso8601String(),
+          }
+        ]);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/create_social_post') {
+        recordedCalls['create_post'] = body;
+        _writeJson(request, 200, {
+          'id': 'post-2',
+          'author_learner_id': body['p_author_learner_id'],
+          'author_display_name': 'Amani B.',
+          'author_avatar_preset': 'owl_scholar',
+          'post_type': body['p_post_type'],
+          'title': body['p_title'],
+          'content': body['p_content'],
+          'tags': body['p_tags'] ?? [],
+          'likes_count': 0,
+          'comments_count': 0,
+          'bookmarks_count': 0,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/toggle_post_reaction') {
+        recordedCalls['reaction'] = body;
+        _writeJson(request, 200, {
+          'action': 'added',
+          'post_id': body['p_post_id'],
+          'reaction_type': body['p_reaction_type'],
+        });
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/add_post_comment') {
+        recordedCalls['comment'] = body;
+        _writeJson(request, 200, {
+          'id': 'c-1',
+          'post_id': body['p_post_id'],
+          'author_learner_id': body['p_author_learner_id'],
+          'author_display_name': 'Neema M.',
+          'author_avatar_preset': 'lion_reader',
+          'content': body['p_content'],
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/toggle_save_post') {
+        recordedCalls['save_post'] = body;
+        _writeJson(request, 200, true);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/block_learner') {
+        recordedCalls['block'] = body;
+        _writeJson(request, 200, true);
+        return;
+      }
+
       _writeJson(request, 404, {'message': 'Not found: $path'});
     });
 
@@ -163,5 +240,74 @@ void main() {
     expect(publicProfile.schoolName, 'Mlimani Primary');
     expect(recordedCalls['get_public']['p_target_learner_id'], 'learner-888');
     expect(recordedCalls['get_public']['p_viewer_learner_id'], 'learner-999');
+  });
+
+  test('getSocialFeed invokes RPC and parses posts', () async {
+    final posts = await repository.getSocialFeed(
+      viewerLearnerId: 'learner-1',
+      postType: 'question',
+    );
+
+    expect(posts.length, 1);
+    expect(posts.first.title, 'Photosynthesis question');
+    expect(recordedCalls['get_feed']['p_viewer_learner_id'], 'learner-1');
+    expect(recordedCalls['get_feed']['p_post_type'], 'question');
+  });
+
+  test('createPost invokes create RPC', () async {
+    final post = await repository.createPost(
+      authorLearnerId: 'learner-1',
+      postType: 'question',
+      title: 'New question',
+      content: 'Detailed explanation needed',
+      tags: ['biology'],
+    );
+
+    expect(post.title, 'New question');
+    expect(recordedCalls['create_post']['p_title'], 'New question');
+  });
+
+  test('toggleReaction invokes reaction RPC', () async {
+    final res = await repository.toggleReaction(
+      postId: 'post-1',
+      learnerId: 'learner-2',
+      reactionType: 'helpful',
+    );
+
+    expect(res['action'], 'added');
+    expect(recordedCalls['reaction']['p_reaction_type'], 'helpful');
+  });
+
+  test('addComment invokes comment RPC', () async {
+    final comm = await repository.addComment(
+      postId: 'post-1',
+      authorLearnerId: 'learner-2',
+      content: 'Here is the answer!',
+    );
+
+    expect(comm.content, 'Here is the answer!');
+    expect(recordedCalls['comment']['p_content'], 'Here is the answer!');
+  });
+
+  test('toggleSavePost invokes save RPC', () async {
+    final saved = await repository.toggleSavePost(
+      postId: 'post-1',
+      learnerId: 'learner-2',
+    );
+
+    expect(saved, isTrue);
+    expect(recordedCalls['save_post']['p_post_id'], 'post-1');
+  });
+
+  test('blockLearner invokes block RPC', () async {
+    final blocked = await repository.blockLearner(
+      blockerLearnerId: 'learner-1',
+      blockedLearnerId: 'learner-2',
+      reason: 'Spam',
+    );
+
+    expect(blocked, isTrue);
+    expect(recordedCalls['block']['p_blocker_learner_id'], 'learner-1');
+    expect(recordedCalls['block']['p_blocked_learner_id'], 'learner-2');
   });
 }

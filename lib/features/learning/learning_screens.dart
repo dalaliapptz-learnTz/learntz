@@ -104,6 +104,11 @@ class LearningHubScreen extends ConsumerWidget {
                         label: const Text('Academic Profile'),
                       ),
                       OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.communityFeed),
+                        icon: const Icon(Icons.forum_outlined, size: 18),
+                        label: const Text('Community Feed'),
+                      ),
+                      OutlinedButton.icon(
                         onPressed: () => context.go(AppRoutes.resourceLibrary),
                         icon: const Icon(Icons.menu_book_outlined, size: 18),
                         label: Text(l10n.resourceLibraryTitle),
