@@ -138,6 +138,33 @@ class _StubLearningRepository implements LearningRepository {
     String? educationLevelId,
     String? gradeId,
   }) async => const [];
+
+  @override
+  Future<LearningLesson> getLessonInteractiveContent(String lessonId) async =>
+      lesson;
+
+  @override
+  Future<List<QuestionBankItem>> getTopicAssessmentQuestions({
+    required String topicId,
+    int limit = 10,
+  }) async =>
+      const [];
+
+  @override
+  Future<AssessmentSubmissionResult> submitAssessmentAttempt({
+    required String learnerId,
+    required String topicId,
+    required List<Map<String, dynamic>> answers,
+  }) async {
+    return const AssessmentSubmissionResult(
+      scorePercent: 100,
+      passed: true,
+      totalQuestions: 1,
+      correctCount: 1,
+      masteryStatus: 'proficient',
+      results: [],
+    );
+  }
 }
 
 void main() {

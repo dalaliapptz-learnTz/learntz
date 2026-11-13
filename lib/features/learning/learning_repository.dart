@@ -87,15 +87,64 @@ class LearningRepository {
 
   Future<LearningLesson> getLesson(String lessonId) async {
     _requireUser();
-    final row = await _client
-        .from('lessons')
-        .select(
-          'id, topic_id, title, body_markdown, estimated_minutes, '
-          'is_free_preview, display_order',
+    try {
+      final result = await _client.rpc(
+        'get_lesson_interactive_content',
+        params: {'p_lesson_id': lessonId},
+      );
+      return LearningLesson.fromJson(Map<String, dynamic>.from(result as Map));
+    } catch (_) {
+      final row = await _client
+          .from('lessons')
+          .select(
+            'id, topic_id, title, body_markdown, estimated_minutes, '
+            'is_free_preview, display_order, content_blocks, summary',
+          )
+          .eq('id', lessonId)
+          .single();
+      return LearningLesson.fromJson(row);
+    }
+  }
+
+  Future<LearningLesson> getLessonInteractiveContent(String lessonId) async {
+    return getLesson(lessonId);
+  }
+
+  Future<List<QuestionBankItem>> getTopicAssessmentQuestions({
+    required String topicId,
+    int limit = 10,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_topic_assessment_questions',
+      params: {'p_topic_id': topicId, 'p_limit': limit},
+    );
+    return (result as List<dynamic>)
+        .map(
+          (row) => QuestionBankItem.fromJson(
+            Map<String, dynamic>.from(row as Map),
+          ),
         )
-        .eq('id', lessonId)
-        .single();
-    return LearningLesson.fromJson(row);
+        .toList(growable: false);
+  }
+
+  Future<AssessmentSubmissionResult> submitAssessmentAttempt({
+    required String learnerId,
+    required String topicId,
+    required List<Map<String, dynamic>> answers,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'submit_assessment_attempt',
+      params: {
+        'p_learner_id': learnerId,
+        'p_topic_id': topicId,
+        'p_answers': answers,
+      },
+    );
+    return AssessmentSubmissionResult.fromJson(
+      Map<String, dynamic>.from(result as Map),
+    );
   }
 
   Future<LearnerLearningSummary> getLearningSummary(String learnerId) async {

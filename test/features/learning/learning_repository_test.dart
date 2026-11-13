@@ -354,4 +354,192 @@ void main() {
     await client.dispose();
     await server.close();
   });
+
+  test('LearningRepository invokes Phase 2 interactive content and question bank RPCs correctly', () async {
+    final server = await _FakeSupabaseServer.start((request, body) async {
+      final path = request.uri.path;
+      if (path == '/auth/v1/token') {
+        _writeJson(request, 200, _sessionPayload());
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_lesson_interactive_content') {
+        expect(body['p_lesson_id'], 'lesson-101');
+        _writeJson(request, 200, {
+          'id': 'lesson-101',
+          'topic_id': 'topic-101',
+          'title': 'Sauti za Irabu',
+          'summary': 'Misingi ya irabu',
+          'estimated_minutes': 12,
+          'is_free_preview': true,
+          'body_markdown': '# Irabu\n\na, e, i, o, u',
+          'content_blocks': [
+            {
+              'type': 'markdown',
+              'body': 'Katika lugha ya Kiswahili tuna irabu tano.',
+            },
+            {
+              'type': 'callout',
+              'style': 'tip',
+              'title': 'Zingatio',
+              'content': 'Kila neno lina irabu.',
+            },
+            {
+              'type': 'definition',
+              'term': 'Irabu',
+              'pronunciation': '/i.ra.bu/',
+              'definition': 'Sauti huru',
+              'example': 'a, e, i, o, u',
+            },
+            {
+              'type': 'example',
+              'title': 'Mfano',
+              'problem': 'Silabi',
+              'steps': ['b + a = ba', 'k + i = ki'],
+              'takeaway': 'Konsonanti na irabu huunda silabi',
+            },
+            {
+              'type': 'checkpoint',
+              'question': 'b + a inatoa nini?',
+              'options': ['ba', 'bo'],
+              'correct_index': 0,
+              'explanation': 'b + a = ba',
+            },
+          ],
+        });
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_topic_assessment_questions') {
+        expect(body['p_topic_id'], 'topic-101');
+        _writeJson(request, 200, [
+          {
+            'id': 'q-mc',
+            'topic_id': 'topic-101',
+            'lesson_id': 'lesson-101',
+            'question_type': 'multiple_choice',
+            'difficulty_level': 'easy',
+            'question_text': 'Ipi ni irabu?',
+            'options': ['a', 'b', 'c'],
+            'cognitive_tier': 'knowledge',
+            'display_order': 1,
+          },
+          {
+            'id': 'q-tf',
+            'topic_id': 'topic-101',
+            'lesson_id': 'lesson-101',
+            'question_type': 'true_false',
+            'difficulty_level': 'easy',
+            'question_text': 'Kiswahili kina irabu tano.',
+            'options': ['Kweli', 'Si Kweli'],
+            'cognitive_tier': 'knowledge',
+            'display_order': 2,
+          },
+          {
+            'id': 'q-fill',
+            'topic_id': 'topic-101',
+            'lesson_id': 'lesson-101',
+            'question_type': 'fill_in_the_blank',
+            'difficulty_level': 'medium',
+            'question_text': 'b + a = ___',
+            'options': null,
+            'cognitive_tier': 'comprehension',
+            'display_order': 3,
+          },
+          {
+            'id': 'q-match',
+            'topic_id': 'topic-101',
+            'lesson_id': 'lesson-101',
+            'question_type': 'matching',
+            'difficulty_level': 'medium',
+            'question_text': 'Oanisha:',
+            'options': {
+              'premises': [
+                {'id': 'p1', 'text': 'm'},
+              ],
+              'responses': [
+                {'id': 'r1', 'text': 'mama'},
+              ],
+            },
+            'cognitive_tier': 'application',
+            'display_order': 4,
+          },
+          {
+            'id': 'q-short',
+            'topic_id': 'topic-101',
+            'lesson_id': 'lesson-101',
+            'question_type': 'short_answer',
+            'difficulty_level': 'easy',
+            'question_text': 'Taja mzazi wa kike:',
+            'options': null,
+            'cognitive_tier': 'knowledge',
+            'display_order': 5,
+          },
+        ]);
+        return;
+      }
+      if (path == '/rest/v1/rpc/submit_assessment_attempt') {
+        expect(body['p_learner_id'], 'learner-101');
+        expect(body['p_topic_id'], 'topic-101');
+        _writeJson(request, 200, {
+          'score_percent': 100,
+          'passed': true,
+          'total_questions': 5,
+          'correct_count': 5,
+          'mastery_status': 'proficient',
+          'results': [
+            {
+              'question_id': 'q-mc',
+              'question_type': 'multiple_choice',
+              'is_correct': true,
+              'user_answer': 0,
+              'correct_answer': 0,
+              'explanation': 'a ni irabu.',
+            },
+          ],
+        });
+        return;
+      }
+      _writeJson(request, 404, {'message': 'Not found'});
+    });
+
+    final client = await _signedInClient(server);
+    final repo = LearningRepository(client);
+
+    final lesson = await repo.getLessonInteractiveContent('lesson-101');
+    expect(lesson.title, 'Sauti za Irabu');
+    expect(lesson.summary, 'Misingi ya irabu');
+    expect(lesson.estimatedMinutes, 12);
+    expect(lesson.contentBlocks.length, 5);
+    expect(lesson.contentBlocks[1].type, 'callout');
+    expect(lesson.contentBlocks[1].style, 'tip');
+    expect(lesson.contentBlocks[2].term, 'Irabu');
+    expect(lesson.contentBlocks[3].steps.length, 2);
+    expect(lesson.contentBlocks[4].question, 'b + a inatoa nini?');
+
+    final questions = await repo.getTopicAssessmentQuestions(topicId: 'topic-101');
+    expect(questions.length, 5);
+    expect(questions[0].questionType, 'multiple_choice');
+    expect(questions[0].options?.length, 3);
+    expect(questions[1].questionType, 'true_false');
+    expect(questions[2].questionType, 'fill_in_the_blank');
+    expect(questions[3].questionType, 'matching');
+    expect(questions[3].matchingPremises.first.text, 'm');
+    expect(questions[3].matchingResponses.first.text, 'mama');
+    expect(questions[4].questionType, 'short_answer');
+
+    final result = await repo.submitAssessmentAttempt(
+      learnerId: 'learner-101',
+      topicId: 'topic-101',
+      answers: [
+        {'question_id': 'q-mc', 'answer': 0},
+      ],
+    );
+    expect(result.passed, isTrue);
+    expect(result.scorePercent, 100);
+    expect(result.masteryStatus, 'proficient');
+    expect(result.results.first.isCorrect, isTrue);
+    expect(result.results.first.explanation, 'a ni irabu.');
+
+    await client.dispose();
+    await server.close();
+  });
 }

@@ -413,11 +413,6 @@ class _LessonReaderScreenState extends ConsumerState<LessonReaderScreen> {
             error: (error, _) =>
                 AuthInlineMessage(message: l10n.requestFailed, isError: true),
             data: (lesson) {
-              final paragraphs = lesson.bodyMarkdown
-                  .split('\n\n')
-                  .map((p) => p.trim())
-                  .where((p) => p.isNotEmpty)
-                  .toList();
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -437,21 +432,20 @@ class _LessonReaderScreenState extends ConsumerState<LessonReaderScreen> {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 16),
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (final block in paragraphs) ...[
-                          Text(
-                            block.replaceAll('# ', '').replaceAll('### ', ''),
-                            style: block.startsWith('#')
-                                ? Theme.of(context).textTheme.titleLarge
-                                : Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const SizedBox(height: 12),
-                        ],
-                      ],
+                  if (lesson.summary != null &&
+                      lesson.summary!.isNotEmpty) ...[
+                    AppCard(
+                      child: Text(
+                        lesson.summary!,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontStyle: FontStyle.italic,
+                            ),
+                      ),
                     ),
+                    const SizedBox(height: 14),
+                  ],
+                  _InteractiveLessonBlocksView(
+                    blocks: lesson.effectiveContentBlocks,
                   ),
                   const SizedBox(height: 16),
                   AppCard(
@@ -533,6 +527,10 @@ class _PracticeQuizScreenState extends ConsumerState<PracticeQuizScreen> {
   bool _isSubmitting = false;
   String? _errorMessage;
 
+  // Modern multi-type assessment state
+  final Map<String, dynamic> _assessmentAnswers = {};
+  AssessmentSubmissionResult? _assessmentResult;
+
   Future<void> _submitQuiz(PracticeQuiz quiz) async {
     final learner = ref.read(activeLearnerProvider);
     final repo = ref.read(learningRepositoryProvider);
@@ -571,10 +569,58 @@ class _PracticeQuizScreenState extends ConsumerState<PracticeQuizScreen> {
     }
   }
 
+  Future<void> _submitAssessment({
+    required String topicId,
+    required List<QuestionBankItem> questions,
+  }) async {
+    final learner = ref.read(activeLearnerProvider);
+    final repo = ref.read(learningRepositoryProvider);
+    if (learner == null || repo == null) return;
+
+    if (questions.any((q) => !_assessmentAnswers.containsKey(q.id))) {
+      setState(
+        () => _errorMessage =
+            AppLocalizations.of(context)!.answerAllQuestionsError,
+      );
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final payload = [
+        for (final q in questions)
+          {
+            'question_id': q.id,
+            'answer': _assessmentAnswers[q.id],
+          },
+      ];
+      final result = await repo.submitAssessmentAttempt(
+        learnerId: learner.id,
+        topicId: topicId,
+        answers: payload,
+      );
+      ref.invalidate(activeLearnerLearningCatalogProvider);
+      if (mounted) {
+        setState(() => _assessmentResult = result);
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() => _errorMessage = error.toString());
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final activeLearner = ref.watch(activeLearnerProvider);
+    final lessonAsync = ref.watch(lessonDetailProvider(widget.lessonId));
     final quizAsync = ref.watch(lessonQuizProvider(widget.lessonId));
 
     if (activeLearner == null) {
@@ -594,123 +640,1005 @@ class _PracticeQuizScreenState extends ConsumerState<PracticeQuizScreen> {
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 780),
-          child: quizAsync.when(
+          child: lessonAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) =>
                 AuthInlineMessage(message: l10n.requestFailed, isError: true),
-            data: (quiz) {
-              if (quiz == null) {
-                return AppCard(child: Text(l10n.noQuizForLesson));
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextButton.icon(
-                    onPressed: () =>
-                        context.go(AppRoutes.lessonReader(widget.lessonId)),
-                    icon: const Icon(Icons.arrow_back),
-                    label: Text(l10n.backToLessonAction),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    quiz.title,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 16),
-                  if (_submissionResult != null) ...[
-                    AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _submissionResult!.passed
-                                ? l10n.quizPassedTitle(
-                                    _submissionResult!.scorePercent,
-                                  )
-                                : l10n.quizTryAgainTitle(
-                                    _submissionResult!.scorePercent,
-                                  ),
-                            key: const ValueKey('quiz-result-heading'),
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n.quizScoreSummary(
-                              _submissionResult!.correctCount,
-                              _submissionResult!.totalQuestions,
-                              _submissionResult!.bestQuizScorePercent,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          FilledButton(
-                            onPressed: () => context.go(AppRoutes.learn),
-                            child: Text(l10n.backToLearningHubAction),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  if (_errorMessage != null) ...[
-                    AuthInlineMessage(message: _errorMessage!, isError: true),
-                    const SizedBox(height: 12),
-                  ],
-                  for (final (qIndex, q) in quiz.questions.indexed) ...[
-                    AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${qIndex + 1}. ${q.prompt}',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          RadioGroup<int>(
-                            groupValue: _selectedOptions[q.id],
-                            onChanged: _isSubmitting
-                                ? (_) {}
-                                : (val) {
-                                    if (val != null) {
-                                      setState(() => _selectedOptions[q.id] = val);
-                                    }
-                                  },
-                            child: Column(
-                              children: [
-                                for (final (optIndex, option) in q.options.indexed)
-                                  RadioListTile<int>(
-                                    value: optIndex,
-                                    title: Text(option),
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                              ],
-                            ),
-                          ),
-                          if (_submissionResult != null &&
-                              qIndex < _submissionResult!.results.length &&
-                              _submissionResult!
-                                  .results[qIndex]
-                                  .explanation
-                                  .isNotEmpty)
-                            Text(
-                              _submissionResult!.results[qIndex].explanation,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  FilledButton.icon(
-                    key: const ValueKey('submit-quiz-button'),
-                    onPressed: _isSubmitting ? null : () => _submitQuiz(quiz),
-                    icon: const Icon(Icons.send_outlined),
-                    label: Text(l10n.submitQuizAction),
-                  ),
-                ],
+            data: (lesson) {
+              final topicQuestionsAsync =
+                  ref.watch(topicAssessmentQuestionsProvider(lesson.topicId));
+
+              return topicQuestionsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (_, _) => _buildLegacyQuizView(context, quizAsync, l10n),
+                data: (topicQuestions) {
+                  if (topicQuestions.isNotEmpty) {
+                    return _buildModernAssessmentView(
+                      context,
+                      lesson,
+                      topicQuestions,
+                      l10n,
+                    );
+                  }
+                  return _buildLegacyQuizView(context, quizAsync, l10n);
+                },
               );
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildModernAssessmentView(
+    BuildContext context,
+    LearningLesson lesson,
+    List<QuestionBankItem> questions,
+    AppLocalizations l10n,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextButton.icon(
+          onPressed: () => context.go(AppRoutes.lessonReader(widget.lessonId)),
+          icon: const Icon(Icons.arrow_back),
+          label: Text(l10n.backToLessonAction),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          lesson.title,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        const SizedBox(height: 16),
+        if (_assessmentResult != null) ...[
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _assessmentResult!.passed
+                            ? l10n.assessmentPassedTitle(
+                                _assessmentResult!.scorePercent,
+                              )
+                            : l10n.assessmentTryAgainTitle(
+                                _assessmentResult!.scorePercent,
+                              ),
+                        key: const ValueKey('quiz-result-heading'),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    _buildMasteryPill(context, _assessmentResult!.masteryStatus, l10n),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.assessmentScoreSummary(
+                    _assessmentResult!.correctCount,
+                    _assessmentResult!.totalQuestions,
+                    _masteryLabel(_assessmentResult!.masteryStatus, l10n),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () => context.go(AppRoutes.learn),
+                  child: Text(l10n.backToLearningHubAction),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (_errorMessage != null) ...[
+          AuthInlineMessage(message: _errorMessage!, isError: true),
+          const SizedBox(height: 12),
+        ],
+        for (final (qIndex, q) in questions.indexed) ...[
+          _buildQuestionBankCard(context, qIndex, q, l10n),
+          const SizedBox(height: 12),
+        ],
+        FilledButton.icon(
+          key: const ValueKey('submit-quiz-button'),
+          onPressed: _isSubmitting
+              ? null
+              : () => _submitAssessment(
+                    topicId: lesson.topicId,
+                    questions: questions,
+                  ),
+          icon: const Icon(Icons.send_outlined),
+          label: Text(l10n.submitQuizAction),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMasteryPill(
+    BuildContext context,
+    String status,
+    AppLocalizations l10n,
+  ) {
+    Color bg;
+    Color fg;
+    IconData icon;
+    if (status == 'mastered') {
+      bg = Colors.amber.shade100;
+      fg = Colors.amber.shade900;
+      icon = Icons.stars;
+    } else if (status == 'proficient') {
+      bg = Colors.green.shade100;
+      fg = Colors.green.shade800;
+      icon = Icons.verified;
+    } else {
+      bg = Colors.blue.shade100;
+      fg = Colors.blue.shade800;
+      icon = Icons.timelapse;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: fg),
+          const SizedBox(width: 4),
+          Text(
+            _masteryLabel(status, l10n),
+            style: TextStyle(color: fg, fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _masteryLabel(String status, AppLocalizations l10n) {
+    switch (status) {
+      case 'mastered':
+        return l10n.masteryStatusMastered;
+      case 'proficient':
+        return l10n.masteryStatusProficient;
+      default:
+        return l10n.masteryStatusInProgress;
+    }
+  }
+
+  Widget _buildQuestionBankCard(
+    BuildContext context,
+    int qIndex,
+    QuestionBankItem q,
+    AppLocalizations l10n,
+  ) {
+    final theme = Theme.of(context);
+    final graded = _assessmentResult?.results
+        .where((r) => r.questionId == q.id)
+        .firstOrNull;
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Chip(
+                label: Text(
+                  _questionTypeLabel(q.questionType, l10n),
+                  style: const TextStyle(fontSize: 11),
+                ),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                q.difficultyLevel.toUpperCase(),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.outline,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              if (graded != null)
+                Icon(
+                  graded.isCorrect ? Icons.check_circle : Icons.cancel,
+                  color: graded.isCorrect ? Colors.green : Colors.red,
+                  size: 20,
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${qIndex + 1}. ${q.questionText}',
+            style: theme.textTheme.titleMedium,
+          ),
+          const SizedBox(height: 12),
+          _buildQuestionInput(context, q, l10n),
+          if (graded != null) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: graded.isCorrect
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!graded.isCorrect) ...[
+                    Text(
+                      l10n.correctAnswerLabel(graded.correctAnswer.toString()),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                  if (graded.explanation.isNotEmpty)
+                    Text(
+                      '${l10n.explanationLabel}: ${graded.explanation}',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuestionInput(
+    BuildContext context,
+    QuestionBankItem q,
+    AppLocalizations l10n,
+  ) {
+    switch (q.questionType) {
+      case 'true_false':
+        final current = _assessmentAnswers[q.id] as bool?;
+        return Row(
+          children: [
+            FilledButton.tonal(
+              style: FilledButton.styleFrom(
+                backgroundColor: current == true
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : null,
+              ),
+              onPressed: _isSubmitting
+                  ? null
+                  : () => setState(() => _assessmentAnswers[q.id] = true),
+              child: Text(l10n.trueOption),
+            ),
+            const SizedBox(width: 12),
+            FilledButton.tonal(
+              style: FilledButton.styleFrom(
+                backgroundColor: current == false
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : null,
+              ),
+              onPressed: _isSubmitting
+                  ? null
+                  : () => setState(() => _assessmentAnswers[q.id] = false),
+              child: Text(l10n.falseOption),
+            ),
+          ],
+        );
+
+      case 'fill_in_the_blank':
+        return TextFormField(
+          initialValue: _assessmentAnswers[q.id]?.toString(),
+          decoration: InputDecoration(
+            hintText: l10n.fillBlankHint,
+            border: const OutlineInputBorder(),
+            isDense: true,
+          ),
+          enabled: !_isSubmitting,
+          onChanged: (val) => _assessmentAnswers[q.id] = val.trim(),
+        );
+
+      case 'short_answer':
+        return TextFormField(
+          initialValue: _assessmentAnswers[q.id]?.toString(),
+          decoration: InputDecoration(
+            hintText: l10n.shortAnswerHint,
+            border: const OutlineInputBorder(),
+            isDense: true,
+          ),
+          maxLines: 2,
+          enabled: !_isSubmitting,
+          onChanged: (val) => _assessmentAnswers[q.id] = val.trim(),
+        );
+
+      case 'matching':
+        final currentMap =
+            (_assessmentAnswers[q.id] as Map<String, dynamic>?) ?? {};
+        return Column(
+          children: [
+            for (final p in q.matchingPremises) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        p.text,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_forward, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 3,
+                      child: DropdownButtonFormField<String>(
+                        key: ValueKey('matching-${q.id}-${p.id}'),
+                        initialValue: currentMap[p.id]?.toString(),
+                        hint: Text(
+                          l10n.matchingSelectPlaceholder,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        ),
+                        items: [
+                          for (final r in q.matchingResponses)
+                            DropdownMenuItem<String>(
+                              value: r.id,
+                              child: Text(r.text),
+                            ),
+                        ],
+                        onChanged: _isSubmitting
+                            ? null
+                            : (val) {
+                                if (val != null) {
+                                  setState(() {
+                                    final updated = Map<String, dynamic>.from(
+                                      currentMap,
+                                    );
+                                    updated[p.id] = val;
+                                    _assessmentAnswers[q.id] = updated;
+                                  });
+                                }
+                              },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        );
+
+      case 'multiple_choice':
+      default:
+        final options = q.options ?? const [];
+        return RadioGroup<int>(
+          groupValue: _assessmentAnswers[q.id] as int?,
+          onChanged: _isSubmitting
+              ? (_) {}
+              : (val) {
+                  if (val != null) {
+                    setState(() => _assessmentAnswers[q.id] = val);
+                  }
+                },
+          child: Column(
+            children: [
+              for (final (optIndex, option) in options.indexed)
+                RadioListTile<int>(
+                  value: optIndex,
+                  title: Text(option),
+                  contentPadding: EdgeInsets.zero,
+                ),
+            ],
+          ),
+        );
+    }
+  }
+
+  String _questionTypeLabel(String type, AppLocalizations l10n) {
+    switch (type) {
+      case 'multiple_choice':
+        return l10n.questionTypeMultipleChoice;
+      case 'true_false':
+        return l10n.questionTypeTrueFalse;
+      case 'fill_in_the_blank':
+        return l10n.questionTypeFillBlank;
+      case 'matching':
+        return l10n.questionTypeMatching;
+      case 'short_answer':
+        return l10n.questionTypeShortAnswer;
+      default:
+        return type;
+    }
+  }
+
+  Widget _buildLegacyQuizView(
+    BuildContext context,
+    AsyncValue<PracticeQuiz?> quizAsync,
+    AppLocalizations l10n,
+  ) {
+    return quizAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) =>
+          AuthInlineMessage(message: l10n.requestFailed, isError: true),
+      data: (quiz) {
+        if (quiz == null) {
+          return AppCard(child: Text(l10n.noQuizForLesson));
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextButton.icon(
+              onPressed: () =>
+                  context.go(AppRoutes.lessonReader(widget.lessonId)),
+              icon: const Icon(Icons.arrow_back),
+              label: Text(l10n.backToLessonAction),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              quiz.title,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 16),
+            if (_submissionResult != null) ...[
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _submissionResult!.passed
+                          ? l10n.quizPassedTitle(
+                              _submissionResult!.scorePercent,
+                            )
+                          : l10n.quizTryAgainTitle(
+                              _submissionResult!.scorePercent,
+                            ),
+                      key: const ValueKey('quiz-result-heading'),
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.quizScoreSummary(
+                        _submissionResult!.correctCount,
+                        _submissionResult!.totalQuestions,
+                        _submissionResult!.bestQuizScorePercent,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: () => context.go(AppRoutes.learn),
+                      child: Text(l10n.backToLearningHubAction),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (_errorMessage != null) ...[
+              AuthInlineMessage(message: _errorMessage!, isError: true),
+              const SizedBox(height: 12),
+            ],
+            for (final (qIndex, q) in quiz.questions.indexed) ...[
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${qIndex + 1}. ${q.prompt}',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    RadioGroup<int>(
+                      groupValue: _selectedOptions[q.id],
+                      onChanged: _isSubmitting
+                          ? (_) {}
+                          : (val) {
+                              if (val != null) {
+                                setState(() => _selectedOptions[q.id] = val);
+                              }
+                            },
+                      child: Column(
+                        children: [
+                          for (final (optIndex, option) in q.options.indexed)
+                            RadioListTile<int>(
+                              value: optIndex,
+                              title: Text(option),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (_submissionResult != null &&
+                        qIndex < _submissionResult!.results.length &&
+                        _submissionResult!
+                            .results[qIndex]
+                            .explanation
+                            .isNotEmpty)
+                      Text(
+                        _submissionResult!.results[qIndex].explanation,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            FilledButton.icon(
+              key: const ValueKey('submit-quiz-button'),
+              onPressed: _isSubmitting ? null : () => _submitQuiz(quiz),
+              icon: const Icon(Icons.send_outlined),
+              label: Text(l10n.submitQuizAction),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _InteractiveLessonBlocksView extends StatelessWidget {
+  const _InteractiveLessonBlocksView({required this.blocks});
+
+  final List<LessonContentBlock> blocks;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final block in blocks) ...[
+          _buildBlock(context, block),
+          const SizedBox(height: 14),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildBlock(BuildContext context, LessonContentBlock block) {
+    switch (block.type) {
+      case 'callout':
+        return _CalloutBlockWidget(block: block);
+      case 'definition':
+        return _DefinitionBlockWidget(block: block);
+      case 'example':
+        return _ExampleBlockWidget(block: block);
+      case 'diagram':
+        return _DiagramBlockWidget(block: block);
+      case 'checkpoint':
+        return _InlineCheckpointWidget(block: block);
+      case 'markdown':
+      default:
+        final paragraphs = (block.body ?? '')
+            .split('\n\n')
+            .map((p) => p.trim())
+            .where((p) => p.isNotEmpty)
+            .toList();
+        return AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final p in paragraphs) ...[
+                Text(
+                  p
+                      .replaceAll('# ', '')
+                      .replaceAll('## ', '')
+                      .replaceAll('### ', ''),
+                  style: p.startsWith('#')
+                      ? Theme.of(context).textTheme.titleLarge
+                      : Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 12),
+              ],
+            ],
+          ),
+        );
+    }
+  }
+}
+
+class _CalloutBlockWidget extends StatelessWidget {
+  const _CalloutBlockWidget({required this.block});
+
+  final LessonContentBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isWarning = block.style == 'warning';
+    final isTip = block.style == 'tip';
+
+    final Color accentColor = isWarning
+        ? Colors.amber.shade700
+        : isTip
+            ? Colors.green.shade700
+            : theme.colorScheme.primary;
+
+    final IconData iconData = isWarning
+        ? Icons.warning_amber_rounded
+        : isTip
+            ? Icons.lightbulb_outline
+            : Icons.info_outline;
+
+    return AppCard(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: accentColor, width: 4)),
+        ),
+        padding: const EdgeInsets.only(left: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(iconData, color: accentColor, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    block.title ??
+                        (isTip ? 'Tip' : isWarning ? 'Warning' : 'Note'),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: accentColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (block.content != null && block.content!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                block.content!,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DefinitionBlockWidget extends StatelessWidget {
+  const _DefinitionBlockWidget({required this.block});
+
+  final LessonContentBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Chip(
+                avatar: const Icon(Icons.bookmark_outline, size: 16),
+                label: Text(l10n.definitionLabel),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+              if (block.pronunciation != null) ...[
+                const SizedBox(width: 8),
+                Text(
+                  block.pronunciation!,
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(fontStyle: FontStyle.italic),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            block.term ?? '',
+            style: theme.textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            block.definition ?? '',
+            style: theme.textTheme.bodyLarge
+                ?.copyWith(fontStyle: FontStyle.italic),
+          ),
+          if (block.example != null && block.example!.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${l10n.exampleLabel}: ${block.example!}',
+                style: theme.textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ExampleBlockWidget extends StatelessWidget {
+  const _ExampleBlockWidget({required this.block});
+
+  final LessonContentBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.school_outlined,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                block.title ?? l10n.exampleLabel,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          if (block.problem != null) ...[
+            const SizedBox(height: 8),
+            Text(block.problem!, style: theme.textTheme.bodyLarge),
+          ],
+          if (block.steps.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            for (final (index, step) in block.steps.indexed) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 10,
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      child: Text(
+                        '${index + 1}',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(step, style: theme.textTheme.bodyMedium),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+          if (block.takeaway != null && block.takeaway!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${l10n.takeawayLabel}: ${block.takeaway!}',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DiagramBlockWidget extends StatelessWidget {
+  const _DiagramBlockWidget({required this.block});
+
+  final LessonContentBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AppCard(
+      child: Column(
+        children: [
+          Container(
+            height: 160,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image_outlined,
+                    size: 48,
+                    color: theme.colorScheme.outline,
+                  ),
+                  if (block.altText != null) ...[
+                    const SizedBox(height: 8),
+                    Text(block.altText!, style: theme.textTheme.bodySmall),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          if (block.caption != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              block.caption!,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(fontStyle: FontStyle.italic),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _InlineCheckpointWidget extends StatefulWidget {
+  const _InlineCheckpointWidget({required this.block});
+
+  final LessonContentBlock block;
+
+  @override
+  State<_InlineCheckpointWidget> createState() =>
+      _InlineCheckpointWidgetState();
+}
+
+class _InlineCheckpointWidgetState extends State<_InlineCheckpointWidget> {
+  int? _selectedIndex;
+  bool _checked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final isCorrect = _selectedIndex == widget.block.correctIndex;
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.quiz_outlined,
+                color: theme.colorScheme.secondary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.checkpointTitle,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          if (widget.block.question != null) ...[
+            const SizedBox(height: 8),
+            Text(widget.block.question!, style: theme.textTheme.bodyLarge),
+          ],
+          const SizedBox(height: 12),
+          RadioGroup<int>(
+            groupValue: _selectedIndex,
+            onChanged: _checked
+                ? (_) {}
+                : (val) {
+                    if (val != null) {
+                      setState(() => _selectedIndex = val);
+                    }
+                  },
+            child: Column(
+              children: [
+                for (final (idx, opt) in widget.block.options.indexed)
+                  RadioListTile<int>(
+                    value: idx,
+                    title: Text(opt),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (!_checked)
+            FilledButton.tonal(
+              onPressed: _selectedIndex != null
+                  ? () => setState(() => _checked = true)
+                  : null,
+              child: Text(l10n.checkAnswerAction),
+            )
+          else ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isCorrect
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: isCorrect ? Colors.green : Colors.red,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isCorrect ? Icons.check_circle : Icons.cancel_outlined,
+                        color: isCorrect ? Colors.green : Colors.red,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        isCorrect
+                            ? l10n.checkpointCorrect
+                            : l10n.checkpointIncorrect,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isCorrect ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (widget.block.explanation != null &&
+                      widget.block.explanation!.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      widget.block.explanation!,
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

@@ -62,6 +62,76 @@ class LearningTopic {
   }
 }
 
+class LessonContentBlock {
+  const LessonContentBlock({
+    required this.type,
+    this.body,
+    this.style,
+    this.title,
+    this.content,
+    this.term,
+    this.pronunciation,
+    this.definition,
+    this.example,
+    this.problem,
+    this.steps = const [],
+    this.takeaway,
+    this.imageUrl,
+    this.caption,
+    this.altText,
+    this.question,
+    this.options = const [],
+    this.correctIndex,
+    this.explanation,
+  });
+
+  final String type;
+  final String? body;
+  final String? style;
+  final String? title;
+  final String? content;
+  final String? term;
+  final String? pronunciation;
+  final String? definition;
+  final String? example;
+  final String? problem;
+  final List<String> steps;
+  final String? takeaway;
+  final String? imageUrl;
+  final String? caption;
+  final String? altText;
+  final String? question;
+  final List<String> options;
+  final int? correctIndex;
+  final String? explanation;
+
+  factory LessonContentBlock.fromJson(Map<String, dynamic> json) {
+    final rawSteps = json['steps'] as List<dynamic>? ?? const [];
+    final rawOptions = json['options'] as List<dynamic>? ?? const [];
+    return LessonContentBlock(
+      type: json['type'] as String? ?? 'markdown',
+      body: json['body'] as String?,
+      style: json['style'] as String?,
+      title: json['title'] as String?,
+      content: json['content'] as String?,
+      term: json['term'] as String?,
+      pronunciation: json['pronunciation'] as String?,
+      definition: json['definition'] as String?,
+      example: json['example'] as String?,
+      problem: json['problem'] as String?,
+      steps: rawSteps.map((s) => s.toString()).toList(growable: false),
+      takeaway: json['takeaway'] as String?,
+      imageUrl: json['image_url'] as String?,
+      caption: json['caption'] as String?,
+      altText: json['alt_text'] as String?,
+      question: json['question'] as String?,
+      options: rawOptions.map((o) => o.toString()).toList(growable: false),
+      correctIndex: (json['correct_index'] as num?)?.toInt(),
+      explanation: json['explanation'] as String?,
+    );
+  }
+}
+
 class LearningLesson {
   const LearningLesson({
     required this.id,
@@ -71,6 +141,8 @@ class LearningLesson {
     required this.estimatedMinutes,
     required this.isFreePreview,
     required this.displayOrder,
+    this.summary,
+    this.contentBlocks = const [],
   });
 
   final String id;
@@ -80,8 +152,27 @@ class LearningLesson {
   final int estimatedMinutes;
   final bool isFreePreview;
   final int displayOrder;
+  final String? summary;
+  final List<LessonContentBlock> contentBlocks;
+
+  List<LessonContentBlock> get effectiveContentBlocks {
+    if (contentBlocks.isNotEmpty) return contentBlocks;
+    if (bodyMarkdown.trim().isNotEmpty) {
+      return [
+        LessonContentBlock(
+          type: 'markdown',
+          body: bodyMarkdown,
+        ),
+      ];
+    }
+    return const [];
+  }
 
   factory LearningLesson.fromJson(Map<String, dynamic> json) {
+    final rawBlocks = json['content_blocks'] as List<dynamic>? ?? const [];
+    final blocks = rawBlocks
+        .map((b) => LessonContentBlock.fromJson(Map<String, dynamic>.from(b as Map)))
+        .toList(growable: false);
     return LearningLesson(
       id: json['id'] as String,
       topicId: json['topic_id'] as String,
@@ -90,6 +181,8 @@ class LearningLesson {
       estimatedMinutes: (json['estimated_minutes'] as num?)?.toInt() ?? 10,
       isFreePreview: json['is_free_preview'] as bool? ?? false,
       displayOrder: (json['display_order'] as num?)?.toInt() ?? 1,
+      summary: json['summary'] as String?,
+      contentBlocks: blocks,
     );
   }
 }
@@ -625,6 +718,157 @@ class CurriculumExplorerSubject {
       displayOrder: (json['display_order'] as num?)?.toInt() ?? 1,
       topics: rawTopics
           .map((t) => CurriculumExplorerTopic.fromJson(t as Map<String, dynamic>))
+          .toList(growable: false),
+    );
+  }
+}
+
+class MatchingPremiseResponse {
+  const MatchingPremiseResponse({
+    required this.id,
+    required this.text,
+  });
+
+  final String id;
+  final String text;
+}
+
+class QuestionBankItem {
+  const QuestionBankItem({
+    required this.id,
+    required this.topicId,
+    this.lessonId,
+    required this.questionType,
+    required this.difficultyLevel,
+    required this.questionText,
+    this.options,
+    this.matchingPremises = const [],
+    this.matchingResponses = const [],
+    this.cognitiveTier,
+    required this.displayOrder,
+  });
+
+  final String id;
+  final String topicId;
+  final String? lessonId;
+  final String questionType;
+  final String difficultyLevel;
+  final String questionText;
+  final List<String>? options;
+  final List<MatchingPremiseResponse> matchingPremises;
+  final List<MatchingPremiseResponse> matchingResponses;
+  final String? cognitiveTier;
+  final int displayOrder;
+
+  factory QuestionBankItem.fromJson(Map<String, dynamic> json) {
+    List<String>? opts;
+    final premises = <MatchingPremiseResponse>[];
+    final responses = <MatchingPremiseResponse>[];
+
+    final rawOptions = json['options'];
+    if (rawOptions is List) {
+      opts = rawOptions.map((e) => e.toString()).toList(growable: false);
+    } else if (rawOptions is Map) {
+      final rawPremises = rawOptions['premises'] as List<dynamic>? ?? const [];
+      final rawResponses = rawOptions['responses'] as List<dynamic>? ?? const [];
+      for (final p in rawPremises) {
+        if (p is Map) {
+          premises.add(
+            MatchingPremiseResponse(
+              id: p['id'].toString(),
+              text: p['text'].toString(),
+            ),
+          );
+        }
+      }
+      for (final r in rawResponses) {
+        if (r is Map) {
+          responses.add(
+            MatchingPremiseResponse(
+              id: r['id'].toString(),
+              text: r['text'].toString(),
+            ),
+          );
+        }
+      }
+    }
+
+    return QuestionBankItem(
+      id: json['id'] as String,
+      topicId: json['topic_id'] as String,
+      lessonId: json['lesson_id'] as String?,
+      questionType: json['question_type'] as String,
+      difficultyLevel: json['difficulty_level'] as String? ?? 'medium',
+      questionText: json['question_text'] as String,
+      options: opts,
+      matchingPremises: premises,
+      matchingResponses: responses,
+      cognitiveTier: json['cognitive_tier'] as String?,
+      displayOrder: (json['display_order'] as num?)?.toInt() ?? 1,
+    );
+  }
+}
+
+class AssessmentQuestionGradedResult {
+  const AssessmentQuestionGradedResult({
+    required this.questionId,
+    required this.questionType,
+    required this.isCorrect,
+    this.userAnswer,
+    this.correctAnswer,
+    required this.explanation,
+  });
+
+  final String questionId;
+  final String questionType;
+  final bool isCorrect;
+  final dynamic userAnswer;
+  final dynamic correctAnswer;
+  final String explanation;
+
+  factory AssessmentQuestionGradedResult.fromJson(Map<String, dynamic> json) {
+    return AssessmentQuestionGradedResult(
+      questionId: json['question_id'] as String,
+      questionType: json['question_type'] as String? ?? 'multiple_choice',
+      isCorrect: json['is_correct'] as bool? ?? false,
+      userAnswer: json['user_answer'],
+      correctAnswer: json['correct_answer'],
+      explanation: json['explanation'] as String? ?? '',
+    );
+  }
+}
+
+class AssessmentSubmissionResult {
+  const AssessmentSubmissionResult({
+    required this.scorePercent,
+    required this.passed,
+    required this.totalQuestions,
+    required this.correctCount,
+    required this.masteryStatus,
+    required this.results,
+  });
+
+  final int scorePercent;
+  final bool passed;
+  final int totalQuestions;
+  final int correctCount;
+  final String masteryStatus;
+  final List<AssessmentQuestionGradedResult> results;
+
+  factory AssessmentSubmissionResult.fromJson(Map<String, dynamic> json) {
+    final rawResults = json['results'] as List<dynamic>? ?? const [];
+    return AssessmentSubmissionResult(
+      scorePercent: (json['score_percent'] as num?)?.toInt() ?? 0,
+      passed: json['passed'] as bool? ?? false,
+      totalQuestions: (json['total_questions'] as num?)?.toInt() ?? 0,
+      correctCount: (json['correct_count'] as num?)?.toInt() ?? 0,
+      masteryStatus: json['mastery_status'] as String? ?? 'in_progress',
+      results: rawResults
+          .map(
+            (r) => AssessmentQuestionGradedResult.fromJson(
+              Map<String, dynamic>.from(r as Map),
+            ),
+          )
           .toList(growable: false),
     );
   }

@@ -826,5 +826,85 @@
   "continueAction": "Endelea",
   "@continueAction": {},
   "learnerProfileTitle": "Wasifu wa Mwanafunzi",
-  "@learnerProfileTitle": {}
+  "@learnerProfileTitle": {},
+  "definitionLabel": "Dhana Muhimu",
+  "@definitionLabel": {},
+  "exampleLabel": "Mfano Halisi",
+  "@exampleLabel": {},
+  "takeawayLabel": "Zingatio Kuu",
+  "@takeawayLabel": {},
+  "checkpointTitle": "Jaribio la Haraka",
+  "@checkpointTitle": {},
+  "checkAnswerAction": "Thibitisha Jibu",
+  "@checkAnswerAction": {},
+  "checkpointCorrect": "Sahihi kabisa! Umepatia.",
+  "@checkpointCorrect": {},
+  "checkpointIncorrect": "Siyo sahihi. Angalia ufafanuzi hapa chini.",
+  "@checkpointIncorrect": {},
+  "trueOption": "Kweli",
+  "@trueOption": {},
+  "falseOption": "Si Kweli",
+  "@falseOption": {},
+  "fillBlankHint": "Andika jibu lako hapa...",
+  "@fillBlankHint": {},
+  "shortAnswerHint": "Andika jibu fupi hapa...",
+  "@shortAnswerHint": {},
+  "matchingPremisePrompt": "Chagua linalooana na {premise}",
+  "@matchingPremisePrompt": {
+    "placeholders": {
+      "premise": { "type": "String" }
+    }
+  },
+  "matchingSelectPlaceholder": "Chagua jibu",
+  "@matchingSelectPlaceholder": {},
+  "masteryStatusProficient": "Umahiri wa Kati",
+  "@masteryStatusProficient": {},
+  "masteryStatusMastered": "Umahiri wa Juu",
+  "@masteryStatusMastered": {},
+  "masteryStatusInProgress": "Inaendelea",
+  "@masteryStatusInProgress": {},
+  "questionTypeMultipleChoice": "Chaguo Sahihi",
+  "@questionTypeMultipleChoice": {},
+  "questionTypeTrueFalse": "Kweli au Si Kweli",
+  "@questionTypeTrueFalse": {},
+  "questionTypeFillBlank": "Jaza Nafasi",
+  "@questionTypeFillBlank": {},
+  "questionTypeMatching": "Kuoanisha",
+  "@questionTypeMatching": {},
+  "questionTypeShortAnswer": "Jibu Fupi",
+  "@questionTypeShortAnswer": {},
+  "yourAnswerLabel": "Jibu lako: {answer}",
+  "@yourAnswerLabel": {
+    "placeholders": {
+      "answer": { "type": "String" }
+    }
+  },
+  "correctAnswerLabel": "Jibu sahihi: {answer}",
+  "@correctAnswerLabel": {
+    "placeholders": {
+      "answer": { "type": "String" }
+    }
+  },
+  "explanationLabel": "Ufafanuzi",
+  "@explanationLabel": {},
+  "assessmentPassedTitle": "Umefaulu Jaribio ({percent}%)",
+  "@assessmentPassedTitle": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "assessmentTryAgainTitle": "Endelea Kujizoeza ({percent}%)",
+  "@assessmentTryAgainTitle": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "assessmentScoreSummary": "{correct} kati ya {total} sahihi • Umahiri: {mastery}",
+  "@assessmentScoreSummary": {
+    "placeholders": {
+      "correct": { "type": "int" },
+      "total": { "type": "int" },
+      "mastery": { "type": "String" }
+    }
+  }
 }

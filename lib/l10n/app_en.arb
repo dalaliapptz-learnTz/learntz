@@ -826,5 +826,85 @@
   "continueAction": "Continue",
   "@continueAction": {},
   "learnerProfileTitle": "Learner Profile",
-  "@learnerProfileTitle": {}
+  "@learnerProfileTitle": {},
+  "definitionLabel": "Key Concept",
+  "@definitionLabel": {},
+  "exampleLabel": "Worked Example",
+  "@exampleLabel": {},
+  "takeawayLabel": "Key Takeaway",
+  "@takeawayLabel": {},
+  "checkpointTitle": "Quick Concept Check",
+  "@checkpointTitle": {},
+  "checkAnswerAction": "Check Answer",
+  "@checkAnswerAction": {},
+  "checkpointCorrect": "Correct! Well done.",
+  "@checkpointCorrect": {},
+  "checkpointIncorrect": "Not quite. Check the explanation below.",
+  "@checkpointIncorrect": {},
+  "trueOption": "True",
+  "@trueOption": {},
+  "falseOption": "False",
+  "@falseOption": {},
+  "fillBlankHint": "Type your answer here...",
+  "@fillBlankHint": {},
+  "shortAnswerHint": "Type short answer here...",
+  "@shortAnswerHint": {},
+  "matchingPremisePrompt": "Match for {premise}",
+  "@matchingPremisePrompt": {
+    "placeholders": {
+      "premise": { "type": "String" }
+    }
+  },
+  "matchingSelectPlaceholder": "Choose match",
+  "@matchingSelectPlaceholder": {},
+  "masteryStatusProficient": "Proficient",
+  "@masteryStatusProficient": {},
+  "masteryStatusMastered": "Mastered",
+  "@masteryStatusMastered": {},
+  "masteryStatusInProgress": "In Progress",
+  "@masteryStatusInProgress": {},
+  "questionTypeMultipleChoice": "Multiple Choice",
+  "@questionTypeMultipleChoice": {},
+  "questionTypeTrueFalse": "True / False",
+  "@questionTypeTrueFalse": {},
+  "questionTypeFillBlank": "Fill in the Blank",
+  "@questionTypeFillBlank": {},
+  "questionTypeMatching": "Matching",
+  "@questionTypeMatching": {},
+  "questionTypeShortAnswer": "Short Answer",
+  "@questionTypeShortAnswer": {},
+  "yourAnswerLabel": "Your answer: {answer}",
+  "@yourAnswerLabel": {
+    "placeholders": {
+      "answer": { "type": "String" }
+    }
+  },
+  "correctAnswerLabel": "Correct answer: {answer}",
+  "@correctAnswerLabel": {
+    "placeholders": {
+      "answer": { "type": "String" }
+    }
+  },
+  "explanationLabel": "Explanation",
+  "@explanationLabel": {},
+  "assessmentPassedTitle": "Assessment Passed ({percent}%)",
+  "@assessmentPassedTitle": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "assessmentTryAgainTitle": "Keep Practicing ({percent}%)",
+  "@assessmentTryAgainTitle": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "assessmentScoreSummary": "{correct} of {total} correct • Mastery: {mastery}",
+  "@assessmentScoreSummary": {
+    "placeholders": {
+      "correct": { "type": "int" },
+      "total": { "type": "int" },
+      "mastery": { "type": "String" }
+    }
+  }
 }

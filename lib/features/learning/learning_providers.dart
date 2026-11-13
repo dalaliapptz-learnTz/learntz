@@ -30,6 +30,13 @@ final lessonDetailProvider =
       return repository.getLesson(lessonId);
     });
 
+final topicAssessmentQuestionsProvider = FutureProvider.autoDispose
+    .family<List<QuestionBankItem>, String>((ref, topicId) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getTopicAssessmentQuestions(topicId: topicId);
+    });
+
 final lessonQuizProvider =
     FutureProvider.autoDispose.family<PracticeQuiz?, String>((
       ref,
