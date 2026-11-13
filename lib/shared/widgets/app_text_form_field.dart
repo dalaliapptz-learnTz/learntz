@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../core/design_system/components/app_text_field.dart';
+
+/// Backwards-compatible wrapper around canonical AppTextField
 class AppTextFormField extends StatelessWidget {
   const AppTextFormField({
     required this.label,
+    super.key,
     this.hint,
     this.controller,
     this.validator,
     this.obscureText = false,
-    super.key,
   });
 
   final String label;
@@ -18,11 +21,12 @@ class AppTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return AppTextField(
+      label: label,
+      hint: hint,
       controller: controller,
       validator: validator,
       obscureText: obscureText,
-      decoration: InputDecoration(labelText: label, hintText: hint),
     );
   }
 }

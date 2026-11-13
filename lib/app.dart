@@ -19,7 +19,9 @@ class LearnTzApp extends ConsumerWidget {
         return l10n.appTitle(country.productName, l10n.tagline);
       },
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.forCountry(country),
+      theme: AppTheme.lightTheme(country),
+      darkTheme: AppTheme.darkTheme(country),
+      themeMode: ThemeMode.light,
       routerConfig: ref.watch(appRouterProvider),
       locale: ref.watch(appLocaleProvider),
       supportedLocales: AppLocalizations.supportedLocales,

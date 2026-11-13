@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/routing/app_router.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/design_system/components/components.dart';
 import '../../core/state/app_providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -95,33 +96,14 @@ class _BrandMark extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productName = ref.watch(selectedCountryProvider).productName;
-    final primary = Theme.of(context).colorScheme.primary;
+    final country = ref.watch(selectedCountryProvider);
     return Semantics(
-      label: productName,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.menu_book_rounded, color: Colors.white),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            productName,
-            style: const TextStyle(
-              color: AppColors.ink,
-              fontSize: 21,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
-            ),
-          ),
-        ],
+      label: country.productName,
+      child: AppBrandLogo(
+        height: 36,
+        productName: country.productName,
+        countryBadge: country.countryCode,
+        onTap: () => context.go(AppRoutes.home),
       ),
     );
   }
