@@ -194,6 +194,51 @@ class _StubLearningRepository implements LearningRepository {
       subjectsBreakdown: const [],
     );
   }
+
+  @override
+  Future<LearnerRevisionOverview> getLearnerRevisionOverview(
+    String learnerId,
+  ) async {
+    return LearnerRevisionOverview(
+      learnerId: learnerId,
+      curriculumId: 'curriculum-1',
+      readinessIndex: 75,
+      totalCurriculumTopics: 10,
+      proficientTopicsCount: 3,
+      masteredTopicsCount: 4,
+      weakTopics: const [],
+      flashcardDecksCount: 2,
+      learningResourcesCount: 4,
+    );
+  }
+
+  @override
+  Future<List<QuestionBankItem>> getWeakTopicDrillQuestions(
+    String learnerId, {
+    int limit = 10,
+  }) async =>
+      const [];
+
+  @override
+  Future<List<FlashcardDeck>> getFlashcardDecks({
+    String? learnerId,
+    String? subjectId,
+  }) async =>
+      const [];
+
+  @override
+  Future<List<FlashcardItem>> getDeckFlashcards(String deckId) async =>
+      const [];
+
+  @override
+  Future<List<LearningResourceItem>> getLearningResources({
+    required String countryCode,
+    String? curriculumId,
+    String? subjectId,
+    String? resourceType,
+    int limit = 50,
+  }) async =>
+      const [];
 }
 
 void main() {

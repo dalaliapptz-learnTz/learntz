@@ -76,30 +76,33 @@ class LearningHubScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.learningHubTitle,
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.learningHubSubtitle,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ],
-                    ),
+                  Text(
+                    l10n.learningHubTitle,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.learningHubSubtitle,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
+                      OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.revisionCentre),
+                        icon: const Icon(Icons.assignment_turned_in_outlined, size: 18),
+                        label: Text(l10n.revisionCentreTitle),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.resourceLibrary),
+                        icon: const Icon(Icons.menu_book_outlined, size: 18),
+                        label: Text(l10n.resourceLibraryTitle),
+                      ),
                       OutlinedButton.icon(
                         onPressed: () => context.go(AppRoutes.curriculumExplorer),
                         icon: const Icon(Icons.explore_outlined, size: 18),

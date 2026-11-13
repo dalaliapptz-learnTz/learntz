@@ -101,3 +101,55 @@ final learnerMasteryReportProvider = FutureProvider.autoDispose
       if (repository == null) throw const AuthNotConfiguredException();
       return repository.getLearnerMasteryReport(learnerId);
     });
+
+final learnerRevisionOverviewProvider = FutureProvider.autoDispose
+    .family<LearnerRevisionOverview, String>((ref, learnerId) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getLearnerRevisionOverview(learnerId);
+    });
+
+final weakTopicDrillQuestionsProvider = FutureProvider.autoDispose
+    .family<List<QuestionBankItem>, String>((ref, learnerId) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getWeakTopicDrillQuestions(learnerId, limit: 10);
+    });
+
+final flashcardDecksProvider = FutureProvider.autoDispose.family<
+  List<FlashcardDeck>,
+  ({String? learnerId, String? subjectId})
+>((ref, args) async {
+  final repository = ref.watch(learningRepositoryProvider);
+  if (repository == null) throw const AuthNotConfiguredException();
+  return repository.getFlashcardDecks(
+    learnerId: args.learnerId,
+    subjectId: args.subjectId,
+  );
+});
+
+final deckFlashcardsProvider = FutureProvider.autoDispose
+    .family<List<FlashcardItem>, String>((ref, deckId) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getDeckFlashcards(deckId);
+    });
+
+final learningResourcesProvider = FutureProvider.autoDispose.family<
+  List<LearningResourceItem>,
+  ({
+    String countryCode,
+    String? curriculumId,
+    String? subjectId,
+    String? resourceType,
+  })
+>((ref, args) async {
+  final repository = ref.watch(learningRepositoryProvider);
+  if (repository == null) throw const AuthNotConfiguredException();
+  return repository.getLearningResources(
+    countryCode: args.countryCode,
+    curriculumId: args.curriculumId,
+    subjectId: args.subjectId,
+    resourceType: args.resourceType,
+  );
+});

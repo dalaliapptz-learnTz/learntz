@@ -1010,3 +1010,229 @@ class LearnerMasteryReport {
     );
   }
 }
+
+class LearnerWeakTopicItem {
+  const LearnerWeakTopicItem({
+    required this.topicId,
+    required this.topicTitle,
+    required this.subjectId,
+    required this.subjectName,
+    required this.accuracyRate,
+    required this.quizzesAttempted,
+    required this.masteryStatus,
+  });
+
+  final String topicId;
+  final String topicTitle;
+  final String subjectId;
+  final String subjectName;
+  final double accuracyRate;
+  final int quizzesAttempted;
+  final String masteryStatus;
+
+  factory LearnerWeakTopicItem.fromJson(Map<String, dynamic> json) {
+    return LearnerWeakTopicItem(
+      topicId: json['topic_id'] as String,
+      topicTitle: json['topic_title'] as String,
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String,
+      accuracyRate: (json['accuracy_rate'] as num?)?.toDouble() ?? 0.0,
+      quizzesAttempted: (json['quizzes_attempted'] as num?)?.toInt() ?? 0,
+      masteryStatus: json['mastery_status'] as String? ?? 'not_started',
+    );
+  }
+}
+
+class LearnerRevisionOverview {
+  const LearnerRevisionOverview({
+    required this.learnerId,
+    required this.curriculumId,
+    required this.readinessIndex,
+    required this.totalCurriculumTopics,
+    required this.proficientTopicsCount,
+    required this.masteredTopicsCount,
+    required this.weakTopics,
+    required this.flashcardDecksCount,
+    required this.learningResourcesCount,
+  });
+
+  final String learnerId;
+  final String curriculumId;
+  final int readinessIndex;
+  final int totalCurriculumTopics;
+  final int proficientTopicsCount;
+  final int masteredTopicsCount;
+  final List<LearnerWeakTopicItem> weakTopics;
+  final int flashcardDecksCount;
+  final int learningResourcesCount;
+
+  factory LearnerRevisionOverview.fromJson(Map<String, dynamic> json) {
+    final rawWeak = json['weak_topics'] as List<dynamic>? ?? const [];
+    return LearnerRevisionOverview(
+      learnerId: json['learner_id'] as String,
+      curriculumId: json['curriculum_id'] as String,
+      readinessIndex: (json['readiness_index'] as num?)?.toInt() ?? 0,
+      totalCurriculumTopics: (json['total_curriculum_topics'] as num?)?.toInt() ?? 0,
+      proficientTopicsCount: (json['proficient_topics_count'] as num?)?.toInt() ?? 0,
+      masteredTopicsCount: (json['mastered_topics_count'] as num?)?.toInt() ?? 0,
+      weakTopics: rawWeak
+          .map((item) => LearnerWeakTopicItem.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList(growable: false),
+      flashcardDecksCount: (json['flashcard_decks_count'] as num?)?.toInt() ?? 0,
+      learningResourcesCount: (json['learning_resources_count'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+class FlashcardDeck {
+  const FlashcardDeck({
+    required this.id,
+    required this.countryCode,
+    required this.curriculumId,
+    required this.subjectId,
+    required this.subjectName,
+    this.topicId,
+    this.topicTitle,
+    required this.title,
+    required this.description,
+    required this.cardCount,
+    required this.estimatedMinutes,
+    this.createdAt,
+  });
+
+  final String id;
+  final String countryCode;
+  final String curriculumId;
+  final String subjectId;
+  final String subjectName;
+  final String? topicId;
+  final String? topicTitle;
+  final String title;
+  final String description;
+  final int cardCount;
+  final int estimatedMinutes;
+  final DateTime? createdAt;
+
+  factory FlashcardDeck.fromJson(Map<String, dynamic> json) {
+    return FlashcardDeck(
+      id: json['id'] as String,
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      curriculumId: json['curriculum_id'] as String? ?? '',
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String? ?? '',
+      topicId: json['topic_id'] as String?,
+      topicTitle: json['topic_title'] as String?,
+      title: json['title'] as String,
+      description: json['description'] as String? ?? '',
+      cardCount: (json['card_count'] as num?)?.toInt() ?? 0,
+      estimatedMinutes: (json['estimated_minutes'] as num?)?.toInt() ?? 5,
+      createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at'] as String) : null,
+    );
+  }
+}
+
+class FlashcardItem {
+  const FlashcardItem({
+    required this.id,
+    required this.deckId,
+    required this.frontPrompt,
+    required this.backSolution,
+    this.hint,
+    this.explanation,
+    required this.displayOrder,
+  });
+
+  final String id;
+  final String deckId;
+  final String frontPrompt;
+  final String backSolution;
+  final String? hint;
+  final String? explanation;
+  final int displayOrder;
+
+  factory FlashcardItem.fromJson(Map<String, dynamic> json) {
+    return FlashcardItem(
+      id: json['id'] as String,
+      deckId: json['deck_id'] as String,
+      frontPrompt: json['front_prompt'] as String,
+      backSolution: json['back_solution'] as String,
+      hint: json['hint'] as String?,
+      explanation: json['explanation'] as String?,
+      displayOrder: (json['display_order'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+class LearningResourceItem {
+  const LearningResourceItem({
+    required this.id,
+    required this.countryCode,
+    required this.curriculumId,
+    this.educationLevelId,
+    this.gradeId,
+    required this.subjectId,
+    required this.subjectName,
+    this.topicId,
+    this.topicTitle,
+    required this.title,
+    required this.description,
+    required this.resourceType,
+    required this.fileUrl,
+    required this.fileFormat,
+    this.fileSizeBytes,
+    this.durationSeconds,
+    required this.authorOrPublisher,
+    required this.isOfficial,
+    required this.isDownloadable,
+    required this.isPremium,
+    this.metadata = const {},
+  });
+
+  final String id;
+  final String countryCode;
+  final String curriculumId;
+  final String? educationLevelId;
+  final String? gradeId;
+  final String subjectId;
+  final String subjectName;
+  final String? topicId;
+  final String? topicTitle;
+  final String title;
+  final String description;
+  final String resourceType;
+  final String fileUrl;
+  final String fileFormat;
+  final int? fileSizeBytes;
+  final int? durationSeconds;
+  final String authorOrPublisher;
+  final bool isOfficial;
+  final bool isDownloadable;
+  final bool isPremium;
+  final Map<String, dynamic> metadata;
+
+  factory LearningResourceItem.fromJson(Map<String, dynamic> json) {
+    return LearningResourceItem(
+      id: json['id'] as String,
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      curriculumId: json['curriculum_id'] as String? ?? '',
+      educationLevelId: json['education_level_id'] as String?,
+      gradeId: json['grade_id'] as String?,
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String? ?? '',
+      topicId: json['topic_id'] as String?,
+      topicTitle: json['topic_title'] as String?,
+      title: json['title'] as String,
+      description: json['description'] as String? ?? '',
+      resourceType: json['resource_type'] as String,
+      fileUrl: json['file_url'] as String,
+      fileFormat: json['file_format'] as String? ?? 'pdf',
+      fileSizeBytes: (json['file_size_bytes'] as num?)?.toInt(),
+      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
+      authorOrPublisher: json['author_or_publisher'] as String? ?? 'LearnTZ Editorial',
+      isOfficial: json['is_official'] as bool? ?? true,
+      isDownloadable: json['is_downloadable'] as bool? ?? true,
+      isPremium: json['is_premium'] as bool? ?? false,
+      metadata: json['metadata'] is Map ? Map<String, dynamic>.from(json['metadata'] as Map) : const {},
+    );
+  }
+}

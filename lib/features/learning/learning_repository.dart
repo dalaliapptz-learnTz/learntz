@@ -302,6 +302,103 @@ class LearningRepository {
     );
   }
 
+  Future<LearnerRevisionOverview> getLearnerRevisionOverview(
+    String learnerId,
+  ) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_learner_revision_overview',
+      params: {'p_learner_id': learnerId},
+    );
+    return LearnerRevisionOverview.fromJson(
+      Map<String, dynamic>.from(result as Map),
+    );
+  }
+
+  Future<List<QuestionBankItem>> getWeakTopicDrillQuestions(
+    String learnerId, {
+    int limit = 10,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_weak_topic_drill_questions',
+      params: {
+        'p_learner_id': learnerId,
+        'p_limit': limit,
+      },
+    );
+    return (result as List<dynamic>)
+        .map(
+          (item) => QuestionBankItem.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  Future<List<FlashcardDeck>> getFlashcardDecks({
+    String? learnerId,
+    String? subjectId,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_flashcard_decks',
+      params: {
+        'p_learner_id': ?learnerId,
+        'p_subject_id': ?subjectId,
+      },
+    );
+    return (result as List<dynamic>)
+        .map(
+          (item) => FlashcardDeck.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  Future<List<FlashcardItem>> getDeckFlashcards(String deckId) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_deck_flashcards',
+      params: {'p_deck_id': deckId},
+    );
+    return (result as List<dynamic>)
+        .map(
+          (item) => FlashcardItem.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  Future<List<LearningResourceItem>> getLearningResources({
+    required String countryCode,
+    String? curriculumId,
+    String? subjectId,
+    String? resourceType,
+    int limit = 50,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_learning_resources',
+      params: {
+        'p_country_code': countryCode,
+        'p_curriculum_id': ?curriculumId,
+        'p_subject_id': ?subjectId,
+        'p_resource_type': ?resourceType,
+        'p_limit': limit,
+      },
+    );
+    return (result as List<dynamic>)
+        .map(
+          (item) => LearningResourceItem.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+        )
+        .toList(growable: false);
+  }
+
   User _requireUser() {
     final user = _client.auth.currentUser;
     if (user == null) {

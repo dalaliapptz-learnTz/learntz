@@ -634,4 +634,148 @@ void main() {
     await client.dispose();
     await server.close();
   });
+
+  test('LearningRepository invokes Phase 2 revision and resource library RPCs correctly', () async {
+    final server = await _FakeSupabaseServer.start((request, body) async {
+      final path = request.uri.path;
+      if (path == '/auth/v1/token') {
+        _writeJson(request, 200, _sessionPayload());
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_learner_revision_overview') {
+        expect(body['p_learner_id'], 'learner-301');
+        _writeJson(request, 200, {
+          'learner_id': 'learner-301',
+          'curriculum_id': 'curr-1',
+          'readiness_index': 70,
+          'total_curriculum_topics': 12,
+          'proficient_topics_count': 4,
+          'mastered_topics_count': 3,
+          'weak_topics': [
+            {
+              'topic_id': 'top-1',
+              'topic_title': 'Irabu na Silabi',
+              'subject_id': 'subj-1',
+              'subject_name': 'Kiswahili',
+              'accuracy_rate': 45.0,
+              'quizzes_attempted': 2,
+              'mastery_status': 'in_progress',
+            },
+          ],
+          'flashcard_decks_count': 3,
+          'learning_resources_count': 5,
+        });
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_weak_topic_drill_questions') {
+        expect(body['p_learner_id'], 'learner-301');
+        _writeJson(request, 200, [
+          {
+            'id': 'q-drill-1',
+            'topic_id': 'top-1',
+            'lesson_id': 'les-1',
+            'question_type': 'multiple_choice',
+            'difficulty_level': 'easy',
+            'question_text': 'Silabi inayotokana na B + A ni nini?',
+            'options': ['BA', 'BE', 'BO'],
+            'cognitive_tier': 'knowledge',
+            'display_order': 1,
+          },
+        ]);
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_flashcard_decks') {
+        _writeJson(request, 200, [
+          {
+            'id': 'deck-1',
+            'country_code': 'TZ',
+            'curriculum_id': 'curr-1',
+            'subject_id': 'subj-1',
+            'subject_name': 'Kiswahili',
+            'title': 'Kadi za Silabi',
+            'description': 'Mazoezi ya haraka ya silabi',
+            'card_count': 4,
+            'estimated_minutes': 5,
+          },
+        ]);
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_deck_flashcards') {
+        expect(body['p_deck_id'], 'deck-1');
+        _writeJson(request, 200, [
+          {
+            'id': 'card-1',
+            'deck_id': 'deck-1',
+            'front_prompt': 'Irabu 5 ni zipi?',
+            'back_solution': 'A, E, I, O, U',
+            'hint': 'Sauti za msingi',
+            'explanation': 'Irabu zote tano za Kiswahili',
+            'display_order': 1,
+          },
+        ]);
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_learning_resources') {
+        expect(body['p_country_code'], 'TZ');
+        expect(body['p_resource_type'], 'textbook');
+        _writeJson(request, 200, [
+          {
+            'id': 'res-1',
+            'country_code': 'TZ',
+            'curriculum_id': 'curr-1',
+            'subject_id': 'subj-1',
+            'subject_name': 'Kiswahili',
+            'title': 'Kitabu cha Kiswahili Darasa la 1',
+            'description': 'Kitabu rasmi cha kiada TIE',
+            'resource_type': 'textbook',
+            'file_url': 'https://cdn.learntz.org/tz/std1_swahili.pdf',
+            'file_format': 'pdf',
+            'file_size_bytes': 15000000,
+            'author_or_publisher': 'TIE',
+            'is_official': true,
+            'is_downloadable': true,
+            'is_premium': false,
+            'metadata': {},
+          },
+        ]);
+        return;
+      }
+      _writeJson(request, 404, {'message': 'Not found'});
+    });
+
+    final client = await _signedInClient(server);
+    final repo = LearningRepository(client);
+
+    final overview = await repo.getLearnerRevisionOverview('learner-301');
+    expect(overview.readinessIndex, 70);
+    expect(overview.weakTopics.length, 1);
+    expect(overview.weakTopics.first.topicTitle, 'Irabu na Silabi');
+    expect(overview.flashcardDecksCount, 3);
+    expect(overview.learningResourcesCount, 5);
+
+    final drillQuestions = await repo.getWeakTopicDrillQuestions('learner-301');
+    expect(drillQuestions.length, 1);
+    expect(drillQuestions.first.questionText, contains('B + A'));
+
+    final decks = await repo.getFlashcardDecks(learnerId: 'learner-301');
+    expect(decks.length, 1);
+    expect(decks.first.title, 'Kadi za Silabi');
+    expect(decks.first.cardCount, 4);
+
+    final cards = await repo.getDeckFlashcards('deck-1');
+    expect(cards.length, 1);
+    expect(cards.first.frontPrompt, contains('Irabu 5'));
+    expect(cards.first.backSolution, 'A, E, I, O, U');
+
+    final resources = await repo.getLearningResources(
+      countryCode: 'TZ',
+      resourceType: 'textbook',
+    );
+    expect(resources.length, 1);
+    expect(resources.first.title, contains('Kitabu cha Kiswahili'));
+    expect(resources.first.isOfficial, isTrue);
+
+    await client.dispose();
+    await server.close();
+  });
 }

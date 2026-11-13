@@ -17,8 +17,11 @@ import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learners/learner_screens.dart';
+import '../../features/learning/flashcard_study_screen.dart';
 import '../../features/learning/learning_screens.dart';
 import '../../features/learning/parent_dashboard_screen.dart';
+import '../../features/learning/resource_library_screen.dart';
+import '../../features/learning/revision_centre_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 
@@ -41,6 +44,10 @@ abstract final class AppRoutes {
   static const parentDashboard = '/account/parent-dashboard';
   static const curriculumExplorer = '/curriculum/explorer';
   static const learn = '/learn';
+  static const revisionCentre = '/learn/revision';
+  static String flashcardStudy(String deckId) =>
+      '/learn/revision/flashcards/$deckId';
+  static const resourceLibrary = '/learn/resources';
   static String lessonReader(String lessonId) => '/learn/lessons/$lessonId';
   static String lessonQuiz(String lessonId) => '/learn/lessons/$lessonId/quiz';
   static const admin = '/admin';
@@ -218,6 +225,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.learn,
             builder: (context, state) => const LearningHubScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.revisionCentre,
+            builder: (context, state) => const RevisionCentreScreen(),
+          ),
+          GoRoute(
+            path: '/learn/revision/flashcards/:deckId',
+            builder: (context, state) => FlashcardStudyScreen(
+              deckId: state.pathParameters['deckId']!,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.resourceLibrary,
+            builder: (context, state) => const ResourceLibraryScreen(),
           ),
           GoRoute(
             path: '/learn/lessons/:lessonId',
