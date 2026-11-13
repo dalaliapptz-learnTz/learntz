@@ -24,6 +24,7 @@ import '../../features/learning/resource_library_screen.dart';
 import '../../features/learning/revision_centre_screen.dart';
 import '../../features/social/screens/community_feed_screen.dart';
 import '../../features/social/screens/communities_hub_screen.dart';
+import '../../features/social/screens/challenges_and_leaderboard_screen.dart';
 import '../../features/social/screens/learner_social_profile_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
@@ -56,6 +57,7 @@ abstract final class AppRoutes {
   static const admin = '/admin';
   static const curriculumAdmin = '/admin/curriculum';
   static const addLearner = '/account/learners/add';
+  static const challenges = '/social/challenges';
   static const communities = '/social/communities';
   static const communityFeed = '/social/feed';
   static const socialProfile = '/social/profile';
@@ -287,6 +289,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.communities,
             builder: (context, state) => const CommunitiesHubScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.challenges,
+            builder: (context, state) =>
+                const ChallengesAndLeaderboardScreen(),
           ),
           GoRoute(
             path: '/account/learners/:learnerId',

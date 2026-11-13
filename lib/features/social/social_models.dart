@@ -531,3 +531,175 @@ class ChannelMessage {
       };
 }
 
+/// Academic challenge and competition model.
+class AcademicChallenge {
+  final String id;
+  final String title;
+  final String description;
+  final String challengeType; // 'daily_quiz' | 'weekly_olympiad' | 'monthly_championship' | 'speed_math' | 'science_quest'
+  final int rewardPoints;
+  final String? badgeKey;
+  final DateTime startsAt;
+  final DateTime endsAt;
+  final String status;
+  final int totalQuestions;
+  final String? subjectName;
+  final String? attemptId;
+  final String? attemptStatus;
+  final int? learnerScore;
+  final DateTime? completedAt;
+
+  const AcademicChallenge({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.challengeType,
+    this.rewardPoints = 50,
+    this.badgeKey,
+    required this.startsAt,
+    required this.endsAt,
+    this.status = 'active',
+    this.totalQuestions = 5,
+    this.subjectName,
+    this.attemptId,
+    this.attemptStatus,
+    this.learnerScore,
+    this.completedAt,
+  });
+
+  factory AcademicChallenge.fromJson(Map<String, dynamic> json) {
+    return AcademicChallenge(
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      challengeType: json['challenge_type'] as String? ?? 'daily_quiz',
+      rewardPoints: (json['reward_points'] as num?)?.toInt() ?? 50,
+      badgeKey: json['badge_key'] as String?,
+      startsAt: json['starts_at'] != null
+          ? DateTime.tryParse(json['starts_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      endsAt: json['ends_at'] != null
+          ? DateTime.tryParse(json['ends_at'].toString()) ??
+              DateTime.now().add(const Duration(days: 7))
+          : DateTime.now().add(const Duration(days: 7)),
+      status: json['status'] as String? ?? 'active',
+      totalQuestions: (json['total_questions'] as num?)?.toInt() ?? 5,
+      subjectName: json['subject_name'] as String?,
+      attemptId: json['attempt_id'] as String?,
+      attemptStatus: json['attempt_status'] as String?,
+      learnerScore: (json['learner_score'] as num?)?.toInt(),
+      completedAt: json['completed_at'] != null
+          ? DateTime.tryParse(json['completed_at'].toString())
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'challenge_type': challengeType,
+        'reward_points': rewardPoints,
+        'badge_key': badgeKey,
+        'starts_at': startsAt.toIso8601String(),
+        'ends_at': endsAt.toIso8601String(),
+        'status': status,
+        'total_questions': totalQuestions,
+        'subject_name': subjectName,
+        'attempt_id': attemptId,
+        'attempt_status': attemptStatus,
+        'learner_score': learnerScore,
+        'completed_at': completedAt?.toIso8601String(),
+      };
+}
+
+/// Educational leaderboard entry.
+class LeaderboardEntry {
+  final int rank;
+  final String learnerId;
+  final String displayName;
+  final String avatarPreset;
+  final int points;
+  final int badgesCount;
+  final String? gradeName;
+  final String? schoolName;
+  final String countryCode;
+
+  const LeaderboardEntry({
+    required this.rank,
+    required this.learnerId,
+    required this.displayName,
+    required this.avatarPreset,
+    required this.points,
+    required this.badgesCount,
+    this.gradeName,
+    this.schoolName,
+    required this.countryCode,
+  });
+
+  factory LeaderboardEntry.fromJson(Map<String, dynamic> json) {
+    return LeaderboardEntry(
+      rank: (json['rank'] as num?)?.toInt() ?? 1,
+      learnerId: json['learner_id'] as String? ?? '',
+      displayName: json['display_name'] as String? ?? 'Scholar',
+      avatarPreset: json['avatar_preset'] as String? ?? 'owl_scholar',
+      points: (json['points'] as num?)?.toInt() ?? 0,
+      badgesCount: (json['badges_count'] as num?)?.toInt() ?? 0,
+      gradeName: json['grade_name'] as String?,
+      schoolName: json['school_name'] as String?,
+      countryCode: json['country_code'] as String? ?? 'TZ',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'rank': rank,
+        'learner_id': learnerId,
+        'display_name': displayName,
+        'avatar_preset': avatarPreset,
+        'points': points,
+        'badges_count': badgesCount,
+        'grade_name': gradeName,
+        'school_name': schoolName,
+        'country_code': countryCode,
+      };
+}
+
+/// Achievement Badge catalog item.
+class AchievementBadge {
+  final String badgeKey;
+  final String name;
+  final String description;
+  final String category;
+  final String iconName;
+  final int pointsRequired;
+
+  const AchievementBadge({
+    required this.badgeKey,
+    required this.name,
+    required this.description,
+    required this.category,
+    required this.iconName,
+    required this.pointsRequired,
+  });
+
+  factory AchievementBadge.fromJson(Map<String, dynamic> json) {
+    return AchievementBadge(
+      badgeKey: json['badge_key'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      category: json['category'] as String? ?? 'learning',
+      iconName: json['icon_name'] as String? ?? 'military_tech',
+      pointsRequired: (json['points_required'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'badge_key': badgeKey,
+        'name': name,
+        'description': description,
+        'category': category,
+        'icon_name': iconName,
+        'points_required': pointsRequired,
+      };
+}
+

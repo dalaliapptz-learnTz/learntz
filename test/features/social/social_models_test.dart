@@ -209,5 +209,60 @@ void main() {
       expect(msg.authorDisplayName, 'Upendo S.');
       expect(msg.content, 'Hello classmates!');
     });
+
+    test('AcademicChallenge model serialization', () {
+      final json = {
+        'id': 'chal-1',
+        'title': 'Speed Math Sprint',
+        'description': 'Answer 5 calculations',
+        'challenge_type': 'speed_math',
+        'reward_points': 50,
+        'badge_key': 'math_champion',
+        'starts_at': now.toIso8601String(),
+        'ends_at': now.add(const Duration(days: 7)).toIso8601String(),
+        'status': 'active',
+        'total_questions': 5,
+        'subject_name': 'Mathematics',
+      };
+
+      final chal = AcademicChallenge.fromJson(json);
+      expect(chal.id, 'chal-1');
+      expect(chal.title, 'Speed Math Sprint');
+      expect(chal.rewardPoints, 50);
+      expect(chal.badgeKey, 'math_champion');
+
+      final serialized = chal.toJson();
+      expect(serialized['reward_points'], 50);
+    });
+
+    test('LeaderboardEntry and AchievementBadge models', () {
+      final lbJson = {
+        'rank': 1,
+        'learner_id': 'l-1',
+        'display_name': 'Faraja J.',
+        'avatar_preset': 'owl_scholar',
+        'points': 250,
+        'badges_count': 3,
+        'country_code': 'TZ',
+      };
+
+      final entry = LeaderboardEntry.fromJson(lbJson);
+      expect(entry.rank, 1);
+      expect(entry.displayName, 'Faraja J.');
+      expect(entry.points, 250);
+
+      final badgeJson = {
+        'badge_key': 'math_champion',
+        'name': 'Math Champion',
+        'description': 'Completed speed math',
+        'category': 'competition',
+        'icon_name': 'calculate',
+        'points_required': 50,
+      };
+
+      final badge = AchievementBadge.fromJson(badgeJson);
+      expect(badge.name, 'Math Champion');
+      expect(badge.category, 'competition');
+    });
   });
 }

@@ -389,4 +389,86 @@ class SocialRepository {
     }
     throw StateError('Invalid response when sending channel message: $response');
   }
+
+  /// Fetches active academic challenges and competitions for a learner.
+  Future<List<AcademicChallenge>> getActiveChallenges(String learnerId) async {
+    final response = await _supabase.rpc(
+      'get_active_challenges',
+      params: {'p_learner_id': learnerId},
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              AcademicChallenge.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Enters a challenge attempt.
+  Future<Map<String, dynamic>> participateInChallenge({
+    required String challengeId,
+    required String learnerId,
+  }) async {
+    final response = await _supabase.rpc(
+      'participate_in_challenge',
+      params: {
+        'p_challenge_id': challengeId,
+        'p_learner_id': learnerId,
+      },
+    );
+
+    if (response is Map<String, dynamic>) return response;
+    if (response is Map) return Map<String, dynamic>.from(response);
+    return {'status': 'in_progress'};
+  }
+
+  /// Submits completed challenge attempt, awarding points and badges.
+  Future<Map<String, dynamic>> submitChallengeAttempt({
+    required String challengeId,
+    required String learnerId,
+    required int score,
+    required int timeSpentSeconds,
+    List<dynamic> answers = const [],
+  }) async {
+    final response = await _supabase.rpc(
+      'submit_challenge_attempt',
+      params: {
+        'p_challenge_id': challengeId,
+        'p_learner_id': learnerId,
+        'p_score': score,
+        'p_time_spent_seconds': timeSpentSeconds,
+        'p_answers': answers,
+      },
+    );
+
+    if (response is Map<String, dynamic>) return response;
+    if (response is Map) return Map<String, dynamic>.from(response);
+    return {'score': score};
+  }
+
+  /// Fetches educational leaderboard (ranked pseudonyms, points, badges).
+  Future<List<LeaderboardEntry>> getLeaderboard({
+    String scope = 'national',
+    String scopeId = 'TZ',
+    int limit = 25,
+  }) async {
+    final response = await _supabase.rpc(
+      'get_community_leaderboard',
+      params: {
+        'p_scope': scope,
+        'p_scope_id': scopeId,
+        'p_limit': limit,
+      },
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              LeaderboardEntry.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
 }

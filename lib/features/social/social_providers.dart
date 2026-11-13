@@ -74,3 +74,20 @@ final channelMessagesProvider = FutureProvider.family<
     viewerLearnerId: args.viewerId,
   );
 });
+
+final activeChallengesProvider =
+    FutureProvider.family<List<AcademicChallenge>, String>((ref, learnerId) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getActiveChallenges(learnerId);
+});
+
+final communityLeaderboardProvider = FutureProvider.family<
+    List<LeaderboardEntry>,
+    ({String scope, String scopeId, int limit})>((ref, args) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getLeaderboard(
+    scope: args.scope,
+    scopeId: args.scopeId,
+    limit: args.limit,
+  );
+});

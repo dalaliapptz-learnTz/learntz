@@ -231,6 +231,52 @@ void main() {
         return;
       }
 
+      if (path == '/rest/v1/rpc/get_active_challenges') {
+        recordedCalls['active_challenges'] = body;
+        _writeJson(request, 200, [
+          {
+            'id': 'chal-1',
+            'title': 'Speed Math Sprint',
+            'description': 'Rapid mental math',
+            'challenge_type': 'speed_math',
+            'reward_points': 50,
+            'starts_at': DateTime.now().toIso8601String(),
+            'ends_at': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
+            'status': 'active',
+            'total_questions': 5,
+          }
+        ]);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/submit_challenge_attempt') {
+        recordedCalls['submit_challenge'] = body;
+        _writeJson(request, 200, {
+          'challenge_id': body['p_challenge_id'],
+          'learner_id': body['p_learner_id'],
+          'score': body['p_score'],
+          'earned_points': 50,
+          'awarded_badge': 'math_champion',
+        });
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/get_community_leaderboard') {
+        recordedCalls['leaderboard'] = body;
+        _writeJson(request, 200, [
+          {
+            'rank': 1,
+            'learner_id': 'l-1',
+            'display_name': 'Faraja J.',
+            'avatar_preset': 'owl_scholar',
+            'points': 200,
+            'badges_count': 2,
+            'country_code': 'TZ',
+          }
+        ]);
+        return;
+      }
+
       _writeJson(request, 404, {'message': 'Not found: $path'});
     });
 
@@ -386,5 +432,28 @@ void main() {
     );
     expect(msg.content, 'Study session at 4pm!');
     expect(recordedCalls['send_msg']['p_content'], 'Study session at 4pm!');
+  });
+
+  test('getActiveChallenges, submitChallengeAttempt, and getLeaderboard invoke RPCs', () async {
+    final challenges = await repository.getActiveChallenges('learner-1');
+    expect(challenges.length, 1);
+    expect(challenges.first.title, 'Speed Math Sprint');
+    expect(recordedCalls['active_challenges']['p_learner_id'], 'learner-1');
+
+    final attempt = await repository.submitChallengeAttempt(
+      challengeId: 'chal-1',
+      learnerId: 'learner-1',
+      score: 100,
+      timeSpentSeconds: 30,
+    );
+    expect(attempt['earned_points'], 50);
+    expect(attempt['awarded_badge'], 'math_champion');
+    expect(recordedCalls['submit_challenge']['p_score'], 100);
+
+    final leaderboard = await repository.getLeaderboard(scope: 'national', scopeId: 'TZ');
+    expect(leaderboard.length, 1);
+    expect(leaderboard.first.displayName, 'Faraja J.');
+    expect(leaderboard.first.rank, 1);
+    expect(recordedCalls['leaderboard']['p_scope'], 'national');
   });
 }
