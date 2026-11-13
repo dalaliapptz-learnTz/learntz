@@ -125,6 +125,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isProtected =
           path == AppRoutes.account ||
           path.startsWith('${AppRoutes.account}/') ||
+          path == AppRoutes.admin ||
+          path.startsWith('${AppRoutes.admin}/') ||
           path == AppRoutes.learn ||
           path.startsWith('${AppRoutes.learn}/');
       if (isProtected && !isSignedIn) {
