@@ -264,5 +264,43 @@ void main() {
       expect(badge.name, 'Math Champion');
       expect(badge.category, 'competition');
     });
+
+    test('SocialModerationReport and SocialNotification models', () {
+      final repJson = {
+        'id': 'rep-1',
+        'reporter_learner_id': 'l-1',
+        'reporter_display_name': 'Tumaini M.',
+        'target_type': 'post',
+        'target_id': 'post-1',
+        'reason_category': 'misinformation',
+        'details': 'Needs verification',
+        'status': 'pending',
+        'created_at': now.toIso8601String(),
+      };
+
+      final report = SocialModerationReport.fromJson(repJson);
+      expect(report.id, 'rep-1');
+      expect(report.reasonCategory, 'misinformation');
+      expect(report.status, 'pending');
+
+      final notifJson = {
+        'id': 'notif-1',
+        'recipient_learner_id': 'l-1',
+        'actor_learner_id': 'l-2',
+        'actor_display_name': 'Rehema K.',
+        'actor_avatar_preset': 'lion_reader',
+        'notification_type': 'reaction_received',
+        'title': 'Reaction on your post',
+        'body': 'Rehema reacted insightful to your question',
+        'target_route': '/social/feed',
+        'is_read': false,
+        'created_at': now.toIso8601String(),
+      };
+
+      final notif = SocialNotification.fromJson(notifJson);
+      expect(notif.id, 'notif-1');
+      expect(notif.notificationType, 'reaction_received');
+      expect(notif.isRead, isFalse);
+    });
   });
 }

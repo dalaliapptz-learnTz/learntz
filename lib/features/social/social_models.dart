@@ -703,3 +703,122 @@ class AchievementBadge {
       };
 }
 
+/// Social moderation report model for reporting inappropriate educational content.
+class SocialModerationReport {
+  final String id;
+  final String reporterLearnerId;
+  final String? reporterDisplayName;
+  final String targetType; // 'post' | 'comment' | 'channel_message' | 'learner_profile'
+  final String targetId;
+  final String reasonCategory;
+  final String? details;
+  final String status;
+  final String? targetPreview;
+  final DateTime createdAt;
+
+  const SocialModerationReport({
+    required this.id,
+    required this.reporterLearnerId,
+    this.reporterDisplayName,
+    required this.targetType,
+    required this.targetId,
+    required this.reasonCategory,
+    this.details,
+    this.status = 'pending',
+    this.targetPreview,
+    required this.createdAt,
+  });
+
+  factory SocialModerationReport.fromJson(Map<String, dynamic> json) {
+    return SocialModerationReport(
+      id: json['id'] as String? ?? '',
+      reporterLearnerId: json['reporter_learner_id'] as String? ?? '',
+      reporterDisplayName: json['reporter_display_name'] as String?,
+      targetType: json['target_type'] as String? ?? 'post',
+      targetId: json['target_id'] as String? ?? '',
+      reasonCategory: json['reason_category'] as String? ?? 'other',
+      details: json['details'] as String?,
+      status: json['status'] as String? ?? 'pending',
+      targetPreview: json['target_preview'] as String?,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'reporter_learner_id': reporterLearnerId,
+        'reporter_display_name': reporterDisplayName,
+        'target_type': targetType,
+        'target_id': targetId,
+        'reason_category': reasonCategory,
+        'details': details,
+        'status': status,
+        'target_preview': targetPreview,
+        'created_at': createdAt.toIso8601String(),
+      };
+}
+
+/// Social notification model.
+class SocialNotification {
+  final String id;
+  final String recipientLearnerId;
+  final String? actorLearnerId;
+  final String? actorDisplayName;
+  final String? actorAvatarPreset;
+  final String notificationType;
+  final String title;
+  final String body;
+  final String? targetRoute;
+  final bool isRead;
+  final DateTime createdAt;
+
+  const SocialNotification({
+    required this.id,
+    required this.recipientLearnerId,
+    this.actorLearnerId,
+    this.actorDisplayName,
+    this.actorAvatarPreset,
+    required this.notificationType,
+    required this.title,
+    required this.body,
+    this.targetRoute,
+    this.isRead = false,
+    required this.createdAt,
+  });
+
+  factory SocialNotification.fromJson(Map<String, dynamic> json) {
+    return SocialNotification(
+      id: json['id'] as String? ?? '',
+      recipientLearnerId: json['recipient_learner_id'] as String? ?? '',
+      actorLearnerId: json['actor_learner_id'] as String?,
+      actorDisplayName: json['actor_display_name'] as String?,
+      actorAvatarPreset: json['actor_avatar_preset'] as String?,
+      notificationType:
+          json['notification_type'] as String? ?? 'reaction_received',
+      title: json['title'] as String? ?? 'Notification',
+      body: json['body'] as String? ?? '',
+      targetRoute: json['target_route'] as String?,
+      isRead: json['is_read'] as bool? ?? false,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'recipient_learner_id': recipientLearnerId,
+        'actor_learner_id': actorLearnerId,
+        'actor_display_name': actorDisplayName,
+        'actor_avatar_preset': actorAvatarPreset,
+        'notification_type': notificationType,
+        'title': title,
+        'body': body,
+        'target_route': targetRoute,
+        'is_read': isRead,
+        'created_at': createdAt.toIso8601String(),
+      };
+}
+

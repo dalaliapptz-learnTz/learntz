@@ -277,6 +277,42 @@ void main() {
         return;
       }
 
+      if (path == '/rest/v1/rpc/report_social_content') {
+        recordedCalls['report'] = body;
+        _writeJson(request, 200, {
+          'id': 'rep-1',
+          'reporter_learner_id': body['p_reporter_learner_id'],
+          'target_type': body['p_target_type'],
+          'target_id': body['p_target_id'],
+          'reason_category': body['p_reason_category'],
+          'status': 'pending',
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/get_learner_social_notifications') {
+        recordedCalls['notifications'] = body;
+        _writeJson(request, 200, [
+          {
+            'id': 'notif-1',
+            'recipient_learner_id': body['p_learner_id'],
+            'notification_type': 'reaction_received',
+            'title': 'New Reaction',
+            'body': 'A classmate reacted to your post',
+            'is_read': false,
+            'created_at': DateTime.now().toIso8601String(),
+          }
+        ]);
+        return;
+      }
+
+      if (path == '/rest/v1/rpc/mark_notifications_read') {
+        recordedCalls['mark_read'] = body;
+        _writeJson(request, 200, 1);
+        return;
+      }
+
       _writeJson(request, 404, {'message': 'Not found: $path'});
     });
 
@@ -455,5 +491,26 @@ void main() {
     expect(leaderboard.first.displayName, 'Faraja J.');
     expect(leaderboard.first.rank, 1);
     expect(recordedCalls['leaderboard']['p_scope'], 'national');
+  });
+
+  test('reportContent, getNotifications, and markNotificationsRead invoke RPCs', () async {
+    final rep = await repository.reportContent(
+      reporterLearnerId: 'learner-1',
+      targetType: 'post',
+      targetId: 'post-1',
+      reasonCategory: 'misinformation',
+      details: 'Needs review',
+    );
+    expect(rep.reasonCategory, 'misinformation');
+    expect(recordedCalls['report']['p_reason_category'], 'misinformation');
+
+    final notifs = await repository.getNotifications(learnerId: 'learner-1');
+    expect(notifs.length, 1);
+    expect(notifs.first.title, 'New Reaction');
+    expect(recordedCalls['notifications']['p_learner_id'], 'learner-1');
+
+    final count = await repository.markNotificationsRead(learnerId: 'learner-1');
+    expect(count, 1);
+    expect(recordedCalls['mark_read']['p_learner_id'], 'learner-1');
   });
 }

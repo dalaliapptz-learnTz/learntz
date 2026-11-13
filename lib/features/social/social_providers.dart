@@ -91,3 +91,20 @@ final communityLeaderboardProvider = FutureProvider.family<
     limit: args.limit,
   );
 });
+
+final learnerNotificationsProvider = FutureProvider.family<
+    List<SocialNotification>,
+    ({String learnerId, bool unreadOnly})>((ref, args) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getNotifications(
+    learnerId: args.learnerId,
+    unreadOnly: args.unreadOnly,
+  );
+});
+
+final moderationQueueProvider = FutureProvider.family<
+    List<SocialModerationReport>,
+    String?>((ref, status) async {
+  final repo = ref.watch(socialRepositoryProvider);
+  return repo.getModerationQueue(status: status);
+});

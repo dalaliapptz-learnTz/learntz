@@ -471,4 +471,113 @@ class SocialRepository {
     }
     return const [];
   }
+
+  /// Reports inappropriate educational content for staff moderation.
+  Future<SocialModerationReport> reportContent({
+    required String reporterLearnerId,
+    required String targetType,
+    required String targetId,
+    required String reasonCategory,
+    String? details,
+  }) async {
+    final response = await _supabase.rpc(
+      'report_social_content',
+      params: {
+        'p_reporter_learner_id': reporterLearnerId,
+        'p_target_type': targetType,
+        'p_target_id': targetId,
+        'p_reason_category': reasonCategory,
+        'p_details': ?details,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return SocialModerationReport.fromJson(response);
+    } else if (response is Map) {
+      return SocialModerationReport.fromJson(Map<String, dynamic>.from(response));
+    }
+    throw StateError('Invalid response when filing report: $response');
+  }
+
+  /// Fetches pending moderation reports for staff review.
+  Future<List<SocialModerationReport>> getModerationQueue({
+    String? status = 'pending',
+    int limit = 25,
+  }) async {
+    final response = await _supabase.rpc(
+      'get_moderation_queue',
+      params: {
+        'p_status': ?status,
+        'p_limit': limit,
+      },
+    );
+
+    if (response is List) {
+      return response
+          .map((item) => SocialModerationReport.fromJson(
+              Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Resolves a moderation report with action taken.
+  Future<Map<String, dynamic>> reviewModerationReport({
+    required String reportId,
+    required String action,
+    String? notes,
+  }) async {
+    final response = await _supabase.rpc(
+      'review_moderation_report',
+      params: {
+        'p_report_id': reportId,
+        'p_action': action,
+        'p_notes': ?notes,
+      },
+    );
+
+    if (response is Map<String, dynamic>) return response;
+    if (response is Map) return Map<String, dynamic>.from(response);
+    return {'action_taken': action};
+  }
+
+  /// Fetches social notifications for a learner.
+  Future<List<SocialNotification>> getNotifications({
+    required String learnerId,
+    bool unreadOnly = false,
+    int limit = 25,
+  }) async {
+    final response = await _supabase.rpc(
+      'get_learner_social_notifications',
+      params: {
+        'p_learner_id': learnerId,
+        'p_unread_only': unreadOnly,
+        'p_limit': limit,
+      },
+    );
+
+    if (response is List) {
+      return response
+          .map((item) =>
+              SocialNotification.fromJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Marks notifications as read.
+  Future<int> markNotificationsRead({
+    required String learnerId,
+    List<String>? notificationIds,
+  }) async {
+    final response = await _supabase.rpc(
+      'mark_notifications_read',
+      params: {
+        'p_learner_id': learnerId,
+        'p_notification_ids': ?notificationIds,
+      },
+    );
+
+    return (response as num?)?.toInt() ?? 0;
+  }
 }

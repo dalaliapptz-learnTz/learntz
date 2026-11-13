@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../learners/learner_providers.dart';
 import '../social_models.dart';
 import '../social_providers.dart';
+import 'moderation_report_dialog.dart';
 
 class CommunityFeedScreen extends ConsumerStatefulWidget {
   const CommunityFeedScreen({super.key});
@@ -412,7 +413,17 @@ class _PostCard extends ConsumerWidget {
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, size: 20),
                   onSelected: (val) async {
-                    if (val == 'block') {
+                    if (val == 'report') {
+                      await showDialog(
+                        context: context,
+                        builder: (ctx) => ModerationReportDialog(
+                          reporterLearnerId: viewerLearnerId,
+                          targetType: 'post',
+                          targetId: post.id,
+                          targetTitle: post.title,
+                        ),
+                      );
+                    } else if (val == 'block') {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
@@ -443,6 +454,10 @@ class _PostCard extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (ctx) => const [
+                    PopupMenuItem(
+                      value: 'report',
+                      child: Text('Report Inappropriate Content'),
+                    ),
                     PopupMenuItem(
                       value: 'block',
                       child: Text('Block Contributor'),

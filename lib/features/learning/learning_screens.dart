@@ -119,6 +119,11 @@ class LearningHubScreen extends ConsumerWidget {
                         label: const Text('Academic Arena'),
                       ),
                       OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.notifications),
+                        icon: const Icon(Icons.notifications_outlined, size: 18),
+                        label: const Text('Notifications'),
+                      ),
+                      OutlinedButton.icon(
                         onPressed: () => context.go(AppRoutes.resourceLibrary),
                         icon: const Icon(Icons.menu_book_outlined, size: 18),
                         label: Text(l10n.resourceLibraryTitle),

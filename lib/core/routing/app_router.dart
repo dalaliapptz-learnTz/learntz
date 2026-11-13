@@ -26,6 +26,7 @@ import '../../features/social/screens/community_feed_screen.dart';
 import '../../features/social/screens/communities_hub_screen.dart';
 import '../../features/social/screens/challenges_and_leaderboard_screen.dart';
 import '../../features/social/screens/learner_social_profile_screen.dart';
+import '../../features/social/screens/notifications_center_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 
@@ -60,6 +61,7 @@ abstract final class AppRoutes {
   static const challenges = '/social/challenges';
   static const communities = '/social/communities';
   static const communityFeed = '/social/feed';
+  static const notifications = '/social/notifications';
   static const socialProfile = '/social/profile';
   static String socialProfileFor(String learnerId) =>
       '/social/profile?learnerId=$learnerId';
@@ -294,6 +296,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.challenges,
             builder: (context, state) =>
                 const ChallengesAndLeaderboardScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.notifications,
+            builder: (context, state) =>
+                const NotificationsCenterScreen(),
           ),
           GoRoute(
             path: '/account/learners/:learnerId',
