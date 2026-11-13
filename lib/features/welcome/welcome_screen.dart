@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/design_system/components/components.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/state/app_providers.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../shared/widgets/app_button.dart';
-import '../../shared/widgets/app_card.dart';
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
@@ -126,11 +125,17 @@ class _WelcomeArtwork extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.auto_stories_rounded,
-              color: Colors.white,
-              size: 42,
-              semanticLabel: 'Learning',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const AppBrandLogo(height: 44),
+                const Icon(
+                  Icons.auto_stories_rounded,
+                  color: Colors.white,
+                  size: 36,
+                  semanticLabel: 'Learning',
+                ),
+              ],
             ),
             const SizedBox(height: 24),
             Text(

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/design_system/components/components.dart';
+import '../../core/design_system/tokens/design_tokens.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/state/app_providers.dart';
-import '../../core/theme/app_theme.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../shared/widgets/app_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -17,7 +17,7 @@ class HomeScreen extends ConsumerWidget {
     final productName = ref.watch(selectedCountryProvider).productName;
     final colors = Theme.of(context).colorScheme;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: LearnTzSpacing.screenPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -25,12 +25,12 @@ class HomeScreen extends ConsumerWidget {
             l10n.homeTitle(productName),
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 12),
+          LearnTzSpacing.vGapSm,
           Text(
             l10n.homeDescription(productName),
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          const SizedBox(height: 28),
+          LearnTzSpacing.vGapLg,
           AppCard(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +45,7 @@ class HomeScreen extends ConsumerWidget {
                         l10n.homeCardTitle,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      const SizedBox(height: 8),
+                      LearnTzSpacing.vGapXs,
                       Text(
                         l10n.homeCardDescription,
                         style: Theme.of(context).textTheme.bodyLarge,
@@ -56,8 +56,9 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          LearnTzSpacing.vGapMd,
           AppCard(
+            variant: AppCardVariant.interactive,
             onTap: () => context.go(AppRoutes.country),
             child: Row(
               children: [
@@ -69,7 +70,7 @@ class HomeScreen extends ConsumerWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                const Icon(Icons.arrow_forward, color: AppColors.muted),
+                const Icon(Icons.arrow_forward, color: LearnTzColors.textSecondary),
               ],
             ),
           ),

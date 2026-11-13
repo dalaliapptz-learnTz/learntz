@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/design_system/components/components.dart';
 import '../../core/routing/app_router.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../shared/widgets/app_card.dart';
 import '../auth/auth_screens.dart';
 import '../learners/learner_providers.dart';
 import 'learning_models.dart';
@@ -138,9 +138,10 @@ class _ParentLearnerCard extends ConsumerWidget {
                   ],
                 ),
               ),
-              Chip(
-                avatar: const Icon(Icons.local_fire_department, size: 18, color: Colors.deepOrange),
-                label: Text('${learner.streakDays} ${l10n.streakDaysSuffix}'),
+              AppBadge(
+                icon: Icons.local_fire_department,
+                label: '${learner.streakDays} ${l10n.streakDaysSuffix}',
+                variant: AppBadgeVariant.accent,
               ),
             ],
           ),
@@ -207,23 +208,18 @@ class _ParentLearnerCard extends ConsumerWidget {
               runSpacing: 8,
               children: [
                 for (final subj in learner.subjectsOverview)
-                  Chip(
-                    avatar: Icon(
-                      subj.status == 'excelling'
-                          ? Icons.trending_up
-                          : subj.status == 'needs_practice'
-                              ? Icons.priority_high
-                              : Icons.check_circle_outline,
-                      size: 16,
-                      color: subj.status == 'excelling'
-                          ? Colors.green
-                          : subj.status == 'needs_practice'
-                              ? Colors.red
-                              : Colors.blue,
-                    ),
-                    label: Text(
-                      '${subj.subjectName}: ${subj.averageQuizScore}% (${subj.completedLessons}/${subj.totalLessons})',
-                    ),
+                  AppBadge(
+                    icon: subj.status == 'excelling'
+                        ? Icons.trending_up
+                        : subj.status == 'needs_practice'
+                            ? Icons.priority_high
+                            : Icons.check_circle_outline,
+                    label: '${subj.subjectName}: ${subj.averageQuizScore}% (${subj.completedLessons}/${subj.totalLessons})',
+                    variant: subj.status == 'excelling'
+                        ? AppBadgeVariant.success
+                        : subj.status == 'needs_practice'
+                            ? AppBadgeVariant.error
+                            : AppBadgeVariant.info,
                   ),
               ],
             ),

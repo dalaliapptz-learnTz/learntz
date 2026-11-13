@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/design_system/tokens/design_tokens.dart';
 import '../../learners/learner_providers.dart';
 import '../social_models.dart';
 import '../social_providers.dart';
@@ -102,19 +103,19 @@ class _LearnerSocialProfileScreenState
         children: [
           // Child Safety Notice Card
           Card(
-            color: const Color(0xFFEFF6FF),
+            color: LearnTzColors.primary50,
             elevation: 0,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: Color(0xFFBFDBFE)),
+              borderRadius: LearnTzRadii.borderMd,
+              side: const BorderSide(color: LearnTzColors.primary200),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: LearnTzSpacing.allMd,
               child: Row(
                 children: [
                   const Icon(
                     Icons.security,
-                    color: Color(0xFF1D4ED8),
+                    color: LearnTzColors.primary600,
                     size: 28,
                   ),
                   const SizedBox(width: 14),
@@ -126,14 +127,14 @@ class _LearnerSocialProfileScreenState
                           'Child-Safe Academic Identity',
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1E40AF),
+                            color: LearnTzColors.primary700,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Personal details (real full names, phone numbers, exact birth dates, and locations) are strictly protected and never shown publicly.',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFF1E3A8A),
+                            color: LearnTzColors.primary800,
                           ),
                         ),
                       ],

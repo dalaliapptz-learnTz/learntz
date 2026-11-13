@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/design_system/tokens/design_tokens.dart';
 import '../../core/routing/app_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../shared/widgets/app_card.dart';
@@ -795,16 +796,16 @@ class _PracticeQuizScreenState extends ConsumerState<PracticeQuizScreen> {
     Color fg;
     IconData icon;
     if (status == 'mastered') {
-      bg = Colors.amber.shade100;
-      fg = Colors.amber.shade900;
+      bg = LearnTzColors.accent100;
+      fg = LearnTzColors.accent900;
       icon = Icons.stars;
     } else if (status == 'proficient') {
-      bg = Colors.green.shade100;
-      fg = Colors.green.shade800;
+      bg = LearnTzColors.successBg;
+      fg = LearnTzColors.successText;
       icon = Icons.verified;
     } else {
-      bg = Colors.blue.shade100;
-      fg = Colors.blue.shade800;
+      bg = LearnTzColors.infoBg;
+      fg = LearnTzColors.infoText;
       icon = Icons.timelapse;
     }
 
