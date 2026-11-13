@@ -423,7 +423,6 @@
   "viewSubscriptionsAction": "Subscriptions",
   "learningHubTitle": "Learning Hub",
   "learningHubSubtitle": "Browse curriculum subjects, read interactive lessons, and track mastery progress.",
-  "switchLearnerAction": "Switch learner",
   "selectActiveLearnerTitle": "Select a learner to begin",
   "learningMasteryTitle": "Curriculum Mastery Progress",
   "learningMasteryStats": "{completed} of {total} lessons completed • Avg quiz {avgScore}%",
