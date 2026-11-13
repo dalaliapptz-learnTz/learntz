@@ -259,6 +259,49 @@ class LearningRepository {
         .toList(growable: false);
   }
 
+  Future<List<LearnerRecommendation>> getLearnerRecommendations(
+    String learnerId,
+  ) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_learner_recommendations',
+      params: {'p_learner_id': learnerId},
+    );
+    return (result as List<dynamic>)
+        .map(
+          (row) => LearnerRecommendation.fromJson(
+            Map<String, dynamic>.from(row as Map),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  Future<bool> dismissLearnerRecommendation({
+    required String learnerId,
+    required String recommendationId,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'dismiss_learner_recommendation',
+      params: {
+        'p_learner_id': learnerId,
+        'p_recommendation_id': recommendationId,
+      },
+    );
+    return result as bool? ?? false;
+  }
+
+  Future<LearnerMasteryReport> getLearnerMasteryReport(String learnerId) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_learner_mastery_report',
+      params: {'p_learner_id': learnerId},
+    );
+    return LearnerMasteryReport.fromJson(
+      Map<String, dynamic>.from(result as Map),
+    );
+  }
+
   User _requireUser() {
     final user = _client.auth.currentUser;
     if (user == null) {

@@ -873,3 +873,140 @@ class AssessmentSubmissionResult {
     );
   }
 }
+
+class LearnerRecommendation {
+  const LearnerRecommendation({
+    required this.id,
+    required this.subjectId,
+    required this.subjectName,
+    this.topicId,
+    this.topicTitle,
+    this.lessonId,
+    this.lessonTitle,
+    required this.recommendationType,
+    required this.title,
+    required this.reason,
+    required this.priority,
+    required this.createdAt,
+  });
+
+  final String id;
+  final String subjectId;
+  final String subjectName;
+  final String? topicId;
+  final String? topicTitle;
+  final String? lessonId;
+  final String? lessonTitle;
+  final String recommendationType; // remedial, advanced, spaced_repetition
+  final String title;
+  final String reason;
+  final int priority;
+  final DateTime createdAt;
+
+  factory LearnerRecommendation.fromJson(Map<String, dynamic> json) {
+    return LearnerRecommendation(
+      id: json['id'] as String,
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String? ?? '',
+      topicId: json['topic_id'] as String?,
+      topicTitle: json['topic_title'] as String?,
+      lessonId: json['lesson_id'] as String?,
+      lessonTitle: json['lesson_title'] as String?,
+      recommendationType: json['recommendation_type'] as String,
+      title: json['title'] as String,
+      reason: json['reason'] as String,
+      priority: (json['priority'] as num?)?.toInt() ?? 1,
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
+          DateTime.now(),
+    );
+  }
+}
+
+class LearnerSubjectMasteryBreakdown {
+  const LearnerSubjectMasteryBreakdown({
+    required this.subjectId,
+    required this.subjectName,
+    required this.subjectCode,
+    required this.totalTopics,
+    required this.masteredTopics,
+    required this.proficientTopics,
+    required this.inProgressTopics,
+    required this.notStartedTopics,
+    required this.averageAccuracy,
+    required this.masteryPercent,
+  });
+
+  final String subjectId;
+  final String subjectName;
+  final String subjectCode;
+  final int totalTopics;
+  final int masteredTopics;
+  final int proficientTopics;
+  final int inProgressTopics;
+  final int notStartedTopics;
+  final double averageAccuracy;
+  final int masteryPercent;
+
+  factory LearnerSubjectMasteryBreakdown.fromJson(Map<String, dynamic> json) {
+    return LearnerSubjectMasteryBreakdown(
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String,
+      subjectCode: json['subject_code'] as String,
+      totalTopics: (json['total_topics'] as num?)?.toInt() ?? 0,
+      masteredTopics: (json['mastered_topics'] as num?)?.toInt() ?? 0,
+      proficientTopics: (json['proficient_topics'] as num?)?.toInt() ?? 0,
+      inProgressTopics: (json['in_progress_topics'] as num?)?.toInt() ?? 0,
+      notStartedTopics: (json['not_started_topics'] as num?)?.toInt() ?? 0,
+      averageAccuracy: (json['average_accuracy'] as num?)?.toDouble() ?? 0.0,
+      masteryPercent: (json['mastery_percent'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+class LearnerMasteryReport {
+  const LearnerMasteryReport({
+    required this.learnerId,
+    required this.totalTopics,
+    required this.masteredTopics,
+    required this.proficientTopics,
+    required this.inProgressTopics,
+    required this.notStartedTopics,
+    required this.overallAccuracyRate,
+    required this.streakDays,
+    required this.readinessIndex,
+    required this.subjectsBreakdown,
+  });
+
+  final String learnerId;
+  final int totalTopics;
+  final int masteredTopics;
+  final int proficientTopics;
+  final int inProgressTopics;
+  final int notStartedTopics;
+  final double overallAccuracyRate;
+  final int streakDays;
+  final int readinessIndex; // 0 - 100%
+  final List<LearnerSubjectMasteryBreakdown> subjectsBreakdown;
+
+  factory LearnerMasteryReport.fromJson(Map<String, dynamic> json) {
+    final rawBreakdown = json['subjects_breakdown'] as List<dynamic>? ?? const [];
+    return LearnerMasteryReport(
+      learnerId: json['learner_id'] as String,
+      totalTopics: (json['total_topics'] as num?)?.toInt() ?? 0,
+      masteredTopics: (json['mastered_topics'] as num?)?.toInt() ?? 0,
+      proficientTopics: (json['proficient_topics'] as num?)?.toInt() ?? 0,
+      inProgressTopics: (json['in_progress_topics'] as num?)?.toInt() ?? 0,
+      notStartedTopics: (json['not_started_topics'] as num?)?.toInt() ?? 0,
+      overallAccuracyRate: (json['overall_accuracy_rate'] as num?)?.toDouble() ?? 0.0,
+      streakDays: (json['streak_days'] as num?)?.toInt() ?? 0,
+      readinessIndex: (json['readiness_index'] as num?)?.toInt() ?? 0,
+      subjectsBreakdown: rawBreakdown
+          .map(
+            (b) => LearnerSubjectMasteryBreakdown.fromJson(
+              Map<String, dynamic>.from(b as Map),
+            ),
+          )
+          .toList(growable: false),
+    );
+  }
+}

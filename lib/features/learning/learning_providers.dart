@@ -87,3 +87,17 @@ final curriculumExplorerTreeProvider = FutureProvider.autoDispose.family<
     gradeId: args.gradeId,
   );
 });
+
+final learnerRecommendationsProvider = FutureProvider.autoDispose
+    .family<List<LearnerRecommendation>, String>((ref, learnerId) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getLearnerRecommendations(learnerId);
+    });
+
+final learnerMasteryReportProvider = FutureProvider.autoDispose
+    .family<LearnerMasteryReport, String>((ref, learnerId) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getLearnerMasteryReport(learnerId);
+    });

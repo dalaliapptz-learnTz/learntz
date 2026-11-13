@@ -542,4 +542,96 @@ void main() {
     await client.dispose();
     await server.close();
   });
+
+  test('LearningRepository invokes recommendations and mastery report RPCs correctly', () async {
+    final server = await _FakeSupabaseServer.start((request, body) async {
+      final path = request.uri.path;
+      if (path == '/auth/v1/token') {
+        _writeJson(request, 200, _sessionPayload());
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_learner_recommendations') {
+        expect(body['p_learner_id'], 'learner-201');
+        _writeJson(request, 200, [
+          {
+            'id': 'rec-1',
+            'subject_id': 'subj-1',
+            'subject_name': 'Kiswahili',
+            'topic_id': 'topic-1',
+            'topic_title': 'Irabu na Silabi',
+            'lesson_id': 'lesson-1',
+            'lesson_title': 'Sauti za Irabu',
+            'recommendation_type': 'remedial',
+            'title': 'Zoezi la Uimarishaji: Irabu na Silabi',
+            'reason': 'Kiwango cha usahihi kiko chini ya 60%.',
+            'priority': 1,
+            'created_at': '2026-11-13T00:00:00Z',
+          },
+        ]);
+        return;
+      }
+      if (path == '/rest/v1/rpc/dismiss_learner_recommendation') {
+        expect(body['p_learner_id'], 'learner-201');
+        expect(body['p_recommendation_id'], 'rec-1');
+        _writeJson(request, 200, true);
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_learner_mastery_report') {
+        expect(body['p_learner_id'], 'learner-201');
+        _writeJson(request, 200, {
+          'learner_id': 'learner-201',
+          'total_topics': 10,
+          'mastered_topics': 6,
+          'proficient_topics': 2,
+          'in_progress_topics': 1,
+          'not_started_topics': 1,
+          'overall_accuracy_rate': 82.5,
+          'streak_days': 5,
+          'readiness_index': 77,
+          'subjects_breakdown': [
+            {
+              'subject_id': 'subj-1',
+              'subject_name': 'Kiswahili',
+              'subject_code': 'KISW',
+              'total_topics': 5,
+              'mastered_topics': 4,
+              'proficient_topics': 1,
+              'in_progress_topics': 0,
+              'not_started_topics': 0,
+              'average_accuracy': 88.0,
+              'mastery_percent': 80,
+            },
+          ],
+        });
+        return;
+      }
+      _writeJson(request, 404, {'message': 'Not found'});
+    });
+
+    final client = await _signedInClient(server);
+    final repo = LearningRepository(client);
+
+    final recs = await repo.getLearnerRecommendations('learner-201');
+    expect(recs.length, 1);
+    expect(recs.first.recommendationType, 'remedial');
+    expect(recs.first.subjectName, 'Kiswahili');
+    expect(recs.first.title, 'Zoezi la Uimarishaji: Irabu na Silabi');
+
+    final dismissed = await repo.dismissLearnerRecommendation(
+      learnerId: 'learner-201',
+      recommendationId: 'rec-1',
+    );
+    expect(dismissed, isTrue);
+
+    final report = await repo.getLearnerMasteryReport('learner-201');
+    expect(report.totalTopics, 10);
+    expect(report.masteredTopics, 6);
+    expect(report.readinessIndex, 77);
+    expect(report.streakDays, 5);
+    expect(report.subjectsBreakdown.first.subjectName, 'Kiswahili');
+    expect(report.subjectsBreakdown.first.masteryPercent, 80);
+
+    await client.dispose();
+    await server.close();
+  });
 }

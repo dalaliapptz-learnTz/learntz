@@ -165,6 +165,35 @@ class _StubLearningRepository implements LearningRepository {
       results: [],
     );
   }
+
+  @override
+  Future<List<LearnerRecommendation>> getLearnerRecommendations(
+    String learnerId,
+  ) async =>
+      const [];
+
+  @override
+  Future<bool> dismissLearnerRecommendation({
+    required String learnerId,
+    required String recommendationId,
+  }) async =>
+      true;
+
+  @override
+  Future<LearnerMasteryReport> getLearnerMasteryReport(String learnerId) async {
+    return LearnerMasteryReport(
+      learnerId: learnerId,
+      totalTopics: 1,
+      masteredTopics: 0,
+      proficientTopics: 0,
+      inProgressTopics: 0,
+      notStartedTopics: 1,
+      overallAccuracyRate: 0.0,
+      streakDays: 0,
+      readinessIndex: 0,
+      subjectsBreakdown: const [],
+    );
+  }
 }
 
 void main() {

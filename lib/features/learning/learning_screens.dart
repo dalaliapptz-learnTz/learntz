@@ -149,6 +149,9 @@ class LearningHubScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 _LearnerDailyTargetAndResumeSection(learnerId: activeLearner.id),
                 const SizedBox(height: 16),
+                _LearnerRecommendationsSection(learnerId: activeLearner.id),
+                _LearnerMasteryOverviewSection(learnerId: activeLearner.id),
+                const SizedBox(height: 16),
                 ref
                     .watch(activeLearnerLearningCatalogProvider)
                     .when(
@@ -1752,6 +1755,325 @@ class _LearnerDailyTargetAndResumeSection extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _LearnerRecommendationsSection extends ConsumerWidget {
+  const _LearnerRecommendationsSection({required this.learnerId});
+
+  final String learnerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final recsAsync = ref.watch(learnerRecommendationsProvider(learnerId));
+
+    return recsAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (recommendations) {
+        if (recommendations.isEmpty) return const SizedBox.shrink();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.recommendationsTitle,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.recommendationsSubtitle,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            for (final rec in recommendations) ...[
+              _RecommendationCard(
+                recommendation: rec,
+                learnerId: learnerId,
+              ),
+              const SizedBox(height: 10),
+            ],
+            const SizedBox(height: 12),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _RecommendationCard extends ConsumerStatefulWidget {
+  const _RecommendationCard({
+    required this.recommendation,
+    required this.learnerId,
+  });
+
+  final LearnerRecommendation recommendation;
+  final String learnerId;
+
+  @override
+  ConsumerState<_RecommendationCard> createState() =>
+      _RecommendationCardState();
+}
+
+class _RecommendationCardState extends ConsumerState<_RecommendationCard> {
+  bool _isDismissing = false;
+
+  Future<void> _dismiss() async {
+    final repo = ref.read(learningRepositoryProvider);
+    if (repo == null) return;
+    setState(() => _isDismissing = true);
+    try {
+      await repo.dismissLearnerRecommendation(
+        learnerId: widget.learnerId,
+        recommendationId: widget.recommendation.id,
+      );
+      ref.invalidate(learnerRecommendationsProvider(widget.learnerId));
+    } catch (_) {
+      if (mounted) setState(() => _isDismissing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final rec = widget.recommendation;
+
+    Color badgeBg;
+    Color badgeFg;
+    String badgeText;
+    IconData badgeIcon;
+
+    if (rec.recommendationType == 'remedial') {
+      badgeBg = Colors.orange.shade100;
+      badgeFg = Colors.orange.shade900;
+      badgeText = l10n.remedialPill;
+      badgeIcon = Icons.fitness_center;
+    } else if (rec.recommendationType == 'advanced') {
+      badgeBg = Colors.purple.shade100;
+      badgeFg = Colors.purple.shade900;
+      badgeText = l10n.advancedPill;
+      badgeIcon = Icons.trending_up;
+    } else {
+      badgeBg = Colors.blue.shade100;
+      badgeFg = Colors.blue.shade900;
+      badgeText = l10n.spacedRepetitionPill;
+      badgeIcon = Icons.update;
+    }
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: badgeBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(badgeIcon, size: 14, color: badgeFg),
+                    const SizedBox(width: 4),
+                    Text(
+                      badgeText,
+                      style: TextStyle(
+                        color: badgeFg,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                rec.subjectName,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close, size: 18),
+                tooltip: l10n.dismissRecommendationAction,
+                onPressed: _isDismissing ? null : _dismiss,
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(rec.title, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(rec.reason, style: theme.textTheme.bodyMedium),
+          if (rec.lessonId != null) ...[
+            const SizedBox(height: 12),
+            FilledButton.tonalIcon(
+              onPressed: () =>
+                  context.go(AppRoutes.lessonReader(rec.lessonId!)),
+              icon: const Icon(Icons.play_arrow_outlined, size: 18),
+              label: Text(l10n.startRecommendedLessonAction),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _LearnerMasteryOverviewSection extends ConsumerWidget {
+  const _LearnerMasteryOverviewSection({required this.learnerId});
+
+  final String learnerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final reportAsync = ref.watch(learnerMasteryReportProvider(learnerId));
+
+    return reportAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (report) {
+        if (report.totalTopics == 0) return const SizedBox.shrink();
+
+        final theme = Theme.of(context);
+        return AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.insights_outlined,
+                    color: theme.colorScheme.primary,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.masteryReportTitle,
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.speed, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${report.readinessIndex}% ${l10n.readinessIndexLabel}',
+                          style: TextStyle(
+                            color: theme.colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  _buildMasteryTierStat(
+                    context,
+                    count: report.masteredTopics,
+                    label: l10n.topicsMasteredLabel,
+                    color: Colors.amber.shade700,
+                  ),
+                  _buildMasteryTierStat(
+                    context,
+                    count: report.proficientTopics,
+                    label: l10n.topicsProficientLabel,
+                    color: Colors.green.shade700,
+                  ),
+                  _buildMasteryTierStat(
+                    context,
+                    count: report.inProgressTopics,
+                    label: l10n.topicsInProgressLabel,
+                    color: Colors.blue.shade700,
+                  ),
+                  _buildMasteryTierStat(
+                    context,
+                    count: report.notStartedTopics,
+                    label: l10n.topicsNotStartedLabel,
+                    color: theme.colorScheme.outline,
+                  ),
+                ],
+              ),
+              if (report.overallAccuracyRate > 0) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Text(
+                      '${l10n.overallAccuracyLabel}: ',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    Text(
+                      '${report.overallAccuracyRate}%',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMasteryTierStat(
+    BuildContext context, {
+    required int count,
+    required String label,
+    required Color color,
+  }) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            '$count',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style:
+                Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10),
+          ),
+        ],
+      ),
     );
   }
 }
