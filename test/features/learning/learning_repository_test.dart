@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learntz/features/learners/learner_models.dart';
+import 'package:learntz/features/learning/learning_models.dart';
 import 'package:learntz/features/learning/learning_repository.dart';
 
 class _FakeSupabaseServer {
@@ -774,6 +775,85 @@ void main() {
     expect(resources.length, 1);
     expect(resources.first.title, contains('Kitabu cha Kiswahili'));
     expect(resources.first.isOfficial, isTrue);
+
+    await client.dispose();
+    await server.close();
+  });
+
+  test('LearningRepository invokes Phase 2 offline sync and pack download RPCs correctly', () async {
+    final server = await _FakeSupabaseServer.start((request, body) async {
+      final path = request.uri.path;
+      if (path == '/auth/v1/token') {
+        _writeJson(request, 200, _sessionPayload());
+        return;
+      }
+      if (path == '/rest/v1/rpc/sync_learner_offline_activity') {
+        expect(body['p_learner_id'], 'learner-401');
+        final events = body['p_events'] as List<dynamic>;
+        expect(events.length, 1);
+        expect(events.first['event_type'], 'reading_progress');
+        _writeJson(request, 200, {
+          'learner_id': 'learner-401',
+          'events_received': 1,
+          'events_processed': 1,
+          'events_duplicate': 0,
+          'synced_at': '2026-11-13T07:00:00Z',
+        });
+        return;
+      }
+      if (path == '/rest/v1/rpc/get_subject_offline_pack') {
+        expect(body['p_learner_id'], 'learner-401');
+        expect(body['p_subject_id'], 'subj-101');
+        _writeJson(request, 200, {
+          'subject_id': 'subj-101',
+          'subject_name': 'Kiswahili',
+          'subject_code': 'KISW',
+          'country_code': 'TZ',
+          'curriculum_id': 'curr-101',
+          'description': 'Mtaala wa Msingi',
+          'topics': [
+            {
+              'id': 'top-1',
+              'title': 'Kusoma na Kuandika',
+              'lessons': [],
+              'questions': [],
+            },
+          ],
+          'flashcard_decks': [],
+          'packed_at': '2026-11-13T07:00:00Z',
+        });
+        return;
+      }
+      _writeJson(request, 404, {'message': 'Not found'});
+    });
+
+    final client = await _signedInClient(server);
+    final repo = LearningRepository(client);
+
+    final syncResult = await repo.syncOfflineActivity(
+      learnerId: 'learner-401',
+      events: [
+        OfflineSyncEvent(
+          clientEventId: 'evt-101',
+          eventType: 'reading_progress',
+          payload: {
+            'lesson_id': 'les-1',
+            'reading_progress_percent': 85,
+          },
+          clientRecordedAt: DateTime.utc(2026, 11, 13, 6, 30),
+        ),
+      ],
+    );
+    expect(syncResult.eventsReceived, 1);
+    expect(syncResult.eventsProcessed, 1);
+    expect(syncResult.eventsDuplicate, 0);
+
+    final pack = await repo.getSubjectOfflinePack(
+      learnerId: 'learner-401',
+      subjectId: 'subj-101',
+    );
+    expect(pack.subjectName, 'Kiswahili');
+    expect(pack.topics.length, 1);
 
     await client.dispose();
     await server.close();

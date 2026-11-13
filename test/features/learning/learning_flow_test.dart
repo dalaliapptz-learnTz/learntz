@@ -239,6 +239,38 @@ class _StubLearningRepository implements LearningRepository {
     int limit = 50,
   }) async =>
       const [];
+
+  @override
+  Future<OfflineSyncResult> syncOfflineActivity({
+    required String learnerId,
+    required List<OfflineSyncEvent> events,
+  }) async {
+    return OfflineSyncResult(
+      learnerId: learnerId,
+      eventsReceived: events.length,
+      eventsProcessed: events.length,
+      eventsDuplicate: 0,
+      syncedAt: DateTime.utc(2026, 11, 13),
+    );
+  }
+
+  @override
+  Future<SubjectOfflinePack> getSubjectOfflinePack({
+    required String learnerId,
+    required String subjectId,
+  }) async {
+    return SubjectOfflinePack(
+      subjectId: subjectId,
+      subjectName: 'Kiswahili',
+      subjectCode: 'KISW',
+      countryCode: 'TZ',
+      curriculumId: 'curr-1',
+      description: '',
+      topics: const [],
+      flashcardDecks: const [],
+      packedAt: DateTime.utc(2026, 11, 13),
+    );
+  }
 }
 
 void main() {

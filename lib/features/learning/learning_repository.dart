@@ -399,6 +399,40 @@ class LearningRepository {
         .toList(growable: false);
   }
 
+  Future<OfflineSyncResult> syncOfflineActivity({
+    required String learnerId,
+    required List<OfflineSyncEvent> events,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'sync_learner_offline_activity',
+      params: {
+        'p_learner_id': learnerId,
+        'p_events': events.map((e) => e.toJson()).toList(),
+      },
+    );
+    return OfflineSyncResult.fromJson(
+      Map<String, dynamic>.from(result as Map),
+    );
+  }
+
+  Future<SubjectOfflinePack> getSubjectOfflinePack({
+    required String learnerId,
+    required String subjectId,
+  }) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_subject_offline_pack',
+      params: {
+        'p_learner_id': learnerId,
+        'p_subject_id': subjectId,
+      },
+    );
+    return SubjectOfflinePack.fromJson(
+      Map<String, dynamic>.from(result as Map),
+    );
+  }
+
   User _requireUser() {
     final user = _client.auth.currentUser;
     if (user == null) {

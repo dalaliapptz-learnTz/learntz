@@ -1032,5 +1032,19 @@
   "resourceSavedOffline": "Nyaraka imehifadhiwa kwa ajili ya kusoma bila intaneti.",
   "@resourceSavedOffline": {},
   "resourceRemovedOffline": "Nyaraka imeondolewa kwenye kumbukumbu ya simu.",
-  "@resourceRemovedOffline": {}
+  "@resourceRemovedOffline": {},
+  "syncStatusSynced": "Maendeleo yote yamesawazishwa",
+  "@syncStatusSynced": {},
+  "syncStatusPending": "Mabadiliko {count} ya nje ya mtandao yanasubiri kusawazishwa",
+  "@syncStatusPending": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "syncNowAction": "Sawazisha Sasa",
+  "@syncNowAction": {},
+  "syncingAction": "Inasawazisha...",
+  "@syncingAction": {},
+  "syncSuccessMessage": "Maendeleo ya nje ya mtandao yamesawazishwa kikamilifu.",
+  "@syncSuccessMessage": {}
 }

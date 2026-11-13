@@ -150,6 +150,7 @@ class LearningHubScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
+                _OfflineSyncStatusBar(learnerId: activeLearner.id),
                 _LearnerDailyTargetAndResumeSection(learnerId: activeLearner.id),
                 const SizedBox(height: 16),
                 _LearnerRecommendationsSection(learnerId: activeLearner.id),
@@ -1758,6 +1759,84 @@ class _LearnerDailyTargetAndResumeSection extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _OfflineSyncStatusBar extends ConsumerWidget {
+  const _OfflineSyncStatusBar({required this.learnerId});
+
+  final String learnerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final syncState = ref.watch(offlineSyncNotifierProvider);
+    final hasPending = syncState.pendingCount > 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: hasPending
+            ? Colors.amber.withValues(alpha: 0.12)
+            : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: hasPending
+              ? Colors.amber.withValues(alpha: 0.4)
+              : Theme.of(context).dividerColor.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            hasPending ? Icons.cloud_upload_outlined : Icons.cloud_done_outlined,
+            size: 20,
+            color: hasPending ? Colors.amber.shade800 : Colors.green,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              hasPending
+                  ? l10n.syncStatusPending(syncState.pendingCount)
+                  : l10n.syncStatusSynced,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: hasPending ? FontWeight.bold : FontWeight.normal,
+                  ),
+            ),
+          ),
+          if (hasPending)
+            FilledButton.tonal(
+              onPressed: syncState.isSyncing
+                  ? null
+                  : () async {
+                      final result = await ref
+                          .read(offlineSyncNotifierProvider.notifier)
+                          .flushQueue(learnerId);
+                      if (context.mounted && result != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.syncSuccessMessage)),
+                        );
+                      }
+                    },
+              child: syncState.isSyncing
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(l10n.syncingAction),
+                      ],
+                    )
+                  : Text(l10n.syncNowAction),
+            ),
+        ],
+      ),
     );
   }
 }

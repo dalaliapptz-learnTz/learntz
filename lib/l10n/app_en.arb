@@ -1032,5 +1032,19 @@
   "resourceSavedOffline": "Resource saved for offline study.",
   "@resourceSavedOffline": {},
   "resourceRemovedOffline": "Resource removed from offline storage.",
-  "@resourceRemovedOffline": {}
+  "@resourceRemovedOffline": {},
+  "syncStatusSynced": "All progress synced",
+  "@syncStatusSynced": {},
+  "syncStatusPending": "{count} offline changes pending",
+  "@syncStatusPending": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "syncNowAction": "Sync Now",
+  "@syncNowAction": {},
+  "syncingAction": "Syncing...",
+  "@syncingAction": {},
+  "syncSuccessMessage": "Offline progress synchronized successfully.",
+  "@syncSuccessMessage": {}
 }

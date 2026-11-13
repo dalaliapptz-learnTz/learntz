@@ -153,3 +153,79 @@ final learningResourcesProvider = FutureProvider.autoDispose.family<
     resourceType: args.resourceType,
   );
 });
+
+class OfflineSyncState {
+  const OfflineSyncState({
+    this.pendingEvents = const [],
+    this.isSyncing = false,
+    this.lastSyncedAt,
+    this.lastSyncError,
+  });
+
+  final List<OfflineSyncEvent> pendingEvents;
+  final bool isSyncing;
+  final DateTime? lastSyncedAt;
+  final String? lastSyncError;
+
+  int get pendingCount => pendingEvents.length;
+
+  OfflineSyncState copyWith({
+    List<OfflineSyncEvent>? pendingEvents,
+    bool? isSyncing,
+    DateTime? lastSyncedAt,
+    String? lastSyncError,
+  }) {
+    return OfflineSyncState(
+      pendingEvents: pendingEvents ?? this.pendingEvents,
+      isSyncing: isSyncing ?? this.isSyncing,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      lastSyncError: lastSyncError,
+    );
+  }
+}
+
+class OfflineSyncNotifier extends Notifier<OfflineSyncState> {
+  @override
+  OfflineSyncState build() => const OfflineSyncState();
+
+  void queueEvent(OfflineSyncEvent event) {
+    state = state.copyWith(
+      pendingEvents: [...state.pendingEvents, event],
+    );
+  }
+
+  Future<OfflineSyncResult?> flushQueue(String learnerId) async {
+    final repo = ref.read(learningRepositoryProvider);
+    if (repo == null || state.pendingEvents.isEmpty || state.isSyncing) {
+      return null;
+    }
+
+    state = state.copyWith(isSyncing: true, lastSyncError: null);
+
+    try {
+      final eventsToSend = List<OfflineSyncEvent>.from(state.pendingEvents);
+      final result = await repo.syncOfflineActivity(
+        learnerId: learnerId,
+        events: eventsToSend,
+      );
+
+      state = state.copyWith(
+        pendingEvents: const [],
+        isSyncing: false,
+        lastSyncedAt: result.syncedAt,
+      );
+      return result;
+    } catch (e) {
+      state = state.copyWith(
+        isSyncing: false,
+        lastSyncError: e.toString(),
+      );
+      return null;
+    }
+  }
+}
+
+final offlineSyncNotifierProvider =
+    NotifierProvider<OfflineSyncNotifier, OfflineSyncState>(
+  OfflineSyncNotifier.new,
+);

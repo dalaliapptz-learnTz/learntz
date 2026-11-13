@@ -1236,3 +1236,97 @@ class LearningResourceItem {
     );
   }
 }
+
+class OfflineSyncEvent {
+  const OfflineSyncEvent({
+    required this.clientEventId,
+    required this.eventType,
+    required this.payload,
+    required this.clientRecordedAt,
+  });
+
+  final String clientEventId;
+  final String eventType;
+  final Map<String, dynamic> payload;
+  final DateTime clientRecordedAt;
+
+  Map<String, dynamic> toJson() => {
+        'client_event_id': clientEventId,
+        'event_type': eventType,
+        'payload': payload,
+        'client_recorded_at': clientRecordedAt.toIso8601String(),
+      };
+
+  factory OfflineSyncEvent.fromJson(Map<String, dynamic> json) {
+    return OfflineSyncEvent(
+      clientEventId: json['client_event_id'] as String,
+      eventType: json['event_type'] as String,
+      payload: Map<String, dynamic>.from(json['payload'] as Map? ?? const {}),
+      clientRecordedAt: DateTime.parse(json['client_recorded_at'] as String),
+    );
+  }
+}
+
+class OfflineSyncResult {
+  const OfflineSyncResult({
+    required this.learnerId,
+    required this.eventsReceived,
+    required this.eventsProcessed,
+    required this.eventsDuplicate,
+    required this.syncedAt,
+  });
+
+  final String learnerId;
+  final int eventsReceived;
+  final int eventsProcessed;
+  final int eventsDuplicate;
+  final DateTime syncedAt;
+
+  factory OfflineSyncResult.fromJson(Map<String, dynamic> json) {
+    return OfflineSyncResult(
+      learnerId: json['learner_id'] as String,
+      eventsReceived: (json['events_received'] as num?)?.toInt() ?? 0,
+      eventsProcessed: (json['events_processed'] as num?)?.toInt() ?? 0,
+      eventsDuplicate: (json['events_duplicate'] as num?)?.toInt() ?? 0,
+      syncedAt: DateTime.tryParse(json['synced_at'] as String? ?? '') ?? DateTime.now(),
+    );
+  }
+}
+
+class SubjectOfflinePack {
+  const SubjectOfflinePack({
+    required this.subjectId,
+    required this.subjectName,
+    required this.subjectCode,
+    required this.countryCode,
+    required this.curriculumId,
+    required this.description,
+    required this.topics,
+    required this.flashcardDecks,
+    required this.packedAt,
+  });
+
+  final String subjectId;
+  final String subjectName;
+  final String subjectCode;
+  final String countryCode;
+  final String curriculumId;
+  final String description;
+  final List<dynamic> topics;
+  final List<dynamic> flashcardDecks;
+  final DateTime packedAt;
+
+  factory SubjectOfflinePack.fromJson(Map<String, dynamic> json) {
+    return SubjectOfflinePack(
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String,
+      subjectCode: json['subject_code'] as String,
+      countryCode: json['country_code'] as String,
+      curriculumId: json['curriculum_id'] as String,
+      description: json['description'] as String? ?? '',
+      topics: json['topics'] as List<dynamic>? ?? const [],
+      flashcardDecks: json['flashcard_decks'] as List<dynamic>? ?? const [],
+      packedAt: DateTime.tryParse(json['packed_at'] as String? ?? '') ?? DateTime.now(),
+    );
+  }
+}
