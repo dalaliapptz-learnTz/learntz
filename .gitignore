@@ -53,6 +53,9 @@ app.*.map.json
 .env.*
 !.env.example
 
+.vscode/
+devtools_options.yaml
+
 # Supabase local development state
 supabase/.temp/
 supabase/.branches/

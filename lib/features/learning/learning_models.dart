@@ -307,3 +307,325 @@ class LearningCatalogBundle {
   final Map<String, LearnerProgressRecord> progressByLesson;
   final LearnerLearningSummary summary;
 }
+
+class ParentSubjectOverview {
+  const ParentSubjectOverview({
+    required this.subjectId,
+    required this.subjectName,
+    required this.totalLessons,
+    required this.completedLessons,
+    required this.averageQuizScore,
+    required this.status,
+  });
+
+  final String subjectId;
+  final String subjectName;
+  final int totalLessons;
+  final int completedLessons;
+  final int averageQuizScore;
+  final String status; // 'excelling', 'needs_practice', 'on_track'
+
+  factory ParentSubjectOverview.fromJson(Map<String, dynamic> json) {
+    return ParentSubjectOverview(
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String,
+      totalLessons: (json['total_lessons'] as num?)?.toInt() ?? 0,
+      completedLessons: (json['completed_lessons'] as num?)?.toInt() ?? 0,
+      averageQuizScore: (json['average_quiz_score'] as num?)?.toInt() ?? 0,
+      status: json['status'] as String? ?? 'on_track',
+    );
+  }
+}
+
+class LearnerLastAccessedLesson {
+  const LearnerLastAccessedLesson({
+    required this.lessonId,
+    required this.lessonTitle,
+    required this.subjectName,
+    this.topicTitle,
+    required this.readingProgressPercent,
+    required this.isCompleted,
+    this.lastAccessedAt,
+  });
+
+  final String lessonId;
+  final String lessonTitle;
+  final String subjectName;
+  final String? topicTitle;
+  final int readingProgressPercent;
+  final bool isCompleted;
+  final DateTime? lastAccessedAt;
+
+  factory LearnerLastAccessedLesson.fromJson(Map<String, dynamic> json) {
+    return LearnerLastAccessedLesson(
+      lessonId: json['lesson_id'] as String,
+      lessonTitle: json['lesson_title'] as String,
+      subjectName: json['subject_name'] as String,
+      topicTitle: json['topic_title'] as String?,
+      readingProgressPercent:
+          (json['reading_progress_percent'] as num?)?.toInt() ?? 0,
+      isCompleted: json['is_completed'] as bool? ?? false,
+      lastAccessedAt: json['last_accessed_at'] == null
+          ? null
+          : DateTime.parse(json['last_accessed_at'] as String),
+    );
+  }
+}
+
+class ParentLearnerOverview {
+  const ParentLearnerOverview({
+    required this.learnerId,
+    required this.firstName,
+    required this.lastName,
+    required this.fullName,
+    required this.countryCode,
+    required this.status,
+    required this.gradeName,
+    required this.levelName,
+    required this.curriculumName,
+    required this.systemName,
+    required this.schoolName,
+    required this.totalLessons,
+    required this.completedLessons,
+    required this.inProgressLessons,
+    required this.averageQuizScorePercent,
+    required this.masteryPercent,
+    required this.streakDays,
+    this.lastAccessedAt,
+    this.lastLessonAccessed,
+    required this.subjectsOverview,
+  });
+
+  final String learnerId;
+  final String firstName;
+  final String lastName;
+  final String fullName;
+  final String countryCode;
+  final String status;
+  final String gradeName;
+  final String levelName;
+  final String curriculumName;
+  final String systemName;
+  final String schoolName;
+  final int totalLessons;
+  final int completedLessons;
+  final int inProgressLessons;
+  final int averageQuizScorePercent;
+  final int masteryPercent;
+  final int streakDays;
+  final DateTime? lastAccessedAt;
+  final LearnerLastAccessedLesson? lastLessonAccessed;
+  final List<ParentSubjectOverview> subjectsOverview;
+
+  factory ParentLearnerOverview.fromJson(Map<String, dynamic> json) {
+    final rawSubjects = json['subjects_overview'] as List<dynamic>? ?? const [];
+    return ParentLearnerOverview(
+      learnerId: json['learner_id'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
+      fullName: json['full_name'] as String,
+      countryCode: json['country_code'] as String,
+      status: json['status'] as String,
+      gradeName: json['grade_name'] as String? ?? 'N/A',
+      levelName: json['level_name'] as String? ?? 'N/A',
+      curriculumName: json['curriculum_name'] as String? ?? 'N/A',
+      systemName: json['system_name'] as String? ?? 'N/A',
+      schoolName: json['school_name'] as String? ?? 'Independent Learner',
+      totalLessons: (json['total_lessons'] as num?)?.toInt() ?? 0,
+      completedLessons: (json['completed_lessons'] as num?)?.toInt() ?? 0,
+      inProgressLessons: (json['in_progress_lessons'] as num?)?.toInt() ?? 0,
+      averageQuizScorePercent:
+          (json['average_quiz_score_percent'] as num?)?.toInt() ?? 0,
+      masteryPercent: (json['mastery_percent'] as num?)?.toInt() ?? 0,
+      streakDays: (json['streak_days'] as num?)?.toInt() ?? 1,
+      lastAccessedAt: json['last_accessed_at'] == null
+          ? null
+          : DateTime.parse(json['last_accessed_at'] as String),
+      lastLessonAccessed: json['last_lesson_accessed'] == null
+          ? null
+          : LearnerLastAccessedLesson.fromJson(
+              json['last_lesson_accessed'] as Map<String, dynamic>,
+            ),
+      subjectsOverview: rawSubjects
+          .map((s) => ParentSubjectOverview.fromJson(s as Map<String, dynamic>))
+          .toList(growable: false),
+    );
+  }
+}
+
+class LearnerDashboardData {
+  const LearnerDashboardData({
+    required this.learnerId,
+    required this.firstName,
+    required this.lastName,
+    required this.fullName,
+    required this.countryCode,
+    required this.status,
+    required this.gradeName,
+    required this.systemName,
+    required this.curriculumName,
+    required this.schoolName,
+    required this.summary,
+    this.resumeLesson,
+    required this.streakDays,
+    required this.dailyTargetLessons,
+    required this.todayCompletedLessons,
+    required this.dailyTargetMinutes,
+    this.academicCalendarName,
+    this.activeTermName,
+  });
+
+  final String learnerId;
+  final String firstName;
+  final String lastName;
+  final String fullName;
+  final String countryCode;
+  final String status;
+  final String gradeName;
+  final String systemName;
+  final String curriculumName;
+  final String schoolName;
+  final LearnerLearningSummary summary;
+  final LearnerLastAccessedLesson? resumeLesson;
+  final int streakDays;
+  final int dailyTargetLessons;
+  final int todayCompletedLessons;
+  final int dailyTargetMinutes;
+  final String? academicCalendarName;
+  final String? activeTermName;
+
+  factory LearnerDashboardData.fromJson(Map<String, dynamic> json) {
+    final rawCal = json['academic_calendar'] as Map<String, dynamic>?;
+    String? termName;
+    if (rawCal != null) {
+      final terms = rawCal['terms'] as List<dynamic>? ?? const [];
+      final currentTerm = terms.cast<Map<String, dynamic>?>().firstWhere(
+            (t) => t?['is_current'] == true,
+            orElse: () => terms.isNotEmpty ? terms.first as Map<String, dynamic> : null,
+          );
+      termName = currentTerm?['name'] as String?;
+    }
+
+    return LearnerDashboardData(
+      learnerId: json['learner_id'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
+      fullName: json['full_name'] as String,
+      countryCode: json['country_code'] as String,
+      status: json['status'] as String,
+      gradeName: json['grade_name'] as String? ?? 'Grade',
+      systemName: json['system_name'] as String? ?? 'National System',
+      curriculumName: json['curriculum_name'] as String? ?? 'Curriculum',
+      schoolName: json['school_name'] as String? ?? 'Independent Learner',
+      summary: LearnerLearningSummary.fromJson(
+        json['summary'] as Map<String, dynamic>,
+      ),
+      resumeLesson: json['resume_lesson'] == null
+          ? null
+          : LearnerLastAccessedLesson.fromJson(
+              json['resume_lesson'] as Map<String, dynamic>,
+            ),
+      streakDays: (json['streak_days'] as num?)?.toInt() ?? 1,
+      dailyTargetLessons:
+          (json['daily_target_lessons'] as num?)?.toInt() ?? 1,
+      todayCompletedLessons:
+          (json['today_completed_lessons'] as num?)?.toInt() ?? 0,
+      dailyTargetMinutes:
+          (json['daily_target_minutes'] as num?)?.toInt() ?? 20,
+      academicCalendarName: rawCal?['name'] as String?,
+      activeTermName: termName,
+    );
+  }
+}
+
+class CurriculumExplorerLesson {
+  const CurriculumExplorerLesson({
+    required this.lessonId,
+    required this.title,
+    required this.estimatedMinutes,
+    required this.isFreePreview,
+    required this.displayOrder,
+  });
+
+  final String lessonId;
+  final String title;
+  final int estimatedMinutes;
+  final bool isFreePreview;
+  final int displayOrder;
+
+  factory CurriculumExplorerLesson.fromJson(Map<String, dynamic> json) {
+    return CurriculumExplorerLesson(
+      lessonId: json['lesson_id'] as String,
+      title: json['title'] as String,
+      estimatedMinutes: (json['estimated_minutes'] as num?)?.toInt() ?? 15,
+      isFreePreview: json['is_free_preview'] as bool? ?? false,
+      displayOrder: (json['display_order'] as num?)?.toInt() ?? 1,
+    );
+  }
+}
+
+class CurriculumExplorerTopic {
+  const CurriculumExplorerTopic({
+    required this.topicId,
+    required this.title,
+    required this.summary,
+    required this.displayOrder,
+    required this.lessons,
+  });
+
+  final String topicId;
+  final String title;
+  final String summary;
+  final int displayOrder;
+  final List<CurriculumExplorerLesson> lessons;
+
+  factory CurriculumExplorerTopic.fromJson(Map<String, dynamic> json) {
+    final rawLessons = json['lessons'] as List<dynamic>? ?? const [];
+    return CurriculumExplorerTopic(
+      topicId: json['topic_id'] as String,
+      title: json['title'] as String,
+      summary: json['summary'] as String? ?? '',
+      displayOrder: (json['display_order'] as num?)?.toInt() ?? 1,
+      lessons: rawLessons
+          .map((l) => CurriculumExplorerLesson.fromJson(l as Map<String, dynamic>))
+          .toList(growable: false),
+    );
+  }
+}
+
+class CurriculumExplorerSubject {
+  const CurriculumExplorerSubject({
+    required this.subjectId,
+    required this.subjectName,
+    required this.subjectCode,
+    required this.description,
+    this.gradeId,
+    required this.displayOrder,
+    required this.topics,
+  });
+
+  final String subjectId;
+  final String subjectName;
+  final String subjectCode;
+  final String description;
+  final String? gradeId;
+  final int displayOrder;
+  final List<CurriculumExplorerTopic> topics;
+
+  int get totalLessons => topics.fold(0, (sum, t) => sum + t.lessons.length);
+
+  factory CurriculumExplorerSubject.fromJson(Map<String, dynamic> json) {
+    final rawTopics = json['topics'] as List<dynamic>? ?? const [];
+    return CurriculumExplorerSubject(
+      subjectId: json['subject_id'] as String,
+      subjectName: json['subject_name'] as String,
+      subjectCode: json['subject_code'] as String,
+      description: json['description'] as String? ?? '',
+      gradeId: json['grade_id'] as String?,
+      displayOrder: (json['display_order'] as num?)?.toInt() ?? 1,
+      topics: rawTopics
+          .map((t) => CurriculumExplorerTopic.fromJson(t as Map<String, dynamic>))
+          .toList(growable: false),
+    );
+  }
+}

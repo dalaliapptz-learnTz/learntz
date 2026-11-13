@@ -11,12 +11,14 @@ import '../../features/admin/admin_screens.dart';
 import '../../features/auth/auth_screens.dart';
 import '../../features/billing/subscription_screen.dart';
 import '../../features/country/select_country_screen.dart';
+import '../../features/curriculum/curriculum_explorer_screen.dart';
 import '../../features/curriculum/curriculum_providers.dart';
 import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learners/learner_screens.dart';
 import '../../features/learning/learning_screens.dart';
+import '../../features/learning/parent_dashboard_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 
@@ -36,6 +38,8 @@ abstract final class AppRoutes {
   static const editParentProfile = '/account/profile';
   static const accountSettings = '/account/settings';
   static const subscriptions = '/account/subscriptions';
+  static const parentDashboard = '/account/parent-dashboard';
+  static const curriculumExplorer = '/curriculum/explorer';
   static const learn = '/learn';
   static String lessonReader(String lessonId) => '/learn/lessons/$lessonId';
   static String lessonQuiz(String lessonId) => '/learn/lessons/$lessonId/quiz';
@@ -202,6 +206,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.subscriptions,
             builder: (context, state) => const SubscriptionsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.parentDashboard,
+            builder: (context, state) => const ParentDashboardScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.curriculumExplorer,
+            builder: (context, state) => const CurriculumExplorerScreen(),
           ),
           GoRoute(
             path: AppRoutes.learn,

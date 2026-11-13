@@ -76,14 +76,43 @@ class LearningHubScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.learningHubTitle,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.learningHubSubtitle,
-                style: Theme.of(context).textTheme.bodyLarge,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.learningHubTitle,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.learningHubSubtitle,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.curriculumExplorer),
+                        icon: const Icon(Icons.explore_outlined, size: 18),
+                        label: Text(l10n.curriculumExplorerAction),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.parentDashboard),
+                        icon: const Icon(Icons.analytics_outlined, size: 18),
+                        label: Text(l10n.parentDashboardTitle),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               if (activeLearner == null)
@@ -117,6 +146,8 @@ class LearningHubScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 16),
+                _LearnerDailyTargetAndResumeSection(learnerId: activeLearner.id),
                 const SizedBox(height: 16),
                 ref
                     .watch(activeLearnerLearningCatalogProvider)
@@ -681,6 +712,118 @@ class _PracticeQuizScreenState extends ConsumerState<PracticeQuizScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LearnerDailyTargetAndResumeSection extends ConsumerWidget {
+  const _LearnerDailyTargetAndResumeSection({required this.learnerId});
+
+  final String learnerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final dashboardAsync = ref.watch(learnerDashboardDataProvider(learnerId));
+
+    return dashboardAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (data) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppCard(
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                    child: const Icon(Icons.bolt, color: Colors.amber),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${l10n.dailyGoalTitle}: ${data.todayCompletedLessons}/${data.dailyTargetLessons} ${l10n.lessonsCompletedLabel}',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        Text(
+                          data.activeTermName != null
+                              ? '${l10n.activeTermLabel}: ${data.activeTermName}'
+                              : '${data.dailyTargetMinutes} ${l10n.targetMinutesLabel}',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Chip(
+                    avatar: const Icon(
+                      Icons.local_fire_department,
+                      size: 18,
+                      color: Colors.deepOrange,
+                    ),
+                    label: Text('${data.streakDays} ${l10n.streakDaysSuffix}'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (data.resumeLesson != null) ...[
+              AppCard(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.play_circle_outline,
+                      size: 36,
+                      color: Colors.teal,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.resumeLearningTitle,
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          Text(
+                            '${data.resumeLesson!.subjectName}: ${data.resumeLesson!.lessonTitle}',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 4),
+                          LinearProgressIndicator(
+                            value: (data.resumeLesson!.readingProgressPercent
+                                    .clamp(0, 100)) /
+                                100.0,
+                            minHeight: 6,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    FilledButton(
+                      onPressed: () => context.go(
+                        AppRoutes.lessonReader(data.resumeLesson!.lessonId),
+                      ),
+                      child: Text(l10n.continueAction),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
     );
   }
 }

@@ -104,6 +104,40 @@ class _StubLearningRepository implements LearningRepository {
   @override
   Future<LearnerLearningSummary> getLearningSummary(String learnerId) async =>
       bundle.summary;
+
+  @override
+  Future<List<ParentLearnerOverview>> getParentDashboardOverview() async =>
+      const [];
+
+  @override
+  Future<LearnerDashboardData> getLearnerDashboardData(String learnerId) async {
+    return LearnerDashboardData(
+      learnerId: learnerId,
+      firstName: 'Asha',
+      lastName: 'Mushi',
+      fullName: 'Asha Mushi',
+      countryCode: 'TZ',
+      status: 'active',
+      gradeName: 'Darasa la 1',
+      systemName: 'TIE',
+      curriculumName: 'TIE',
+      schoolName: 'Independent Learner',
+      summary: bundle.summary,
+      resumeLesson: null,
+      streakDays: 3,
+      dailyTargetLessons: 1,
+      todayCompletedLessons: 1,
+      dailyTargetMinutes: 20,
+    );
+  }
+
+  @override
+  Future<List<CurriculumExplorerSubject>> getCurriculumExplorerTree({
+    required String countryCode,
+    required String educationSystemId,
+    String? educationLevelId,
+    String? gradeId,
+  }) async => const [];
 }
 
 void main() {

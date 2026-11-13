@@ -94,6 +94,11 @@ class AccountScreen extends ConsumerWidget {
                     label: Text(l10n.learningHubTitle),
                   ),
                   OutlinedButton.icon(
+                    onPressed: () => context.go(AppRoutes.parentDashboard),
+                    icon: const Icon(Icons.analytics_outlined),
+                    label: Text(l10n.parentDashboardTitle),
+                  ),
+                  OutlinedButton.icon(
                     onPressed: () => context.go(AppRoutes.subscriptions),
                     icon: const Icon(Icons.payments_outlined),
                     label: Text(l10n.viewSubscriptionsAction),

@@ -162,6 +162,54 @@ class LearningRepository {
     );
   }
 
+  Future<List<ParentLearnerOverview>> getParentDashboardOverview() async {
+    _requireUser();
+    final result = await _client.rpc('get_parent_dashboard_overview');
+    return (result as List<dynamic>)
+        .map(
+          (row) =>
+              ParentLearnerOverview.fromJson(Map<String, dynamic>.from(row as Map)),
+        )
+        .toList(growable: false);
+  }
+
+  Future<LearnerDashboardData> getLearnerDashboardData(
+    String learnerId,
+  ) async {
+    _requireUser();
+    final result = await _client.rpc(
+      'get_learner_dashboard_data',
+      params: {'p_learner_id': learnerId},
+    );
+    return LearnerDashboardData.fromJson(
+      Map<String, dynamic>.from(result as Map),
+    );
+  }
+
+  Future<List<CurriculumExplorerSubject>> getCurriculumExplorerTree({
+    required String countryCode,
+    required String educationSystemId,
+    String? educationLevelId,
+    String? gradeId,
+  }) async {
+    final result = await _client.rpc(
+      'get_curriculum_explorer_tree',
+      params: {
+        'p_country_code': countryCode,
+        'p_education_system_id': educationSystemId,
+        'p_education_level_id': ?educationLevelId,
+        'p_grade_id': ?gradeId,
+      },
+    );
+    return (result as List<dynamic>)
+        .map(
+          (row) => CurriculumExplorerSubject.fromJson(
+            Map<String, dynamic>.from(row as Map),
+          ),
+        )
+        .toList(growable: false);
+  }
+
   User _requireUser() {
     final user = _client.auth.currentUser;
     if (user == null) {

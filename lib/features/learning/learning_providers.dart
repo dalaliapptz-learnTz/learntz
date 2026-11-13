@@ -44,3 +44,39 @@ final lessonQuizProvider =
         lessonId: lessonId,
       );
     });
+
+final parentDashboardOverviewProvider =
+    FutureProvider.autoDispose<List<ParentLearnerOverview>>((ref) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getParentDashboardOverview();
+    });
+
+final learnerDashboardDataProvider =
+    FutureProvider.autoDispose.family<LearnerDashboardData, String>((
+      ref,
+      learnerId,
+    ) async {
+      final repository = ref.watch(learningRepositoryProvider);
+      if (repository == null) throw const AuthNotConfiguredException();
+      return repository.getLearnerDashboardData(learnerId);
+    });
+
+final curriculumExplorerTreeProvider = FutureProvider.autoDispose.family<
+  List<CurriculumExplorerSubject>,
+  ({
+    String countryCode,
+    String educationSystemId,
+    String? educationLevelId,
+    String? gradeId,
+  })
+>((ref, args) async {
+  final repository = ref.watch(learningRepositoryProvider);
+  if (repository == null) throw const AuthNotConfiguredException();
+  return repository.getCurriculumExplorerTree(
+    countryCode: args.countryCode,
+    educationSystemId: args.educationSystemId,
+    educationLevelId: args.educationLevelId,
+    gradeId: args.gradeId,
+  );
+});
