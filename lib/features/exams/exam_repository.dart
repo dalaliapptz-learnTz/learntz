@@ -258,4 +258,28 @@ class ExamRepository {
         .map((m) => GeneratedMockExamination.fromJson(m))
         .toList();
   }
+
+  Future<LearnerExamResultData> submitAndGradeAttempt(String attemptId) async {
+    final response = await _client.rpc(
+      'submit_and_grade_exam_attempt',
+      params: {'p_attempt_id': attemptId},
+    );
+
+    if (response is Map<String, dynamic>) {
+      return LearnerExamResultData.fromJson(response);
+    }
+    throw const FormatException('Invalid response when submitting exam attempt');
+  }
+
+  Future<LearnerExamResultData> getExamResults(String attemptId) async {
+    final response = await _client.rpc(
+      'get_exam_attempt_results',
+      params: {'p_attempt_id': attemptId},
+    );
+
+    if (response is Map<String, dynamic>) {
+      return LearnerExamResultData.fromJson(response);
+    }
+    throw const FormatException('Invalid response when getting exam results');
+  }
 }

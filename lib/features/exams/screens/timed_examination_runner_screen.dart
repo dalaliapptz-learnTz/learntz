@@ -192,9 +192,9 @@ class _TimedExaminationRunnerScreenState
                 // Floating Timer Widget in AppBar
                 Container(
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: timerColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -213,6 +213,53 @@ class _TimedExaminationRunnerScreenState
                         ),
                       ),
                     ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: AppButton(
+                    label: 'Submit Exam',
+                    icon: Icons.check_circle_outline,
+                    variant: AppButtonVariant.primary,
+                    size: AppButtonSize.sm,
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Submit Examination?'),
+                          content: Text(
+                            'You have answered ${runnerState.answers.length} of ${attempt.questions.length} questions.\n'
+                            'Are you sure you want to finish and view your graded performance analysis?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: const Text('Review Questions'),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              child: const Text('Submit Now'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirmed == true && repo != null && context.mounted) {
+                        try {
+                          await repo.submitAndGradeAttempt(widget.attemptId);
+                          if (context.mounted) {
+                            context.go(AppRoutes.examResults(widget.attemptId));
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to submit: $e')),
+                            );
+                          }
+                        }
+                      }
+                    },
                   ),
                 ),
               ],
@@ -723,7 +770,7 @@ class _TimedExaminationRunnerScreenState
                 label: 'View Examination Results',
                 icon: Icons.analytics_outlined,
                 onPressed: () {
-                  context.go(AppRoutes.examCentre);
+                  context.go(AppRoutes.examResults(widget.attemptId));
                 },
               ),
             ],

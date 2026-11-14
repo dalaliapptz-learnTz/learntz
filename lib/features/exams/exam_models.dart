@@ -844,3 +844,269 @@ class LearnerExamAttemptData {
     );
   }
 }
+
+@immutable
+class ExamSectionPerformance {
+  const ExamSectionPerformance({
+    required this.sectionCode,
+    required this.score,
+    required this.possible,
+    required this.percentage,
+  });
+
+  final String sectionCode;
+  final double score;
+  final double possible;
+  final double percentage;
+
+  factory ExamSectionPerformance.fromJson(Map<String, dynamic> json) {
+    return ExamSectionPerformance(
+      sectionCode: json['section_code'] as String? ?? '',
+      score: (json['score'] as num?)?.toDouble() ?? 0.0,
+      possible: (json['possible'] as num?)?.toDouble() ?? 0.0,
+      percentage: (json['percentage'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+@immutable
+class ExamTopicDeficit {
+  const ExamTopicDeficit({
+    required this.topicId,
+    required this.title,
+    required this.score,
+    required this.possible,
+    required this.accuracyPct,
+  });
+
+  final String topicId;
+  final String title;
+  final double score;
+  final double possible;
+  final double accuracyPct;
+
+  factory ExamTopicDeficit.fromJson(Map<String, dynamic> json) {
+    return ExamTopicDeficit(
+      topicId: json['topic_id'] as String? ?? '',
+      title: json['title'] as String? ?? 'General Topic',
+      score: (json['score'] as num?)?.toDouble() ?? 0.0,
+      possible: (json['possible'] as num?)?.toDouble() ?? 0.0,
+      accuracyPct: (json['accuracy_pct'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+@immutable
+class RemedialLessonItem {
+  const RemedialLessonItem({
+    required this.lessonId,
+    required this.title,
+    required this.topicId,
+    this.estimatedMinutes = 10,
+  });
+
+  final String lessonId;
+  final String title;
+  final String topicId;
+  final int estimatedMinutes;
+
+  factory RemedialLessonItem.fromJson(Map<String, dynamic> json) {
+    return RemedialLessonItem(
+      lessonId: json['lesson_id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      topicId: json['topic_id'] as String? ?? '',
+      estimatedMinutes: (json['estimated_minutes'] as num?)?.toInt() ?? 10,
+    );
+  }
+}
+
+@immutable
+class RemedialFlashcardItem {
+  const RemedialFlashcardItem({
+    required this.deckId,
+    required this.title,
+    required this.topicId,
+    this.cardCount = 0,
+  });
+
+  final String deckId;
+  final String title;
+  final String topicId;
+  final int cardCount;
+
+  factory RemedialFlashcardItem.fromJson(Map<String, dynamic> json) {
+    return RemedialFlashcardItem(
+      deckId: json['deck_id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      topicId: json['topic_id'] as String? ?? '',
+      cardCount: (json['card_count'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+@immutable
+class ExamQuestionReviewItem {
+  const ExamQuestionReviewItem({
+    required this.questionId,
+    required this.sectionCode,
+    required this.orderIndex,
+    required this.questionNumber,
+    this.subPart,
+    required this.questionText,
+    required this.questionType,
+    this.options = const [],
+    this.correctAnswer,
+    this.rubricGuide = const [],
+    required this.marks,
+    this.learnerAnswer,
+    required this.marksAwarded,
+    this.isFlagged = false,
+  });
+
+  final String questionId;
+  final String sectionCode;
+  final int orderIndex;
+  final int questionNumber;
+  final String? subPart;
+  final String questionText;
+  final String questionType;
+  final List<ExamQuestionOption> options;
+  final String? correctAnswer;
+  final List<ExamRubricStep> rubricGuide;
+  final double marks;
+  final String? learnerAnswer;
+  final double marksAwarded;
+  final bool isFlagged;
+
+  String get label => subPart != null && subPart!.isNotEmpty
+      ? 'Sec $sectionCode Q$questionNumber $subPart'
+      : 'Sec $sectionCode Q$questionNumber';
+
+  bool get isFullMarks => marksAwarded >= marks && marks > 0;
+  bool get isZeroMarks => marksAwarded == 0;
+
+  factory ExamQuestionReviewItem.fromJson(Map<String, dynamic> json) {
+    final rawOpts = json['options'];
+    final opts = <ExamQuestionOption>[];
+    if (rawOpts is List) {
+      for (final o in rawOpts) {
+        if (o is Map<String, dynamic>) {
+          opts.add(ExamQuestionOption.fromJson(o));
+        }
+      }
+    }
+
+    final rawRub = json['rubric_guide'];
+    final rubric = <ExamRubricStep>[];
+    if (rawRub is List) {
+      for (final r in rawRub) {
+        if (r is Map<String, dynamic>) {
+          rubric.add(ExamRubricStep.fromJson(r));
+        }
+      }
+    }
+
+    return ExamQuestionReviewItem(
+      questionId: json['question_id'] as String? ?? '',
+      sectionCode: json['section_code'] as String? ?? 'A',
+      orderIndex: (json['order_index'] as num?)?.toInt() ?? 1,
+      questionNumber: (json['question_number'] as num?)?.toInt() ?? 1,
+      subPart: json['sub_part'] as String?,
+      questionText: json['question_text'] as String? ?? '',
+      questionType: json['question_type'] as String? ?? 'structured',
+      options: opts,
+      correctAnswer: json['correct_answer'] as String?,
+      rubricGuide: rubric,
+      marks: (json['marks'] as num?)?.toDouble() ?? 1.0,
+      learnerAnswer: json['learner_answer'] as String?,
+      marksAwarded: (json['marks_awarded'] as num?)?.toDouble() ?? 0.0,
+      isFlagged: json['is_flagged'] as bool? ?? false,
+    );
+  }
+}
+
+@immutable
+class LearnerExamResultData {
+  const LearnerExamResultData({
+    required this.resultId,
+    required this.attemptId,
+    required this.learnerId,
+    required this.title,
+    required this.totalScore,
+    required this.totalPossibleMarks,
+    required this.percentage,
+    required this.predictedDivisionOrGrade,
+    this.gradingSystem = 'division',
+    this.sectionBreakdown = const [],
+    this.topicDeficits = const [],
+    this.remedialLessons = const [],
+    this.remedialFlashcards = const [],
+    required this.createdAt,
+    this.questionsReview = const [],
+  });
+
+  final String resultId;
+  final String attemptId;
+  final String learnerId;
+  final String title;
+  final double totalScore;
+  final double totalPossibleMarks;
+  final double percentage;
+  final String predictedDivisionOrGrade;
+  final String gradingSystem;
+  final List<ExamSectionPerformance> sectionBreakdown;
+  final List<ExamTopicDeficit> topicDeficits;
+  final List<RemedialLessonItem> remedialLessons;
+  final List<RemedialFlashcardItem> remedialFlashcards;
+  final DateTime createdAt;
+  final List<ExamQuestionReviewItem> questionsReview;
+
+  factory LearnerExamResultData.fromJson(Map<String, dynamic> json) {
+    final rawSections = json['section_breakdown'] as List<dynamic>? ?? [];
+    final sections = rawSections
+        .map((s) => ExamSectionPerformance.fromJson(s as Map<String, dynamic>))
+        .toList();
+
+    final rawDeficits = json['topic_deficits'] as List<dynamic>? ?? [];
+    final deficits = rawDeficits
+        .map((d) => ExamTopicDeficit.fromJson(d as Map<String, dynamic>))
+        .toList();
+
+    final rawLessons = json['remedial_lessons'] as List<dynamic>? ?? [];
+    final lessons = rawLessons
+        .map((l) => RemedialLessonItem.fromJson(l as Map<String, dynamic>))
+        .toList();
+
+    final rawDecks = json['remedial_flashcards'] as List<dynamic>? ?? [];
+    final decks = rawDecks
+        .map((d) => RemedialFlashcardItem.fromJson(d as Map<String, dynamic>))
+        .toList();
+
+    final rawQuestions = json['questions_review'] as List<dynamic>? ?? [];
+    final questions = rawQuestions
+        .map((q) => ExamQuestionReviewItem.fromJson(q as Map<String, dynamic>))
+        .toList();
+
+    return LearnerExamResultData(
+      resultId: json['result_id'] as String? ?? '',
+      attemptId: json['attempt_id'] as String? ?? '',
+      learnerId: json['learner_id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      totalScore: (json['total_score'] as num?)?.toDouble() ?? 0.0,
+      totalPossibleMarks:
+          (json['total_possible_marks'] as num?)?.toDouble() ?? 100.0,
+      percentage: (json['percentage'] as num?)?.toDouble() ?? 0.0,
+      predictedDivisionOrGrade:
+          json['predicted_division_or_grade'] as String? ?? 'Division 0',
+      gradingSystem: json['grading_system'] as String? ?? 'division',
+      sectionBreakdown: sections,
+      topicDeficits: deficits,
+      remedialLessons: lessons,
+      remedialFlashcards: decks,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String) ?? DateTime.now()
+          : DateTime.now(),
+      questionsReview: questions,
+    );
+  }
+}

@@ -338,3 +338,10 @@ final examRunnerProvider =
     NotifierProvider<ExamRunnerNotifier, ExamRunnerState>(
   ExamRunnerNotifier.new,
 );
+
+final examResultsProvider =
+    FutureProvider.family<LearnerExamResultData?, String>((ref, attemptId) async {
+  final repository = ref.watch(examRepositoryProvider);
+  if (repository == null) return null;
+  return repository.getExamResults(attemptId);
+});
