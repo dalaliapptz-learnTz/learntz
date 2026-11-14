@@ -234,4 +234,54 @@ class OrganizationRepository {
 
     return (response as bool?) ?? false;
   }
+
+  Future<MinistryWorkspaceKpis> getMinistryWorkspaceKpis(String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_ministry_workspace_kpis',
+      params: {'p_ministry_org_id': orgId},
+    );
+
+    return MinistryWorkspaceKpis.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<ExamAuthorityWorkspaceKpis> getExamAuthorityWorkspaceKpis(
+      String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_exam_authority_workspace_kpis',
+      params: {'p_authority_org_id': orgId},
+    );
+
+    return ExamAuthorityWorkspaceKpis.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<GovernanceOfficeWorkspaceKpis> getGovernanceOfficeWorkspaceKpis(
+      String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_governance_office_workspace_kpis',
+      params: {'p_office_org_id': orgId},
+    );
+
+    return GovernanceOfficeWorkspaceKpis.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
 }

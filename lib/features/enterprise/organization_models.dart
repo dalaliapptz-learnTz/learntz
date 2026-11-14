@@ -353,3 +353,126 @@ class UserWorkspace {
     );
   }
 }
+
+@immutable
+class MinistryWorkspaceKpis {
+  const MinistryWorkspaceKpis({
+    required this.ministryOrgId,
+    required this.countryCode,
+    required this.subordinateSchoolsCount,
+    required this.registeredLearnersCount,
+    required this.activeSyllabusModulesCount,
+    this.recentSchools = const [],
+  });
+
+  final String ministryOrgId;
+  final String countryCode;
+  final int subordinateSchoolsCount;
+  final int registeredLearnersCount;
+  final int activeSyllabusModulesCount;
+  final List<Map<String, dynamic>> recentSchools;
+
+  factory MinistryWorkspaceKpis.fromJson(Map<String, dynamic> json) {
+    return MinistryWorkspaceKpis(
+      ministryOrgId: json['ministry_org_id'] as String? ?? '',
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      subordinateSchoolsCount:
+          (json['subordinate_schools_count'] as num?)?.toInt() ?? 0,
+      registeredLearnersCount:
+          (json['registered_learners_count'] as num?)?.toInt() ?? 0,
+      activeSyllabusModulesCount:
+          (json['active_syllabus_modules_count'] as num?)?.toInt() ?? 0,
+      recentSchools: (json['recent_schools'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          const [],
+    );
+  }
+}
+
+@immutable
+class ExamAuthorityWorkspaceKpis {
+  const ExamAuthorityWorkspaceKpis({
+    required this.authorityOrgId,
+    required this.authorityCode,
+    required this.countryCode,
+    required this.archivedPapersCount,
+    required this.approvedQuestionsCount,
+    required this.activeBlueprintsCount,
+    required this.averagePredictiveValidityIndex,
+    this.recentPapers = const [],
+  });
+
+  final String authorityOrgId;
+  final String authorityCode;
+  final String countryCode;
+  final int archivedPapersCount;
+  final int approvedQuestionsCount;
+  final int activeBlueprintsCount;
+  final double averagePredictiveValidityIndex;
+  final List<Map<String, dynamic>> recentPapers;
+
+  factory ExamAuthorityWorkspaceKpis.fromJson(Map<String, dynamic> json) {
+    return ExamAuthorityWorkspaceKpis(
+      authorityOrgId: json['authority_org_id'] as String? ?? '',
+      authorityCode: json['authority_code'] as String? ?? '',
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      archivedPapersCount:
+          (json['archived_papers_count'] as num?)?.toInt() ?? 0,
+      approvedQuestionsCount:
+          (json['approved_questions_count'] as num?)?.toInt() ?? 0,
+      activeBlueprintsCount:
+          (json['active_blueprints_count'] as num?)?.toInt() ?? 0,
+      averagePredictiveValidityIndex:
+          (json['average_predictive_validity_index'] as num?)?.toDouble() ?? 0.0,
+      recentPapers: (json['recent_papers'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          const [],
+    );
+  }
+}
+
+@immutable
+class GovernanceOfficeWorkspaceKpis {
+  const GovernanceOfficeWorkspaceKpis({
+    required this.officeOrgId,
+    required this.officeName,
+    required this.officeType,
+    required this.countryCode,
+    required this.subordinateSchoolsCount,
+    required this.totalLearnersCount,
+    required this.averageMockPerformancePct,
+    this.schoolsInJurisdiction = const [],
+  });
+
+  final String officeOrgId;
+  final String officeName;
+  final String officeType;
+  final String countryCode;
+  final int subordinateSchoolsCount;
+  final int totalLearnersCount;
+  final double averageMockPerformancePct;
+  final List<Map<String, dynamic>> schoolsInJurisdiction;
+
+  factory GovernanceOfficeWorkspaceKpis.fromJson(Map<String, dynamic> json) {
+    return GovernanceOfficeWorkspaceKpis(
+      officeOrgId: json['office_org_id'] as String? ?? '',
+      officeName: json['office_name'] as String? ?? '',
+      officeType: json['office_type'] as String? ?? '',
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      subordinateSchoolsCount:
+          (json['subordinate_schools_count'] as num?)?.toInt() ?? 0,
+      totalLearnersCount:
+          (json['total_learners_count'] as num?)?.toInt() ?? 0,
+      averageMockPerformancePct:
+          (json['average_mock_performance_pct'] as num?)?.toDouble() ?? 0.0,
+      schoolsInJurisdiction:
+          (json['schools_in_jurisdiction'] as List<dynamic>?)
+                  ?.map((e) => Map<String, dynamic>.from(e as Map))
+                  .toList() ??
+              const [],
+    );
+  }
+}
+

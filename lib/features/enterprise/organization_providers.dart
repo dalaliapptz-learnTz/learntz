@@ -105,3 +105,21 @@ final organizationMembersProvider = FutureProvider.family<
   final repo = ref.watch(organizationRepositoryProvider);
   return repo.listOrganizationMembers(orgId);
 });
+
+final ministryWorkspaceKpisProvider = FutureProvider.family<
+    MinistryWorkspaceKpis, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getMinistryWorkspaceKpis(orgId);
+});
+
+final examAuthorityWorkspaceKpisProvider = FutureProvider.family<
+    ExamAuthorityWorkspaceKpis, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getExamAuthorityWorkspaceKpis(orgId);
+});
+
+final governanceOfficeWorkspaceKpisProvider = FutureProvider.family<
+    GovernanceOfficeWorkspaceKpis, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getGovernanceOfficeWorkspaceKpis(orgId);
+});

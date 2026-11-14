@@ -17,6 +17,9 @@ import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/enterprise/screens/organization_directory_screen.dart';
 import '../../features/enterprise/screens/organization_registration_screen.dart';
 import '../../features/enterprise/screens/organization_staff_directory_screen.dart';
+import '../../features/enterprise/screens/ministry_workspace_screen.dart';
+import '../../features/enterprise/screens/exam_authority_workspace_screen.dart';
+import '../../features/enterprise/screens/regional_district_workspace_screen.dart';
 import '../../features/exams/screens/exam_question_bank_screen.dart';
 import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/exam_results_analytics_screen.dart';
@@ -378,6 +381,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/workspace/:orgId/staff',
             builder: (context, state) => OrganizationStaffDirectoryScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/ministry/:orgId',
+            builder: (context, state) => MinistryWorkspaceScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/authority/:orgId',
+            builder: (context, state) => ExamAuthorityWorkspaceScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/governance/:orgId',
+            builder: (context, state) => RegionalDistrictWorkspaceScreen(
               orgId: state.pathParameters['orgId']!,
             ),
           ),
