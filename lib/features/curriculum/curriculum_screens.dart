@@ -1,6 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/auth/auth_providers.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -240,12 +241,31 @@ class _CurriculumPilotPanelState extends ConsumerState<_CurriculumPilotPanel> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    l10n.curriculumAdminTitle,
-                    style: Theme.of(context).textTheme.headlineMedium,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.curriculumAdminTitle,
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(l10n.curriculumAdminDescription),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FilledButton.icon(
+                        key: const Key('curriculum-launch-cms-btn'),
+                        onPressed: () => context.push('/content/studio'),
+                        icon: const Icon(Icons.edit_note),
+                        label: const Text('Content Studio'),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(l10n.curriculumAdminDescription),
                   const SizedBox(height: 20),
                   if (_error != null) ...[
                     AuthInlineMessage(message: _error!, isError: true),

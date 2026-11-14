@@ -74,6 +74,35 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
+          LearnTzSpacing.vGapMd,
+          AppCard(
+            key: const Key('home-cms-card'),
+            variant: AppCardVariant.interactive,
+            onTap: () => context.push(AppRoutes.contentStudio),
+            child: Row(
+              children: [
+                Icon(Icons.edit_note, color: colors.primary),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Content Management Studio',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      LearnTzSpacing.vGapXs,
+                      Text(
+                        'Interactive Curriculum Authoring, Markdown Studio & Two-Party Review',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward, color: LearnTzColors.textSecondary),
+              ],
+            ),
+          ),
         ],
       ),
     );

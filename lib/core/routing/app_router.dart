@@ -10,6 +10,9 @@ import '../../features/admin/admin_providers.dart';
 import '../../features/admin/admin_screens.dart';
 import '../../features/auth/auth_screens.dart';
 import '../../features/billing/subscription_screen.dart';
+import '../../features/content_studio/screens/content_studio_dashboard_screen.dart';
+import '../../features/content_studio/screens/lesson_editor_studio_screen.dart';
+import '../../features/content_studio/screens/content_media_library_screen.dart';
 import '../../features/country/select_country_screen.dart';
 import '../../features/curriculum/curriculum_explorer_screen.dart';
 import '../../features/curriculum/curriculum_providers.dart';
@@ -97,6 +100,9 @@ abstract final class AppRoutes {
       '/account/learners/$learnerId';
   static String editLearner(String learnerId) =>
       '/account/learners/$learnerId/edit';
+  static const contentStudio = '/content/studio';
+  static const contentStudioEditor = '/content/studio/editor';
+  static const contentStudioMedia = '/content/studio/media';
 }
 
 final _routerAuthListenerProvider = Provider<_RouterAuthListener>((ref) {
@@ -453,6 +459,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => ExamResultsAnalyticsScreen(
               attemptId: state.pathParameters['attemptId']!,
             ),
+          ),
+          GoRoute(
+            path: AppRoutes.contentStudio,
+            builder: (context, state) => const ContentStudioDashboardScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.contentStudioEditor,
+            builder: (context, state) => LessonEditorStudioScreen(
+              initialData: state.extra as Map<String, dynamic>?,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.contentStudioMedia,
+            builder: (context, state) => const ContentMediaLibraryScreen(),
           ),
         ],
       ),

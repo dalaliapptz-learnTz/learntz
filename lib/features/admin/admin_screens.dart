@@ -187,10 +187,23 @@ class _AdminPortalContentState extends ConsumerState<_AdminPortalContent> {
                     ),
                     if (widget.capabilities.isCurriculumStaff) ...[
                       const SizedBox(height: 16),
-                      FilledButton.icon(
-                        onPressed: () => context.go(AppRoutes.curriculumAdmin),
-                        icon: const Icon(Icons.menu_book_outlined),
-                        label: Text(l10n.adminOpenCurriculumAction),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        children: [
+                          FilledButton.icon(
+                            onPressed: () => context.go(AppRoutes.curriculumAdmin),
+                            icon: const Icon(Icons.menu_book_outlined),
+                            label: Text(l10n.adminOpenCurriculumAction),
+                          ),
+                          OutlinedButton.icon(
+                            key: const Key('admin-open-content-studio-btn'),
+                            onPressed: () =>
+                                context.push(AppRoutes.contentStudio),
+                            icon: const Icon(Icons.edit_note_outlined),
+                            label: const Text('Content Management Studio'),
+                          ),
+                        ],
                       ),
                     ],
                   ],
