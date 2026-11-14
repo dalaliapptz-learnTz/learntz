@@ -125,6 +125,11 @@ class LearningHubScreen extends ConsumerWidget {
                         label: const Text('Notifications'),
                       ),
                       OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.examCentre),
+                        icon: const Icon(Icons.school_outlined, size: 18),
+                        label: const Text('Examination Centre'),
+                      ),
+                      OutlinedButton.icon(
                         onPressed: () => context.go(AppRoutes.resourceLibrary),
                         icon: const Icon(Icons.menu_book_outlined, size: 18),
                         label: Text(l10n.resourceLibraryTitle),

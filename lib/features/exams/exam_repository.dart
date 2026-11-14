@@ -282,4 +282,58 @@ class ExamRepository {
     }
     throw const FormatException('Invalid response when getting exam results');
   }
+
+  Future<MockIntelligenceLeaderboard> getMockIntelligenceLeaderboard({
+    String countryCode = 'TZ',
+    int? year,
+  }) async {
+    final response = await _client.rpc(
+      'get_mock_intelligence_leaderboard',
+      params: {
+        'p_country_code': countryCode,
+        'p_year': year,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return MockIntelligenceLeaderboard.fromJson(response);
+    }
+    throw const FormatException('Invalid response when fetching mock leaderboard');
+  }
+
+  Future<HistoricalTopicFrequencyData> getHistoricalTopicFrequency({
+    String? subjectId,
+    String countryCode = 'TZ',
+  }) async {
+    final response = await _client.rpc(
+      'get_historical_topic_frequency',
+      params: {
+        'p_subject_id': subjectId,
+        'p_country_code': countryCode,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return HistoricalTopicFrequencyData.fromJson(response);
+    }
+    throw const FormatException('Invalid response when fetching topic frequency');
+  }
+
+  Future<Map<String, dynamic>> computeMockCorrelation({
+    required String mockPaperId,
+    required String realPaperId,
+  }) async {
+    final response = await _client.rpc(
+      'compute_mock_to_real_correlation',
+      params: {
+        'p_mock_paper_id': mockPaperId,
+        'p_real_paper_id': realPaperId,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return response;
+    }
+    throw const FormatException('Invalid response when computing mock correlation');
+  }
 }

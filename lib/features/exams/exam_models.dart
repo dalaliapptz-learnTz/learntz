@@ -1110,3 +1110,148 @@ class LearnerExamResultData {
     );
   }
 }
+
+@immutable
+class MockLeaderboardEntry {
+  const MockLeaderboardEntry({
+    required this.rank,
+    required this.comparisonId,
+    required this.mockPaperId,
+    required this.mockTitle,
+    required this.tier,
+    this.region,
+    this.district,
+    this.schoolName,
+    required this.realPaperTitle,
+    required this.year,
+    required this.predictiveValidityIndex,
+    required this.topicOverlapRatio,
+    required this.difficultyAlignmentScore,
+  });
+
+  final int rank;
+  final String comparisonId;
+  final String mockPaperId;
+  final String mockTitle;
+  final String tier;
+  final String? region;
+  final String? district;
+  final String? schoolName;
+  final String realPaperTitle;
+  final int year;
+  final double predictiveValidityIndex;
+  final double topicOverlapRatio;
+  final double difficultyAlignmentScore;
+
+  String get locationSubtitle {
+    final parts = [
+      if (region != null && region!.isNotEmpty) region,
+      if (district != null && district!.isNotEmpty) district,
+      if (schoolName != null && schoolName!.isNotEmpty) schoolName,
+    ];
+    return parts.isEmpty ? tier.toUpperCase() : parts.join(' • ');
+  }
+
+  factory MockLeaderboardEntry.fromJson(Map<String, dynamic> json) {
+    return MockLeaderboardEntry(
+      rank: (json['rank'] as num?)?.toInt() ?? 1,
+      comparisonId: json['comparison_id'] as String? ?? '',
+      mockPaperId: json['mock_paper_id'] as String? ?? '',
+      mockTitle: json['mock_title'] as String? ?? '',
+      tier: json['tier'] as String? ?? 'regional',
+      region: json['region'] as String?,
+      district: json['district'] as String?,
+      schoolName: json['school_name'] as String?,
+      realPaperTitle: json['real_paper_title'] as String? ?? '',
+      year: (json['year'] as num?)?.toInt() ?? DateTime.now().year,
+      predictiveValidityIndex:
+          (json['predictive_validity_index'] as num?)?.toDouble() ?? 0.0,
+      topicOverlapRatio:
+          (json['topic_overlap_ratio'] as num?)?.toDouble() ?? 0.0,
+      difficultyAlignmentScore:
+          (json['difficulty_alignment_score'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+@immutable
+class MockIntelligenceLeaderboard {
+  const MockIntelligenceLeaderboard({
+    required this.countryCode,
+    this.year,
+    required this.rankings,
+  });
+
+  final String countryCode;
+  final int? year;
+  final List<MockLeaderboardEntry> rankings;
+
+  factory MockIntelligenceLeaderboard.fromJson(Map<String, dynamic> json) {
+    final rawList = json['rankings'] as List<dynamic>? ?? [];
+    final list = rawList
+        .map((r) => MockLeaderboardEntry.fromJson(r as Map<String, dynamic>))
+        .toList();
+
+    return MockIntelligenceLeaderboard(
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      year: (json['year'] as num?)?.toInt(),
+      rankings: list,
+    );
+  }
+}
+
+@immutable
+class TopicFrequencyItem {
+  const TopicFrequencyItem({
+    required this.topicId,
+    required this.topicTitle,
+    required this.subjectId,
+    required this.questionCount,
+    required this.totalMarks,
+    required this.recurrenceRate,
+  });
+
+  final String topicId;
+  final String topicTitle;
+  final String subjectId;
+  final int questionCount;
+  final double totalMarks;
+  final String recurrenceRate;
+
+  factory TopicFrequencyItem.fromJson(Map<String, dynamic> json) {
+    return TopicFrequencyItem(
+      topicId: json['topic_id'] as String? ?? '',
+      topicTitle: json['topic_title'] as String? ?? '',
+      subjectId: json['subject_id'] as String? ?? '',
+      questionCount: (json['question_count'] as num?)?.toInt() ?? 0,
+      totalMarks: (json['total_marks'] as num?)?.toDouble() ?? 0.0,
+      recurrenceRate: json['recurrence_rate'] as String? ?? 'Occasional',
+    );
+  }
+}
+
+@immutable
+class HistoricalTopicFrequencyData {
+  const HistoricalTopicFrequencyData({
+    required this.countryCode,
+    this.subjectId,
+    required this.topicFrequency,
+  });
+
+  final String countryCode;
+  final String? subjectId;
+  final List<TopicFrequencyItem> topicFrequency;
+
+  factory HistoricalTopicFrequencyData.fromJson(Map<String, dynamic> json) {
+    final rawList = json['topic_frequency'] as List<dynamic>? ?? [];
+    final list = rawList
+        .map((t) => TopicFrequencyItem.fromJson(t as Map<String, dynamic>))
+        .toList();
+
+    return HistoricalTopicFrequencyData(
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      subjectId: json['subject_id'] as String?,
+      topicFrequency: list,
+    );
+  }
+}

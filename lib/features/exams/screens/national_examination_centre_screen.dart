@@ -44,54 +44,93 @@ class _NationalExaminationCentreScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            selectedCountry.countryCode == 'TZ'
-                                ? '🇹🇿'
-                                : selectedCountry.countryCode == 'KE'
-                                    ? '🇰🇪'
-                                    : '🇺🇬',
-                            style: const TextStyle(fontSize: 28),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'National Examination Centre',
-                              style: LearnTzTypography.h2.copyWith(
-                                color: LearnTzColors.textPrimary,
-                                fontWeight: FontWeight.w800,
-                              ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth >= 840;
+                final actions = Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    AppButton(
+                      label: 'Intelligence',
+                      icon: Icons.insights_outlined,
+                      variant: AppButtonVariant.outlined,
+                      size: AppButtonSize.md,
+                      onPressed: () => context.go(AppRoutes.mockIntelligence),
+                    ),
+                    AppButton(
+                      label: 'Question Bank',
+                      icon: Icons.quiz_outlined,
+                      variant: AppButtonVariant.outlined,
+                      size: AppButtonSize.md,
+                      onPressed: () => context.go(AppRoutes.examBank),
+                    ),
+                    AppButton(
+                      key: const Key('upload-mock-exam-btn'),
+                      label: 'Upload Mock Exam',
+                      icon: Icons.cloud_upload_outlined,
+                      size: AppButtonSize.md,
+                      onPressed: () => context.go(AppRoutes.examUpload),
+                    ),
+                  ],
+                );
+
+                final headerInfo = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          selectedCountry.countryCode == 'TZ'
+                              ? '🇹🇿'
+                              : selectedCountry.countryCode == 'KE'
+                                  ? '🇰🇪'
+                                  : '🇺🇬',
+                          style: const TextStyle(fontSize: 28),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'National Examination Centre',
+                            style: LearnTzTypography.h2.copyWith(
+                              color: LearnTzColors.textPrimary,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Access official past papers, regional mocks, and timed exam simulations across East Africa.',
-                        style: LearnTzTypography.bodyRegular.copyWith(
-                          color: LearnTzColors.textSecondary,
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Access official past papers, regional mocks, and timed exam simulations across East Africa.',
+                      style: LearnTzTypography.bodyRegular.copyWith(
+                        color: LearnTzColors.textSecondary,
                       ),
+                    ),
+                  ],
+                );
+
+                if (isWide) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: headerInfo),
+                      const SizedBox(width: 16),
+                      actions,
                     ],
-                  ),
-                ),
-                AppButton(
-                  key: const Key('upload-mock-exam-btn'),
-                  label: 'Upload Mock Exam',
-                  icon: Icons.cloud_upload_outlined,
-                  size: AppButtonSize.md,
-                  onPressed: () => context.go(AppRoutes.examUpload),
-                ),
-              ],
+                  );
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerInfo,
+                    const SizedBox(height: 16),
+                    actions,
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 24),
 

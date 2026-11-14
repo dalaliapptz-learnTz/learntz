@@ -345,3 +345,25 @@ final examResultsProvider =
   if (repository == null) return null;
   return repository.getExamResults(attemptId);
 });
+
+final mockIntelligenceLeaderboardProvider = FutureProvider.family<
+    MockIntelligenceLeaderboard?,
+    ({String countryCode, int? year})>((ref, params) async {
+  final repository = ref.watch(examRepositoryProvider);
+  if (repository == null) return null;
+  return repository.getMockIntelligenceLeaderboard(
+    countryCode: params.countryCode,
+    year: params.year,
+  );
+});
+
+final historicalTopicFrequencyProvider = FutureProvider.family<
+    HistoricalTopicFrequencyData?,
+    ({String? subjectId, String countryCode})>((ref, params) async {
+  final repository = ref.watch(examRepositoryProvider);
+  if (repository == null) return null;
+  return repository.getHistoricalTopicFrequency(
+    subjectId: params.subjectId,
+    countryCode: params.countryCode,
+  );
+});

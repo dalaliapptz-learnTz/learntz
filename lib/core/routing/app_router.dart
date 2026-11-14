@@ -17,6 +17,7 @@ import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/exams/screens/exam_question_bank_screen.dart';
 import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/exam_results_analytics_screen.dart';
+import '../../features/exams/screens/mock_intelligence_dashboard_screen.dart';
 import '../../features/exams/screens/mock_upload_centre_screen.dart';
 import '../../features/exams/screens/national_examination_centre_screen.dart';
 import '../../features/exams/screens/timed_examination_runner_screen.dart';
@@ -67,6 +68,7 @@ abstract final class AppRoutes {
   static const examUpload = '/exams/upload';
   static const examBank = '/exams/bank';
   static const examQuestionReview = '/exams/bank/review';
+  static const mockIntelligence = '/exams/intelligence';
   static String examRunner(String attemptId) => '/exams/runner/$attemptId';
   static String examResults(String attemptId) => '/exams/results/$attemptId';
   static const addLearner = '/account/learners/add';
@@ -356,6 +358,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.examQuestionReview,
             builder: (context, state) =>
                 const ExamQuestionReviewCockpitScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.mockIntelligence,
+            builder: (context, state) =>
+                const MockIntelligenceDashboardScreen(),
           ),
           GoRoute(
             path: '/exams/runner/:attemptId',
