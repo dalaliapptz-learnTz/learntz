@@ -14,6 +14,8 @@ import '../../features/country/select_country_screen.dart';
 import '../../features/curriculum/curriculum_explorer_screen.dart';
 import '../../features/curriculum/curriculum_providers.dart';
 import '../../features/curriculum/curriculum_screens.dart';
+import '../../features/exams/screens/mock_upload_centre_screen.dart';
+import '../../features/exams/screens/national_examination_centre_screen.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learners/learner_screens.dart';
@@ -57,6 +59,8 @@ abstract final class AppRoutes {
   static String lessonQuiz(String lessonId) => '/learn/lessons/$lessonId/quiz';
   static const admin = '/admin';
   static const curriculumAdmin = '/admin/curriculum';
+  static const examCentre = '/exams/centre';
+  static const examUpload = '/exams/upload';
   static const addLearner = '/account/learners/add';
   static const challenges = '/social/challenges';
   static const communities = '/social/communities';
@@ -140,7 +144,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           path == AppRoutes.admin ||
           path.startsWith('${AppRoutes.admin}/') ||
           path == AppRoutes.learn ||
-          path.startsWith('${AppRoutes.learn}/');
+          path.startsWith('${AppRoutes.learn}/') ||
+          path == AppRoutes.examUpload;
       if (isProtected && !isSignedIn) {
         return Uri(
           path: AppRoutes.signIn,
@@ -323,6 +328,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => LearnerFormScreen(
               learnerId: state.pathParameters['learnerId']!,
             ),
+          ),
+          GoRoute(
+            path: AppRoutes.examCentre,
+            builder: (context, state) =>
+                const NationalExaminationCentreScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.examUpload,
+            builder: (context, state) =>
+                const MockUploadCentreScreen(),
           ),
         ],
       ),
