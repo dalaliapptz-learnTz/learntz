@@ -14,6 +14,8 @@ import '../../features/country/select_country_screen.dart';
 import '../../features/curriculum/curriculum_explorer_screen.dart';
 import '../../features/curriculum/curriculum_providers.dart';
 import '../../features/curriculum/curriculum_screens.dart';
+import '../../features/exams/screens/exam_question_bank_screen.dart';
+import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/mock_upload_centre_screen.dart';
 import '../../features/exams/screens/national_examination_centre_screen.dart';
 import '../../features/help/help_screen.dart';
@@ -61,6 +63,8 @@ abstract final class AppRoutes {
   static const curriculumAdmin = '/admin/curriculum';
   static const examCentre = '/exams/centre';
   static const examUpload = '/exams/upload';
+  static const examBank = '/exams/bank';
+  static const examQuestionReview = '/exams/bank/review';
   static const addLearner = '/account/learners/add';
   static const challenges = '/social/challenges';
   static const communities = '/social/communities';
@@ -338,6 +342,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.examUpload,
             builder: (context, state) =>
                 const MockUploadCentreScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.examBank,
+            builder: (context, state) =>
+                const ExamQuestionBankScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.examQuestionReview,
+            builder: (context, state) =>
+                const ExamQuestionReviewCockpitScreen(),
           ),
         ],
       ),

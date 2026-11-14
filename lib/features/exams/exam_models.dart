@@ -360,3 +360,224 @@ class ExaminationPaperUploadResult {
     );
   }
 }
+
+@immutable
+class ExamQuestionOption {
+  const ExamQuestionOption({
+    required this.key,
+    required this.text,
+    this.isCorrect = false,
+  });
+
+  final String key;
+  final String text;
+  final bool isCorrect;
+
+  factory ExamQuestionOption.fromJson(Map<String, dynamic> json) {
+    return ExamQuestionOption(
+      key: json['key'] as String? ?? '',
+      text: json['text'] as String? ?? '',
+      isCorrect: json['is_correct'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'text': text,
+        'is_correct': isCorrect,
+      };
+}
+
+@immutable
+class ExamRubricStep {
+  const ExamRubricStep({
+    required this.step,
+    required this.description,
+    required this.marksAwarded,
+  });
+
+  final int step;
+  final String description;
+  final double marksAwarded;
+
+  factory ExamRubricStep.fromJson(Map<String, dynamic> json) {
+    return ExamRubricStep(
+      step: (json['step'] as num?)?.toInt() ?? 1,
+      description: json['description'] as String? ?? '',
+      marksAwarded: (json['marks_awarded'] as num?)?.toDouble() ?? 1.0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'step': step,
+        'description': description,
+        'marks_awarded': marksAwarded,
+      };
+}
+
+@immutable
+class ExamExtractedQuestion {
+  const ExamExtractedQuestion({
+    required this.id,
+    required this.paperId,
+    this.paperTitle,
+    this.year,
+    this.tier,
+    this.authorityId,
+    this.subjectName,
+    required this.sectionCode,
+    required this.questionNumber,
+    this.subPart,
+    required this.questionText,
+    this.diagramUrl,
+    this.questionType = 'structured',
+    this.options = const [],
+    this.correctAnswer,
+    this.rubricGuide = const [],
+    required this.marks,
+    this.topicId,
+    this.topicTitle,
+    this.bloomLevel = 'comprehension',
+    this.difficulty = 'medium',
+    this.verificationStatus = 'draft',
+    required this.createdAt,
+  });
+
+  final String id;
+  final String paperId;
+  final String? paperTitle;
+  final int? year;
+  final String? tier;
+  final String? authorityId;
+  final String? subjectName;
+  final String sectionCode;
+  final int questionNumber;
+  final String? subPart;
+  final String questionText;
+  final String? diagramUrl;
+  final String questionType;
+  final List<ExamQuestionOption> options;
+  final String? correctAnswer;
+  final List<ExamRubricStep> rubricGuide;
+  final double marks;
+  final String? topicId;
+  final String? topicTitle;
+  final String bloomLevel;
+  final String difficulty;
+  final String verificationStatus;
+  final DateTime createdAt;
+
+  String get fullIdentifier {
+    final sub = subPart != null && subPart!.isNotEmpty ? ' $subPart' : '';
+    return 'Sec $sectionCode Q$questionNumber$sub';
+  }
+
+  bool get isApproved => verificationStatus == 'approved';
+  bool get isVerified => verificationStatus == 'verified';
+  bool get isDraft => verificationStatus == 'draft';
+
+  factory ExamExtractedQuestion.fromJson(Map<String, dynamic> json) {
+    final rawOptions = json['options'];
+    final opts = <ExamQuestionOption>[];
+    if (rawOptions is List) {
+      for (final o in rawOptions) {
+        if (o is Map<String, dynamic>) {
+          opts.add(ExamQuestionOption.fromJson(o));
+        }
+      }
+    }
+
+    final rawRubric = json['rubric_guide'];
+    final rubric = <ExamRubricStep>[];
+    if (rawRubric is List) {
+      for (final r in rawRubric) {
+        if (r is Map<String, dynamic>) {
+          rubric.add(ExamRubricStep.fromJson(r));
+        }
+      }
+    }
+
+    return ExamExtractedQuestion(
+      id: json['id'] as String? ?? '',
+      paperId: json['paper_id'] as String? ?? '',
+      paperTitle: json['paper_title'] as String?,
+      year: (json['year'] as num?)?.toInt(),
+      tier: json['tier'] as String?,
+      authorityId: json['authority_id'] as String?,
+      subjectName: json['subject_name'] as String?,
+      sectionCode: json['section_code'] as String? ?? 'A',
+      questionNumber: (json['question_number'] as num?)?.toInt() ?? 1,
+      subPart: json['sub_part'] as String?,
+      questionText: json['question_text'] as String? ?? '',
+      diagramUrl: json['diagram_url'] as String?,
+      questionType: json['question_type'] as String? ?? 'structured',
+      options: opts,
+      correctAnswer: json['correct_answer'] as String?,
+      rubricGuide: rubric,
+      marks: (json['marks'] as num?)?.toDouble() ?? 1.0,
+      topicId: json['topic_id'] as String?,
+      topicTitle: json['topic_title'] as String?,
+      bloomLevel: json['bloom_level'] as String? ?? 'comprehension',
+      difficulty: json['difficulty'] as String? ?? 'medium',
+      verificationStatus: json['verification_status'] as String? ?? 'draft',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'paper_id': paperId,
+        'paper_title': paperTitle,
+        'year': year,
+        'tier': tier,
+        'authority_id': authorityId,
+        'subject_name': subjectName,
+        'section_code': sectionCode,
+        'question_number': questionNumber,
+        'sub_part': subPart,
+        'question_text': questionText,
+        'diagram_url': diagramUrl,
+        'question_type': questionType,
+        'options': options.map((o) => o.toJson()).toList(),
+        'correct_answer': correctAnswer,
+        'rubric_guide': rubricGuide.map((r) => r.toJson()).toList(),
+        'marks': marks,
+        'topic_id': topicId,
+        'topic_title': topicTitle,
+        'bloom_level': bloomLevel,
+        'difficulty': difficulty,
+        'verification_status': verificationStatus,
+        'created_at': createdAt.toIso8601String(),
+      };
+}
+
+@immutable
+class ExamQuestionReviewResult {
+  const ExamQuestionReviewResult({
+    required this.questionId,
+    required this.verificationStatus,
+    required this.reviewerId,
+    required this.decision,
+    required this.reviewedAt,
+  });
+
+  final String questionId;
+  final String verificationStatus;
+  final String reviewerId;
+  final String decision;
+  final DateTime reviewedAt;
+
+  factory ExamQuestionReviewResult.fromJson(Map<String, dynamic> json) {
+    return ExamQuestionReviewResult(
+      questionId: json['question_id'] as String? ?? '',
+      verificationStatus: json['verification_status'] as String? ?? '',
+      reviewerId: json['reviewer_id'] as String? ?? '',
+      decision: json['decision'] as String? ?? '',
+      reviewedAt: json['reviewed_at'] != null
+          ? DateTime.tryParse(json['reviewed_at'] as String) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+}

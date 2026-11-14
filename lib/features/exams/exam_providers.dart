@@ -88,3 +88,80 @@ final examinationPaperDetailsProvider =
   if (repository == null) return null;
   return repository.getPaperDetails(paperId);
 });
+
+@immutable
+class QuestionBankFilterState {
+  const QuestionBankFilterState({
+    this.paperId,
+    this.subjectId,
+    this.topicId,
+    this.bloomLevel,
+    this.difficulty,
+    this.searchQuery = '',
+  });
+
+  final String? paperId;
+  final String? subjectId;
+  final String? topicId;
+  final String? bloomLevel;
+  final String? difficulty;
+  final String searchQuery;
+
+  QuestionBankFilterState copyWith({
+    String? Function()? paperId,
+    String? Function()? subjectId,
+    String? Function()? topicId,
+    String? Function()? bloomLevel,
+    String? Function()? difficulty,
+    String? searchQuery,
+  }) {
+    return QuestionBankFilterState(
+      paperId: paperId != null ? paperId() : this.paperId,
+      subjectId: subjectId != null ? subjectId() : this.subjectId,
+      topicId: topicId != null ? topicId() : this.topicId,
+      bloomLevel: bloomLevel != null ? bloomLevel() : this.bloomLevel,
+      difficulty: difficulty != null ? difficulty() : this.difficulty,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
+}
+
+class QuestionBankFilterNotifier extends Notifier<QuestionBankFilterState> {
+  @override
+  QuestionBankFilterState build() => const QuestionBankFilterState();
+
+  void setPaperId(String? paperId) =>
+      state = state.copyWith(paperId: () => paperId);
+  void setSubjectId(String? subjectId) =>
+      state = state.copyWith(subjectId: () => subjectId);
+  void setTopicId(String? topicId) =>
+      state = state.copyWith(topicId: () => topicId);
+  void setBloomLevel(String? bloomLevel) =>
+      state = state.copyWith(bloomLevel: () => bloomLevel);
+  void setDifficulty(String? difficulty) =>
+      state = state.copyWith(difficulty: () => difficulty);
+  void setSearch(String query) => state = state.copyWith(searchQuery: query);
+  void reset() => state = const QuestionBankFilterState();
+}
+
+final questionBankFilterProvider =
+    NotifierProvider<QuestionBankFilterNotifier, QuestionBankFilterState>(
+  QuestionBankFilterNotifier.new,
+);
+
+final approvedExamQuestionsProvider =
+    FutureProvider<List<ExamExtractedQuestion>>((ref) async {
+  final repository = ref.watch(examRepositoryProvider);
+  if (repository == null) return [];
+
+  final filter = ref.watch(questionBankFilterProvider);
+
+  return repository.getApprovedQuestions(
+    paperId: filter.paperId,
+    subjectId: filter.subjectId,
+    topicId: filter.topicId,
+    bloomLevel: filter.bloomLevel,
+    difficulty: filter.difficulty,
+    search: filter.searchQuery.isEmpty ? null : filter.searchQuery,
+  );
+});
