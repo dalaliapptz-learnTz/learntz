@@ -73,6 +73,31 @@ class AdminRepository {
         .toList();
   }
 
+  Future<List<Map<String, dynamic>>> listAllCountries() async {
+    _requireUser();
+    final rows = await _client
+        .from('countries')
+        .select()
+        .order('country_code', ascending: true);
+    return (rows as List<dynamic>)
+        .map((r) => Map<String, dynamic>.from(r as Map))
+        .toList();
+  }
+
+  Future<void> toggleCountryEnabled({
+    required String countryCode,
+    required bool isEnabled,
+  }) async {
+    _requireUser();
+    await _client
+        .from('countries')
+        .update({
+          'is_enabled': isEnabled,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('country_code', countryCode);
+  }
+
   void _requireUser() {
     if (_client.auth.currentUser == null) {
       throw const NotSignedInException();

@@ -45,3 +45,12 @@ final adminAuditLogsProvider =
       if (repository == null) throw const AuthNotConfiguredException();
       return repository.listAuditLogs(actionFilter: actionFilter);
     });
+
+final adminCountriesProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  ref.watch(authStateChangesProvider);
+  final repository = ref.watch(adminRepositoryProvider);
+  if (repository == null) return [];
+  return repository.listAllCountries();
+});
+

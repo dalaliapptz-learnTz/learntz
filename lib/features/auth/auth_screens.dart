@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/auth/auth_providers.dart';
+import '../../core/config/app_environment.dart';
 import '../../core/config/country_configuration.dart';
 import '../../core/config/country_providers.dart';
 import '../../core/routing/app_router.dart';
@@ -119,13 +121,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           label: l10n.signInAction,
           onPressed: _isSubmitting ? null : _submit,
         ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          key: const Key('super-admin-demo-sign-in'),
-          icon: const Icon(Icons.admin_panel_settings_outlined),
-          label: const Text('Super Admin Demo Sign-In'),
-          onPressed: _isSubmitting ? null : _submitSuperAdminDemo,
-        ),
+        if (!kReleaseMode &&
+            ref.watch(appEnvironmentProvider).name ==
+                AppEnvironmentName.development) ...[
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const Key('super-admin-demo-sign-in'),
+            icon: const Icon(Icons.admin_panel_settings_outlined),
+            label: const Text('Super Admin Demo Sign-In'),
+            onPressed: _isSubmitting ? null : _submitSuperAdminDemo,
+          ),
+        ],
         TextButton(
           onPressed: () => context.go(AppRoutes.forgotPassword),
           child: Text(l10n.forgotPasswordAction),

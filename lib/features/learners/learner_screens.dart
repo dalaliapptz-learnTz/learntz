@@ -153,7 +153,7 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
     try {
       final learner = widget.learner;
       if (learner == null) {
-        await repository.createLearner(
+        final newLearner = await repository.createLearner(
           registrationRequestId: _registrationRequestId,
           firstName: _firstName.text,
           middleName: _middleName.text,
@@ -167,6 +167,10 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
           gradeId: gradeId,
           schoolId: _schoolId,
         );
+        ref.invalidate(parentLearnersProvider);
+        await ref.read(activeLearnerProvider.notifier).select(newLearner.id);
+        if (mounted) context.go(AppRoutes.parentDashboard);
+        return;
       } else {
         final updatedLearner = await repository.updateLearner(
           learnerId: learner.id,
@@ -187,10 +191,10 @@ class _LearnerFormState extends ConsumerState<_LearnerForm> {
               .read(activeLearnerProvider.notifier)
               .select(updatedLearner.id);
         }
+        ref.invalidate(parentLearnersProvider);
+        ref.invalidate(learnerProvider(learner.id));
+        if (mounted) context.go(AppRoutes.account);
       }
-      ref.invalidate(parentLearnersProvider);
-      if (learner != null) ref.invalidate(learnerProvider(learner.id));
-      if (mounted) context.go(AppRoutes.account);
     } on PostgrestException {
       if (mounted) {
         setState(() => _error = AppLocalizations.of(context)!.requestFailed);

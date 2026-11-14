@@ -25,6 +25,29 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_PATH") ?: (project.findProperty("LEARNTZ_KEYSTORE_PATH") as String?)
+            if (keystorePath != null && file(keystorePath).exists()) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ((project.findProperty("LEARNTZ_KEYSTORE_PASSWORD") as String?) ?: "")
+                keyAlias = System.getenv("KEY_ALIAS") ?: ((project.findProperty("LEARNTZ_KEY_ALIAS") as String?) ?: "learntz")
+                keyPassword = System.getenv("KEY_PASSWORD") ?: ((project.findProperty("LEARNTZ_KEY_PASSWORD") as String?) ?: "")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            val releaseConfig = signingConfigs.getByName("release")
+            signingConfig = if (releaseConfig.storeFile != null && releaseConfig.storeFile!!.exists()) {
+                releaseConfig
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
 }
 
 kotlin {

@@ -295,6 +295,10 @@ class _AdminPortalContentState extends ConsumerState<_AdminPortalContent> {
                   },
                 ),
               ],
+              if (widget.capabilities.isSuperAdmin) ...[
+                const SizedBox(height: 24),
+                const _CountryManagementSection(),
+              ],
             ],
           ),
         ),
@@ -475,3 +479,180 @@ class _AuditLogsSection extends ConsumerWidget {
     );
   }
 }
+
+class _CountryManagementSection extends ConsumerStatefulWidget {
+  const _CountryManagementSection();
+
+  @override
+  ConsumerState<_CountryManagementSection> createState() =>
+      _CountryManagementSectionState();
+}
+
+class _CountryManagementSectionState
+    extends ConsumerState<_CountryManagementSection> {
+  String? _togglingCode;
+
+  Future<void> _toggleCountry(String countryCode, bool currentStatus) async {
+    final repo = ref.read(adminRepositoryProvider);
+    if (repo == null) return;
+
+    setState(() => _togglingCode = countryCode);
+    try {
+      await repo.toggleCountryEnabled(
+        countryCode: countryCode,
+        isEnabled: !currentStatus,
+      );
+      ref.invalidate(adminCountriesProvider);
+      ref.invalidate(adminDashboardStatsProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '$countryCode market status updated to ${!currentStatus ? "ENABLED" : "DISABLED"}.',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update $countryCode: $e'),
+            backgroundColor: LearnTzColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _togglingCode = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final countriesAsync = ref.watch(adminCountriesProvider);
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Regional Markets & Multi-Country Configuration',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Super Administrator Multi-Country Gateway: Enable or disable national deployments',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+              const AppBadge(
+                label: 'SUPER ADMIN CONTROL',
+                variant: AppBadgeVariant.primary,
+                size: AppBadgeSize.sm,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          countriesAsync.when(
+            loading: () => const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (err, _) => AuthInlineMessage(
+              message: err.toString(),
+              isError: true,
+            ),
+            data: (countries) {
+              if (countries.isEmpty) {
+                return const Text('No countries configured.');
+              }
+
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: countries.length,
+                separatorBuilder: (_, _) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final c = countries[index];
+                  final code = c['country_code'] as String? ?? '';
+                  final name = c['display_name'] as String? ?? '';
+                  final product = c['product_name'] as String? ?? '';
+                  final currency = c['currency_code'] as String? ?? '';
+                  final isEnabled = c['is_enabled'] as bool? ?? false;
+                  final isDefault = c['is_default'] as bool? ?? false;
+                  final isBusy = _togglingCode == code;
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    leading: CircleAvatar(
+                      backgroundColor: isEnabled
+                          ? LearnTzColors.primary50
+                          : LearnTzColors.neutral200,
+                      child: Text(
+                        code,
+                        style: TextStyle(
+                          color: isEnabled
+                              ? LearnTzColors.primary
+                              : LearnTzColors.neutral500,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    title: Row(
+                      children: [
+                        Text(
+                          '$name ($product)',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        if (isDefault) ...[
+                          const SizedBox(width: 8),
+                          const AppBadge(
+                            label: 'DEFAULT',
+                            variant: AppBadgeVariant.neutral,
+                            size: AppBadgeSize.sm,
+                          ),
+                        ],
+                      ],
+                    ),
+                    subtitle: Text(
+                      'Currency: $currency • System: ${c['education_system'] ?? "Standard"}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    trailing: isBusy
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Switch(
+                            key: Key('country-toggle-$code'),
+                            value: isEnabled,
+                            activeThumbColor: LearnTzColors.primary,
+                            onChanged: (val) => _toggleCountry(code, isEnabled),
+                          ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
