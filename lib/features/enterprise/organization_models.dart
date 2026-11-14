@@ -476,3 +476,179 @@ class GovernanceOfficeWorkspaceKpis {
   }
 }
 
+@immutable
+class SchoolNetworkWorkspaceKpis {
+  const SchoolNetworkWorkspaceKpis({
+    required this.networkOrgId,
+    required this.networkName,
+    required this.countryCode,
+    this.brandColor = '#059669',
+    required this.campusesCount,
+    required this.totalEnrolledLearners,
+    required this.totalTeachingStaff,
+    required this.networkAveragePerformancePct,
+    this.campuses = const [],
+  });
+
+  final String networkOrgId;
+  final String networkName;
+  final String countryCode;
+  final String brandColor;
+  final int campusesCount;
+  final int totalEnrolledLearners;
+  final int totalTeachingStaff;
+  final double networkAveragePerformancePct;
+  final List<Map<String, dynamic>> campuses;
+
+  factory SchoolNetworkWorkspaceKpis.fromJson(Map<String, dynamic> json) {
+    return SchoolNetworkWorkspaceKpis(
+      networkOrgId: json['network_org_id'] as String? ?? '',
+      networkName: json['network_name'] as String? ?? '',
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      brandColor: json['brand_color'] as String? ?? '#059669',
+      campusesCount: (json['campuses_count'] as num?)?.toInt() ?? 0,
+      totalEnrolledLearners:
+          (json['total_enrolled_learners'] as num?)?.toInt() ?? 0,
+      totalTeachingStaff:
+          (json['total_teaching_staff'] as num?)?.toInt() ?? 0,
+      networkAveragePerformancePct:
+          (json['network_average_performance_pct'] as num?)?.toDouble() ?? 0.0,
+      campuses: (json['campuses'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          const [],
+    );
+  }
+}
+
+@immutable
+class ResearchInstitutionWorkspaceKpis {
+  const ResearchInstitutionWorkspaceKpis({
+    required this.researchOrgId,
+    required this.institutionName,
+    required this.countryCode,
+    required this.differentialPrivacyStandard,
+    required this.anonymizedCohortsCount,
+    required this.totalAnonymizedObservations,
+    required this.statisticalMasteryIndex,
+    this.subjectMasteryDistribution = const [],
+    this.availableDatasets = const [],
+  });
+
+  final String researchOrgId;
+  final String institutionName;
+  final String countryCode;
+  final String differentialPrivacyStandard;
+  final int anonymizedCohortsCount;
+  final int totalAnonymizedObservations;
+  final double statisticalMasteryIndex;
+  final List<Map<String, dynamic>> subjectMasteryDistribution;
+  final List<Map<String, dynamic>> availableDatasets;
+
+  factory ResearchInstitutionWorkspaceKpis.fromJson(Map<String, dynamic> json) {
+    return ResearchInstitutionWorkspaceKpis(
+      researchOrgId: json['research_org_id'] as String? ?? '',
+      institutionName: json['institution_name'] as String? ?? '',
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      differentialPrivacyStandard:
+          json['differential_privacy_standard'] as String? ??
+              'k-anonymity (k>=25)',
+      anonymizedCohortsCount:
+          (json['anonymized_cohorts_count'] as num?)?.toInt() ?? 0,
+      totalAnonymizedObservations:
+          (json['total_anonymized_observations'] as num?)?.toInt() ?? 0,
+      statisticalMasteryIndex:
+          (json['statistical_mastery_index'] as num?)?.toDouble() ?? 0.0,
+      subjectMasteryDistribution:
+          (json['subject_mastery_distribution'] as List<dynamic>?)
+                  ?.map((e) => Map<String, dynamic>.from(e as Map))
+                  .toList() ??
+              const [],
+      availableDatasets: (json['available_datasets'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          const [],
+    );
+  }
+}
+
+@immutable
+class DevelopmentPartnerWorkspaceKpis {
+  const DevelopmentPartnerWorkspaceKpis({
+    required this.partnerOrgId,
+    required this.partnerName,
+    required this.countryCode,
+    required this.supportedSchoolsCount,
+    required this.beneficiaryLearnersCount,
+    required this.activeInterventionProgramsCount,
+    this.sdg4Benchmarks = const {},
+    this.interventions = const [],
+  });
+
+  final String partnerOrgId;
+  final String partnerName;
+  final String countryCode;
+  final int supportedSchoolsCount;
+  final int beneficiaryLearnersCount;
+  final int activeInterventionProgramsCount;
+  final Map<String, dynamic> sdg4Benchmarks;
+  final List<Map<String, dynamic>> interventions;
+
+  factory DevelopmentPartnerWorkspaceKpis.fromJson(Map<String, dynamic> json) {
+    return DevelopmentPartnerWorkspaceKpis(
+      partnerOrgId: json['partner_org_id'] as String? ?? '',
+      partnerName: json['partner_name'] as String? ?? '',
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      supportedSchoolsCount:
+          (json['supported_schools_count'] as num?)?.toInt() ?? 0,
+      beneficiaryLearnersCount:
+          (json['beneficiary_learners_count'] as num?)?.toInt() ?? 0,
+      activeInterventionProgramsCount:
+          (json['active_intervention_programs_count'] as num?)?.toInt() ?? 0,
+      sdg4Benchmarks: json['sdg4_benchmarks'] != null
+          ? Map<String, dynamic>.from(json['sdg4_benchmarks'] as Map)
+          : const {},
+      interventions: (json['interventions'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          const [],
+    );
+  }
+}
+
+@immutable
+class ResearchExportResult {
+  const ResearchExportResult({
+    required this.exportId,
+    required this.datasetKey,
+    required this.institutionName,
+    this.exportedAt,
+    required this.privacyStandard,
+    required this.recordsCount,
+    required this.downloadUrl,
+  });
+
+  final String exportId;
+  final String datasetKey;
+  final String institutionName;
+  final DateTime? exportedAt;
+  final String privacyStandard;
+  final int recordsCount;
+  final String downloadUrl;
+
+  factory ResearchExportResult.fromJson(Map<String, dynamic> json) {
+    return ResearchExportResult(
+      exportId: json['export_id'] as String? ?? '',
+      datasetKey: json['dataset_key'] as String? ?? '',
+      institutionName: json['institution_name'] as String? ?? '',
+      exportedAt: json['exported_at'] != null
+          ? DateTime.tryParse(json['exported_at'] as String)
+          : null,
+      privacyStandard: json['privacy_standard'] as String? ?? '',
+      recordsCount: (json['records_count'] as num?)?.toInt() ?? 0,
+      downloadUrl: json['download_url'] as String? ?? '',
+    );
+  }
+}
+
+

@@ -284,4 +284,77 @@ class OrganizationRepository {
       Map<String, dynamic>.from(response as Map),
     );
   }
+
+  Future<SchoolNetworkWorkspaceKpis> getSchoolNetworkWorkspaceKpis(
+      String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_school_network_workspace_kpis',
+      params: {'p_network_org_id': orgId},
+    );
+
+    return SchoolNetworkWorkspaceKpis.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<ResearchInstitutionWorkspaceKpis> getResearchInstitutionWorkspaceKpis(
+      String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_research_institution_workspace_kpis',
+      params: {'p_research_org_id': orgId},
+    );
+
+    return ResearchInstitutionWorkspaceKpis.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<DevelopmentPartnerWorkspaceKpis> getDevelopmentPartnerWorkspaceKpis(
+      String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_development_partner_workspace_kpis',
+      params: {'p_partner_org_id': orgId},
+    );
+
+    return DevelopmentPartnerWorkspaceKpis.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<ResearchExportResult> exportAnonymizedResearchDataset({
+    required String orgId,
+    required String datasetKey,
+  }) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'export_anonymized_research_dataset',
+      params: {
+        'p_research_org_id': orgId,
+        'p_dataset_key': datasetKey,
+      },
+    );
+
+    return ResearchExportResult.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
 }

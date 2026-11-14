@@ -123,3 +123,21 @@ final governanceOfficeWorkspaceKpisProvider = FutureProvider.family<
   final repo = ref.watch(organizationRepositoryProvider);
   return repo.getGovernanceOfficeWorkspaceKpis(orgId);
 });
+
+final schoolNetworkWorkspaceKpisProvider = FutureProvider.family<
+    SchoolNetworkWorkspaceKpis, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getSchoolNetworkWorkspaceKpis(orgId);
+});
+
+final researchInstitutionWorkspaceKpisProvider = FutureProvider.family<
+    ResearchInstitutionWorkspaceKpis, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getResearchInstitutionWorkspaceKpis(orgId);
+});
+
+final developmentPartnerWorkspaceKpisProvider = FutureProvider.family<
+    DevelopmentPartnerWorkspaceKpis, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getDevelopmentPartnerWorkspaceKpis(orgId);
+});

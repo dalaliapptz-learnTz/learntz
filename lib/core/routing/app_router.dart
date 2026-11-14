@@ -20,6 +20,9 @@ import '../../features/enterprise/screens/organization_staff_directory_screen.da
 import '../../features/enterprise/screens/ministry_workspace_screen.dart';
 import '../../features/enterprise/screens/exam_authority_workspace_screen.dart';
 import '../../features/enterprise/screens/regional_district_workspace_screen.dart';
+import '../../features/enterprise/screens/school_network_workspace_screen.dart';
+import '../../features/enterprise/screens/research_institution_workspace_screen.dart';
+import '../../features/enterprise/screens/development_partner_workspace_screen.dart';
 import '../../features/exams/screens/exam_question_bank_screen.dart';
 import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/exam_results_analytics_screen.dart';
@@ -399,6 +402,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/workspace/governance/:orgId',
             builder: (context, state) => RegionalDistrictWorkspaceScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/network/:orgId',
+            builder: (context, state) => SchoolNetworkWorkspaceScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/research/:orgId',
+            builder: (context, state) => ResearchInstitutionWorkspaceScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/partner/:orgId',
+            builder: (context, state) => DevelopmentPartnerWorkspaceScreen(
               orgId: state.pathParameters['orgId']!,
             ),
           ),

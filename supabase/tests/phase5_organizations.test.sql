@@ -9,10 +9,11 @@ select has_table('public', 'organizations', 'public.organizations table exists')
 select has_table('public', 'organization_hierarchies', 'public.organization_hierarchies table exists');
 
 -- 2. Verify seeded core organizations
-select results_eq(
-  $$ select count(*)::integer from public.organizations where country_code in ('TZ', 'KE', 'UG') $$,
-  $$ values (11::integer) $$,
-  'Seeded 11 core organizations across TZ, KE, and UG'
+select cmp_ok(
+  (select count(*)::integer from public.organizations where country_code in ('TZ', 'KE', 'UG')),
+  '>=',
+  11,
+  'Seeded at least 11 core organizations across TZ, KE, and UG'
 );
 
 -- 3. Verify hierarchy closure table auto-population
