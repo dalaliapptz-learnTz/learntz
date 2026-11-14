@@ -651,4 +651,132 @@ class ResearchExportResult {
   }
 }
 
+@immutable
+class OrganizationSubscriptionStatus {
+  const OrganizationSubscriptionStatus({
+    required this.hasSubscription,
+    this.subscriptionId,
+    required this.planId,
+    required this.planName,
+    required this.tier,
+    required this.status,
+    this.billingCycle = 'annual',
+    this.currency = 'TZS',
+    this.currentPrice = 0.0,
+    required this.allocatedStudentSeats,
+    required this.usedStudentSeats,
+    required this.allocatedTeacherSeats,
+    required this.usedTeacherSeats,
+    required this.allocatedStorageGb,
+    required this.usedStorageGb,
+    this.periodStart,
+    this.periodEnd,
+    this.taxId,
+    required this.slaResponseHours,
+  });
+
+  final bool hasSubscription;
+  final String? subscriptionId;
+  final String planId;
+  final String planName;
+  final String tier;
+  final String status;
+  final String billingCycle;
+  final String currency;
+  final double currentPrice;
+  final int allocatedStudentSeats;
+  final int usedStudentSeats;
+  final int allocatedTeacherSeats;
+  final int usedTeacherSeats;
+  final int allocatedStorageGb;
+  final int usedStorageGb;
+  final DateTime? periodStart;
+  final DateTime? periodEnd;
+  final String? taxId;
+  final int slaResponseHours;
+
+  factory OrganizationSubscriptionStatus.fromJson(Map<String, dynamic> json) {
+    return OrganizationSubscriptionStatus(
+      hasSubscription: json['has_subscription'] as bool? ?? false,
+      subscriptionId: json['subscription_id'] as String?,
+      planId: json['plan_id'] as String? ?? 'school_pilot',
+      planName: json['plan_name'] as String? ?? 'Institutional Pilot',
+      tier: json['tier'] as String? ?? 'pilot',
+      status: json['status'] as String? ?? 'trialing',
+      billingCycle: json['billing_cycle'] as String? ?? 'annual',
+      currency: json['currency'] as String? ?? 'TZS',
+      currentPrice: (json['current_price'] as num?)?.toDouble() ?? 0.0,
+      allocatedStudentSeats:
+          (json['allocated_student_seats'] as num?)?.toInt() ?? 0,
+      usedStudentSeats: (json['used_student_seats'] as num?)?.toInt() ?? 0,
+      allocatedTeacherSeats:
+          (json['allocated_teacher_seats'] as num?)?.toInt() ?? 0,
+      usedTeacherSeats: (json['used_teacher_seats'] as num?)?.toInt() ?? 0,
+      allocatedStorageGb:
+          (json['allocated_storage_gb'] as num?)?.toInt() ?? 50,
+      usedStorageGb: (json['used_storage_gb'] as num?)?.toInt() ?? 0,
+      periodStart: json['period_start'] != null
+          ? DateTime.tryParse(json['period_start'] as String)
+          : null,
+      periodEnd: json['period_end'] != null
+          ? DateTime.tryParse(json['period_end'] as String)
+          : null,
+      taxId: json['tax_id'] as String?,
+      slaResponseHours: (json['sla_response_hours'] as num?)?.toInt() ?? 24,
+    );
+  }
+}
+
+@immutable
+class OrganizationSupportTicket {
+  const OrganizationSupportTicket({
+    required this.id,
+    required this.ticketNumber,
+    required this.subject,
+    required this.description,
+    required this.category,
+    required this.priority,
+    required this.status,
+    this.slaDueAt,
+    this.resolvedAt,
+    this.createdAt,
+    this.messageCount = 0,
+  });
+
+  final String id;
+  final String ticketNumber;
+  final String subject;
+  final String description;
+  final String category;
+  final String priority;
+  final String status;
+  final DateTime? slaDueAt;
+  final DateTime? resolvedAt;
+  final DateTime? createdAt;
+  final int messageCount;
+
+  factory OrganizationSupportTicket.fromJson(Map<String, dynamic> json) {
+    return OrganizationSupportTicket(
+      id: json['id'] as String? ?? '',
+      ticketNumber: json['ticket_number'] as String? ?? '',
+      subject: json['subject'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      category: json['category'] as String? ?? 'technical_integration',
+      priority: json['priority'] as String? ?? 'normal',
+      status: json['status'] as String? ?? 'open',
+      slaDueAt: json['sla_due_at'] != null
+          ? DateTime.tryParse(json['sla_due_at'] as String)
+          : null,
+      resolvedAt: json['resolved_at'] != null
+          ? DateTime.tryParse(json['resolved_at'] as String)
+          : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String)
+          : null,
+      messageCount: (json['message_count'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+
 

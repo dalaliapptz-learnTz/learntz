@@ -141,3 +141,15 @@ final developmentPartnerWorkspaceKpisProvider = FutureProvider.family<
   final repo = ref.watch(organizationRepositoryProvider);
   return repo.getDevelopmentPartnerWorkspaceKpis(orgId);
 });
+
+final organizationSubscriptionStatusProvider = FutureProvider.family<
+    OrganizationSubscriptionStatus, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getOrganizationSubscriptionStatus(orgId);
+});
+
+final organizationSupportTicketsProvider = FutureProvider.family<
+    List<OrganizationSupportTicket>, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.listOrganizationSupportTickets(orgId);
+});

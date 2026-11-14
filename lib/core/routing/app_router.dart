@@ -23,6 +23,8 @@ import '../../features/enterprise/screens/regional_district_workspace_screen.dar
 import '../../features/enterprise/screens/school_network_workspace_screen.dart';
 import '../../features/enterprise/screens/research_institution_workspace_screen.dart';
 import '../../features/enterprise/screens/development_partner_workspace_screen.dart';
+import '../../features/enterprise/screens/institutional_billing_screen.dart';
+import '../../features/enterprise/screens/enterprise_support_screen.dart';
 import '../../features/exams/screens/exam_question_bank_screen.dart';
 import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/exam_results_analytics_screen.dart';
@@ -420,6 +422,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/workspace/partner/:orgId',
             builder: (context, state) => DevelopmentPartnerWorkspaceScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/:orgId/billing',
+            builder: (context, state) => InstitutionalBillingScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/workspace/:orgId/support',
+            builder: (context, state) => EnterpriseSupportScreen(
               orgId: state.pathParameters['orgId']!,
             ),
           ),

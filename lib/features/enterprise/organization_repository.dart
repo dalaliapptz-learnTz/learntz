@@ -357,4 +357,68 @@ class OrganizationRepository {
       Map<String, dynamic>.from(response as Map),
     );
   }
+
+  Future<OrganizationSubscriptionStatus> getOrganizationSubscriptionStatus(
+      String orgId) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'get_organization_subscription_status',
+      params: {'p_org_id': orgId},
+    );
+
+    return OrganizationSubscriptionStatus.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    );
+  }
+
+  Future<List<OrganizationSupportTicket>> listOrganizationSupportTickets(
+      String orgId) async {
+    final client = _client;
+    if (client == null) return [];
+
+    try {
+      final response = await client.rpc(
+        'list_organization_support_tickets',
+        params: {'p_org_id': orgId},
+      );
+
+      final list = (response as List<dynamic>?) ?? [];
+      return list
+          .map((item) => OrganizationSupportTicket.fromJson(
+              Map<String, dynamic>.from(item as Map)))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> createOrganizationSupportTicket({
+    required String orgId,
+    required String subject,
+    required String description,
+    required String category,
+    String priority = 'normal',
+  }) async {
+    final client = _client;
+    if (client == null) {
+      throw StateError('Supabase client not initialized');
+    }
+
+    final response = await client.rpc(
+      'create_organization_support_ticket',
+      params: {
+        'p_org_id': orgId,
+        'p_subject': subject.trim(),
+        'p_description': description.trim(),
+        'p_category': category,
+        'p_priority': priority,
+      },
+    );
+
+    return Map<String, dynamic>.from(response as Map);
+  }
 }
