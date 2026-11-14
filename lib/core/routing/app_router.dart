@@ -16,6 +16,7 @@ import '../../features/curriculum/curriculum_providers.dart';
 import '../../features/curriculum/curriculum_screens.dart';
 import '../../features/enterprise/screens/organization_directory_screen.dart';
 import '../../features/enterprise/screens/organization_registration_screen.dart';
+import '../../features/enterprise/screens/organization_staff_directory_screen.dart';
 import '../../features/exams/screens/exam_question_bank_screen.dart';
 import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/exam_results_analytics_screen.dart';
@@ -73,6 +74,7 @@ abstract final class AppRoutes {
   static const mockIntelligence = '/exams/intelligence';
   static const enterpriseDirectory = '/enterprise/directory';
   static const enterpriseRegister = '/enterprise/register';
+  static String enterpriseStaff(String orgId) => '/workspace/$orgId/staff';
   static String examRunner(String attemptId) => '/exams/runner/$attemptId';
   static String examResults(String attemptId) => '/exams/results/$attemptId';
   static const addLearner = '/account/learners/add';
@@ -372,6 +374,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.enterpriseRegister,
             builder: (context, state) =>
                 const OrganizationRegistrationScreen(),
+          ),
+          GoRoute(
+            path: '/workspace/:orgId/staff',
+            builder: (context, state) => OrganizationStaffDirectoryScreen(
+              orgId: state.pathParameters['orgId']!,
+            ),
           ),
           GoRoute(
             path: AppRoutes.mockIntelligence,

@@ -373,10 +373,21 @@ class _OrganizationDirectoryScreenState
                 ),
               ),
               const SizedBox(width: 12),
-              OutlinedButton.icon(
-                onPressed: () => _showSubordinatesModal(context, org),
-                icon: const Icon(Icons.account_tree_outlined, size: 16),
-                label: const Text('Hierarchy'),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => context.go('/workspace/${org.id}/staff'),
+                    icon: const Icon(Icons.people_outline, size: 16),
+                    label: const Text('Staff'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => _showSubordinatesModal(context, org),
+                    icon: const Icon(Icons.account_tree_outlined, size: 16),
+                    label: const Text('Hierarchy'),
+                  ),
+                ],
               ),
             ],
           ),

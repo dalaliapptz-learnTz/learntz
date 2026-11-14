@@ -93,3 +93,15 @@ final subordinateOrganizationsProvider = FutureProvider.family<
   final repo = ref.watch(organizationRepositoryProvider);
   return repo.listSubordinateOrganizations(args.orgId, type: args.type);
 });
+
+final userInstitutionalWorkspacesProvider =
+    FutureProvider<List<UserWorkspace>>((ref) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.getUserInstitutionalWorkspaces();
+});
+
+final organizationMembersProvider = FutureProvider.family<
+    List<InstitutionalMember>, String>((ref, orgId) async {
+  final repo = ref.watch(organizationRepositoryProvider);
+  return repo.listOrganizationMembers(orgId);
+});

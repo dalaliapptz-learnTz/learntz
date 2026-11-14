@@ -122,4 +122,116 @@ class OrganizationRepository {
 
     return response as String;
   }
+
+  Future<List<InstitutionalMember>> listOrganizationMembers(String orgId) async {
+    final client = _client;
+    if (client == null) return [];
+
+    try {
+      final response = await client.rpc(
+        'list_organization_members',
+        params: {'p_org_id': orgId},
+      );
+
+      final list = (response as List<dynamic>?) ?? [];
+      return list
+          .map((item) =>
+              InstitutionalMember.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<UserWorkspace>> getUserInstitutionalWorkspaces() async {
+    final client = _client;
+    if (client == null) return [];
+
+    try {
+      final response = await client.rpc('get_user_institutional_workspaces');
+
+      final list = (response as List<dynamic>?) ?? [];
+      return list
+          .map((item) => UserWorkspace.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<String> inviteOrganizationMember({
+    required String orgId,
+    required String email,
+    required InstitutionalRole role,
+    String? jobTitle,
+    String? department,
+  }) async {
+    final client = _client;
+    if (client == null) {
+      throw const PostgrestException(message: 'Supabase client unavailable');
+    }
+
+    final response = await client.rpc(
+      'invite_organization_member',
+      params: {
+        'p_org_id': orgId,
+        'p_email': email.trim().toLowerCase(),
+        'p_role': role.dbValue,
+        'p_job_title': jobTitle?.trim(),
+        'p_department': department?.trim(),
+      },
+    );
+
+    return response as String;
+  }
+
+  Future<bool> respondOrganizationInvitation({
+    required String invitationId,
+    required bool accept,
+  }) async {
+    final client = _client;
+    if (client == null) return false;
+
+    final response = await client.rpc(
+      'respond_organization_invitation',
+      params: {
+        'p_invitation_id': invitationId,
+        'p_accept': accept,
+      },
+    );
+
+    return (response as bool?) ?? false;
+  }
+
+  Future<bool> updateOrganizationMemberRole({
+    required String membershipId,
+    required InstitutionalRole newRole,
+    String? jobTitle,
+  }) async {
+    final client = _client;
+    if (client == null) return false;
+
+    final response = await client.rpc(
+      'update_organization_member_role',
+      params: {
+        'p_membership_id': membershipId,
+        'p_new_role': newRole.dbValue,
+        'p_job_title': jobTitle?.trim(),
+      },
+    );
+
+    return (response as bool?) ?? false;
+  }
+
+  Future<bool> removeOrganizationMember(String membershipId) async {
+    final client = _client;
+    if (client == null) return false;
+
+    final response = await client.rpc(
+      'remove_organization_member',
+      params: {'p_membership_id': membershipId},
+    );
+
+    return (response as bool?) ?? false;
+  }
 }

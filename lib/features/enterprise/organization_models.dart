@@ -225,3 +225,131 @@ class SubordinateOrganizationItem {
     );
   }
 }
+
+enum InstitutionalRole {
+  institutionalAdmin,
+  educationOfficer,
+  schoolPrincipal,
+  headOfDepartment,
+  teacher,
+  curriculumAnalyst,
+  researcher,
+  partnerAuditor;
+
+  String get dbValue => switch (this) {
+        InstitutionalRole.institutionalAdmin => 'institutional_admin',
+        InstitutionalRole.educationOfficer => 'education_officer',
+        InstitutionalRole.schoolPrincipal => 'school_principal',
+        InstitutionalRole.headOfDepartment => 'head_of_department',
+        InstitutionalRole.teacher => 'teacher',
+        InstitutionalRole.curriculumAnalyst => 'curriculum_analyst',
+        InstitutionalRole.researcher => 'researcher',
+        InstitutionalRole.partnerAuditor => 'partner_auditor',
+      };
+
+  String get label => switch (this) {
+        InstitutionalRole.institutionalAdmin => 'Institutional Admin',
+        InstitutionalRole.educationOfficer => 'Education Officer',
+        InstitutionalRole.schoolPrincipal => 'School Principal / Head',
+        InstitutionalRole.headOfDepartment => 'Head of Department',
+        InstitutionalRole.teacher => 'Teacher / Instructor',
+        InstitutionalRole.curriculumAnalyst => 'Curriculum Analyst',
+        InstitutionalRole.researcher => 'Education Researcher',
+        InstitutionalRole.partnerAuditor => 'Partner Auditor',
+      };
+
+  static InstitutionalRole fromString(String val) => switch (val.toLowerCase()) {
+        'institutional_admin' => InstitutionalRole.institutionalAdmin,
+        'education_officer' => InstitutionalRole.educationOfficer,
+        'school_principal' => InstitutionalRole.schoolPrincipal,
+        'head_of_department' => InstitutionalRole.headOfDepartment,
+        'teacher' => InstitutionalRole.teacher,
+        'curriculum_analyst' => InstitutionalRole.curriculumAnalyst,
+        'researcher' => InstitutionalRole.researcher,
+        'partner_auditor' => InstitutionalRole.partnerAuditor,
+        _ => InstitutionalRole.teacher,
+      };
+}
+
+@immutable
+class InstitutionalMember {
+  const InstitutionalMember({
+    required this.membershipId,
+    required this.userId,
+    required this.fullName,
+    required this.email,
+    required this.role,
+    this.jobTitle,
+    this.department,
+    this.status = 'active',
+    this.createdAt,
+  });
+
+  final String membershipId;
+  final String userId;
+  final String fullName;
+  final String email;
+  final InstitutionalRole role;
+  final String? jobTitle;
+  final String? department;
+  final String status;
+  final DateTime? createdAt;
+
+  factory InstitutionalMember.fromJson(Map<String, dynamic> json) {
+    return InstitutionalMember(
+      membershipId: json['membership_id'] as String? ?? '',
+      userId: json['user_id'] as String? ?? '',
+      fullName: json['full_name'] as String? ?? 'Staff Member',
+      email: json['email'] as String? ?? '',
+      role: InstitutionalRole.fromString(json['role'] as String? ?? 'teacher'),
+      jobTitle: json['job_title'] as String?,
+      department: json['department'] as String?,
+      status: json['status'] as String? ?? 'active',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String)
+          : null,
+    );
+  }
+}
+
+@immutable
+class UserWorkspace {
+  const UserWorkspace({
+    required this.organizationId,
+    required this.name,
+    required this.slug,
+    required this.type,
+    required this.countryCode,
+    this.brandColor = '#0F4C81',
+    this.logoUrl,
+    required this.role,
+    this.jobTitle,
+    this.department,
+  });
+
+  final String organizationId;
+  final String name;
+  final String slug;
+  final OrganizationType type;
+  final String countryCode;
+  final String brandColor;
+  final String? logoUrl;
+  final InstitutionalRole role;
+  final String? jobTitle;
+  final String? department;
+
+  factory UserWorkspace.fromJson(Map<String, dynamic> json) {
+    return UserWorkspace(
+      organizationId: json['organization_id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      slug: json['slug'] as String? ?? '',
+      type: OrganizationType.fromString(json['type'] as String? ?? 'school'),
+      countryCode: json['country_code'] as String? ?? 'TZ',
+      brandColor: json['brand_color'] as String? ?? '#0F4C81',
+      logoUrl: json['logo_url'] as String?,
+      role: InstitutionalRole.fromString(json['role'] as String? ?? 'teacher'),
+      jobTitle: json['job_title'] as String?,
+      department: json['department'] as String?,
+    );
+  }
+}

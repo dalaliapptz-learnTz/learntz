@@ -5,6 +5,7 @@ import 'package:learntz/features/enterprise/organization_models.dart';
 import 'package:learntz/features/enterprise/organization_providers.dart';
 import 'package:learntz/features/enterprise/screens/organization_directory_screen.dart';
 import 'package:learntz/features/enterprise/screens/organization_registration_screen.dart';
+import 'package:learntz/features/enterprise/screens/organization_staff_directory_screen.dart';
 
 void main() {
   group('Sub-Stage 1 Organization Models Tests', () {
@@ -235,6 +236,142 @@ void main() {
 
       // Auto-slug generated
       expect(find.text('aga-khan-education-service'), findsOneWidget);
+    });
+  });
+
+  group('Sub-Stage 2 Institutional RBAC Models & Widget Tests', () {
+    test('InstitutionalMember.fromJson parses staff record correctly', () {
+      final json = {
+        'membership_id': 'mem-101',
+        'user_id': 'user-201',
+        'full_name': 'Dr. Mkwawa Principal',
+        'email': 'principal@azania.ac.tz',
+        'role': 'school_principal',
+        'job_title': 'Head of School',
+        'department': 'Administration',
+        'status': 'active',
+        'created_at': '2026-11-14T09:00:00Z',
+      };
+
+      final member = InstitutionalMember.fromJson(json);
+      expect(member.membershipId, 'mem-101');
+      expect(member.userId, 'user-201');
+      expect(member.fullName, 'Dr. Mkwawa Principal');
+      expect(member.role, InstitutionalRole.schoolPrincipal);
+      expect(member.jobTitle, 'Head of School');
+      expect(member.department, 'Administration');
+      expect(member.status, 'active');
+    });
+
+    test('UserWorkspace.fromJson parses workspace metadata correctly', () {
+      final json = {
+        'organization_id': 'org-501',
+        'name': 'Azania Secondary School',
+        'slug': 'tz-school-azania',
+        'type': 'school',
+        'country_code': 'TZ',
+        'brand_color': '#0F4C81',
+        'role': 'teacher',
+        'job_title': 'Physics & Math Instructor',
+        'department': 'Science',
+      };
+
+      final ws = UserWorkspace.fromJson(json);
+      expect(ws.organizationId, 'org-501');
+      expect(ws.name, 'Azania Secondary School');
+      expect(ws.slug, 'tz-school-azania');
+      expect(ws.type, OrganizationType.school);
+      expect(ws.role, InstitutionalRole.teacher);
+      expect(ws.jobTitle, 'Physics & Math Instructor');
+    });
+
+    final sampleMembers = [
+      const InstitutionalMember(
+        membershipId: 'mem-1',
+        userId: 'user-1',
+        fullName: 'Dr. Mkwawa Principal',
+        email: 'principal@azania.ac.tz',
+        role: InstitutionalRole.schoolPrincipal,
+        jobTitle: 'Head of School',
+        department: 'Executive Administration',
+      ),
+      const InstitutionalMember(
+        membershipId: 'mem-2',
+        userId: 'user-2',
+        fullName: 'Prof. Mary Nyerere',
+        email: 'math-hod@azania.ac.tz',
+        role: InstitutionalRole.headOfDepartment,
+        jobTitle: 'Head of Mathematics',
+        department: 'Science & STEM',
+      ),
+    ];
+
+    const sampleOrgDetails = OrganizationDetails(
+      id: 'org-test',
+      countryCode: 'TZ',
+      name: 'Azania Secondary School',
+      slug: 'tz-school-azania',
+      type: OrganizationType.school,
+    );
+
+    testWidgets('renders staff directory header, metrics, member cards, and invite dialog',
+        (tester) async {
+      tester.view.physicalSize = const Size(1280, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            organizationDetailsProvider('org-test').overrideWith(
+              (ref) async => sampleOrgDetails,
+            ),
+            organizationMembersProvider('org-test').overrideWith(
+              (ref) async => sampleMembers,
+            ),
+          ],
+          child: const MaterialApp(
+            home: OrganizationStaffDirectoryScreen(orgId: 'org-test'),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Title & Subtitle
+      expect(find.text('Azania Secondary School'), findsOneWidget);
+      expect(
+        find.textContaining('Role-based staff directory, institutional permission management'),
+        findsOneWidget,
+      );
+
+      // Metrics
+      expect(find.text('Total Staff'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('Leadership'), findsOneWidget);
+      expect(find.text('1'), findsNWidgets(2)); // Leadership 1, Educators 1
+      expect(find.text('Educators'), findsOneWidget);
+
+      // Member Cards
+      expect(find.text('Dr. Mkwawa Principal'), findsOneWidget);
+      expect(find.text('Prof. Mary Nyerere'), findsOneWidget);
+      expect(find.text('School Principal / Head'), findsOneWidget);
+      expect(find.text('Head of Department'), findsOneWidget);
+      expect(find.textContaining('Executive Administration'), findsOneWidget);
+      expect(find.textContaining('Science & STEM'), findsOneWidget);
+
+      // Open Invite Dialog
+      final inviteBtn = find.byKey(const Key('invite-staff-member-btn'));
+      expect(inviteBtn, findsOneWidget);
+      await tester.tap(inviteBtn);
+      await tester.pumpAndSettle();
+
+      // Dialog is open
+      expect(find.text('Invite Institutional Staff'), findsOneWidget);
+      expect(find.byKey(const Key('invite-email-field')), findsOneWidget);
+      expect(find.byKey(const Key('invite-job-title-field')), findsOneWidget);
+      expect(find.byKey(const Key('confirm-invite-btn')), findsOneWidget);
     });
   });
 }
