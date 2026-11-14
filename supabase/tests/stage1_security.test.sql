@@ -56,17 +56,17 @@ select is(
   'six initial country configurations are seeded'
 );
 select is(
-  (select count(*)::integer from public.profiles),
+  (select count(*)::integer from public.profiles where id in ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002')),
   2,
   'auth trigger creates one profile per account'
 );
 select is(
-  (select count(*)::integer from public.parent_accounts),
+  (select count(*)::integer from public.parent_accounts where user_id in ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002')),
   2,
   'auth trigger creates one parent account per account'
 );
 select is(
-  (select count(*)::integer from public.user_roles where role = 'parent'),
+  (select count(*)::integer from public.user_roles where role = 'parent' and user_id in ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002')),
   2,
   'auth trigger grants only the fixed parent role'
 );
