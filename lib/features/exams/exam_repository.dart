@@ -179,4 +179,83 @@ class ExamRepository {
     }
     throw const FormatException('Invalid response when reviewing question');
   }
+
+  Future<LearnerExamAttemptData> startExamAttempt({
+    required String mockExamId,
+    required String learnerId,
+  }) async {
+    final response = await _client.rpc(
+      'start_learner_exam_attempt',
+      params: {
+        'p_mock_exam_id': mockExamId,
+        'p_learner_id': learnerId,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return LearnerExamAttemptData.fromJson(response);
+    }
+    throw const FormatException('Invalid response when starting exam attempt');
+  }
+
+  Future<LearnerExamAttemptData> getExamAttempt(String attemptId) async {
+    final response = await _client.rpc(
+      'get_learner_exam_attempt',
+      params: {'p_attempt_id': attemptId},
+    );
+
+    if (response is Map<String, dynamic>) {
+      return LearnerExamAttemptData.fromJson(response);
+    }
+    throw const FormatException('Invalid response when fetching exam attempt');
+  }
+
+  Future<void> recordResponse({
+    required String attemptId,
+    required String questionId,
+    String? learnerAnswer,
+    bool isFlagged = false,
+  }) async {
+    await _client.rpc(
+      'record_exam_response',
+      params: {
+        'p_attempt_id': attemptId,
+        'p_question_id': questionId,
+        'p_answer': learnerAnswer,
+        'p_is_flagged': isFlagged,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> generateAutomatedMock({
+    required String blueprintId,
+    required String title,
+    int academicYear = 2026,
+  }) async {
+    final response = await _client.rpc(
+      'generate_automated_mock_exam',
+      params: {
+        'p_blueprint_id': blueprintId,
+        'p_title': title,
+        'p_academic_year': academicYear,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      return response;
+    }
+    throw const FormatException('Invalid response when generating automated mock');
+  }
+
+  Future<List<GeneratedMockExamination>> listPublishedMocks() async {
+    final response = await _client
+        .from('generated_mock_examinations')
+        .select()
+        .eq('status', 'published')
+        .order('created_at', ascending: false);
+
+    return response
+        .map((m) => GeneratedMockExamination.fromJson(m))
+        .toList();
+  }
 }

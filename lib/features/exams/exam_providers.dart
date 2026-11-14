@@ -165,3 +165,176 @@ final approvedExamQuestionsProvider =
     search: filter.searchQuery.isEmpty ? null : filter.searchQuery,
   );
 });
+
+final learnerExamAttemptProvider =
+    FutureProvider.family<LearnerExamAttemptData?, String>((ref, attemptId) async {
+  final repository = ref.watch(examRepositoryProvider);
+  if (repository == null) return null;
+  return repository.getExamAttempt(attemptId);
+});
+
+final publishedMocksProvider =
+    FutureProvider<List<GeneratedMockExamination>>((ref) async {
+  final repository = ref.watch(examRepositoryProvider);
+  if (repository == null) return [];
+  return repository.listPublishedMocks();
+});
+
+@immutable
+class ExamRunnerState {
+  const ExamRunnerState({
+    this.attemptData,
+    this.currentQuestionIndex = 0,
+    this.secondsRemaining = 0,
+    this.answers = const {},
+    this.flaggedQuestionIds = const {},
+    this.isSubmitting = false,
+    this.isExpired = false,
+  });
+
+  final LearnerExamAttemptData? attemptData;
+  final int currentQuestionIndex;
+  final int secondsRemaining;
+  final Map<String, String> answers;
+  final Set<String> flaggedQuestionIds;
+  final bool isSubmitting;
+  final bool isExpired;
+
+  bool get isCriticalTime => secondsRemaining < 300 && secondsRemaining > 0;
+  bool get isUrgentTime => secondsRemaining < 60 && secondsRemaining > 0;
+
+  MockRunnerQuestion? get currentQuestion {
+    if (attemptData == null || attemptData!.questions.isEmpty) return null;
+    if (currentQuestionIndex < 0 ||
+        currentQuestionIndex >= attemptData!.questions.length) {
+      return null;
+    }
+    return attemptData!.questions[currentQuestionIndex];
+  }
+
+  ExamRunnerState copyWith({
+    LearnerExamAttemptData? attemptData,
+    int? currentQuestionIndex,
+    int? secondsRemaining,
+    Map<String, String>? answers,
+    Set<String>? flaggedQuestionIds,
+    bool? isSubmitting,
+    bool? isExpired,
+  }) {
+    return ExamRunnerState(
+      attemptData: attemptData ?? this.attemptData,
+      currentQuestionIndex: currentQuestionIndex ?? this.currentQuestionIndex,
+      secondsRemaining: secondsRemaining ?? this.secondsRemaining,
+      answers: answers ?? this.answers,
+      flaggedQuestionIds: flaggedQuestionIds ?? this.flaggedQuestionIds,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
+      isExpired: isExpired ?? this.isExpired,
+    );
+  }
+}
+
+class ExamRunnerNotifier extends Notifier<ExamRunnerState> {
+  @override
+  ExamRunnerState build() => const ExamRunnerState();
+
+  void initAttempt(LearnerExamAttemptData attempt) {
+    final existingAnswers = <String, String>{};
+    final existingFlags = <String>{};
+
+    for (final entry in attempt.responses.entries) {
+      if (entry.value.learnerAnswer != null &&
+          entry.value.learnerAnswer!.isNotEmpty) {
+        existingAnswers[entry.key] = entry.value.learnerAnswer!;
+      }
+      if (entry.value.isFlagged) {
+        existingFlags.add(entry.key);
+      }
+    }
+
+    state = ExamRunnerState(
+      attemptData: attempt,
+      currentQuestionIndex: 0,
+      secondsRemaining: attempt.secondsRemaining,
+      answers: existingAnswers,
+      flaggedQuestionIds: existingFlags,
+      isExpired: attempt.isExpired,
+    );
+  }
+
+  void tick() {
+    if (state.secondsRemaining <= 1) {
+      state = state.copyWith(
+        secondsRemaining: 0,
+        isExpired: true,
+      );
+    } else {
+      state = state.copyWith(
+        secondsRemaining: state.secondsRemaining - 1,
+      );
+    }
+  }
+
+  void selectQuestion(int index) {
+    if (state.attemptData == null) return;
+    if (index >= 0 && index < state.attemptData!.questions.length) {
+      state = state.copyWith(currentQuestionIndex: index);
+    }
+  }
+
+  void nextQuestion() {
+    selectQuestion(state.currentQuestionIndex + 1);
+  }
+
+  void previousQuestion() {
+    selectQuestion(state.currentQuestionIndex - 1);
+  }
+
+  Future<void> setAnswer(
+    String questionId,
+    String answer,
+    ExamRepository? repository,
+  ) async {
+    final updatedAnswers = Map<String, String>.from(state.answers);
+    updatedAnswers[questionId] = answer;
+    state = state.copyWith(answers: updatedAnswers);
+
+    if (repository != null && state.attemptData != null) {
+      final isFlagged = state.flaggedQuestionIds.contains(questionId);
+      await repository.recordResponse(
+        attemptId: state.attemptData!.attemptId,
+        questionId: questionId,
+        learnerAnswer: answer,
+        isFlagged: isFlagged,
+      );
+    }
+  }
+
+  Future<void> toggleFlag(
+    String questionId,
+    ExamRepository? repository,
+  ) async {
+    final updatedFlags = Set<String>.from(state.flaggedQuestionIds);
+    final willFlag = !updatedFlags.contains(questionId);
+    if (willFlag) {
+      updatedFlags.add(questionId);
+    } else {
+      updatedFlags.remove(questionId);
+    }
+    state = state.copyWith(flaggedQuestionIds: updatedFlags);
+
+    if (repository != null && state.attemptData != null) {
+      final currentAns = state.answers[questionId];
+      await repository.recordResponse(
+        attemptId: state.attemptData!.attemptId,
+        questionId: questionId,
+        learnerAnswer: currentAns,
+        isFlagged: willFlag,
+      );
+    }
+  }
+}
+
+final examRunnerProvider =
+    NotifierProvider<ExamRunnerNotifier, ExamRunnerState>(
+  ExamRunnerNotifier.new,
+);

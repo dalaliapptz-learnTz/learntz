@@ -581,3 +581,266 @@ class ExamQuestionReviewResult {
     );
   }
 }
+
+@immutable
+class ExaminationBlueprint {
+  const ExaminationBlueprint({
+    required this.id,
+    required this.nationalExaminationId,
+    this.subjectId,
+    required this.title,
+    required this.totalMarks,
+    required this.durationMinutes,
+    this.structureConfig = const [],
+    this.isActive = true,
+  });
+
+  final String id;
+  final String nationalExaminationId;
+  final String? subjectId;
+  final String title;
+  final double totalMarks;
+  final int durationMinutes;
+  final List<dynamic> structureConfig;
+  final bool isActive;
+
+  factory ExaminationBlueprint.fromJson(Map<String, dynamic> json) {
+    return ExaminationBlueprint(
+      id: json['id'] as String? ?? '',
+      nationalExaminationId: json['national_examination_id'] as String? ?? '',
+      subjectId: json['subject_id'] as String?,
+      title: json['title'] as String? ?? '',
+      totalMarks: (json['total_marks'] as num?)?.toDouble() ?? 100.0,
+      durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 180,
+      structureConfig: json['structure_config'] as List<dynamic>? ?? const [],
+      isActive: json['is_active'] as bool? ?? true,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'national_examination_id': nationalExaminationId,
+        'subject_id': subjectId,
+        'title': title,
+        'total_marks': totalMarks,
+        'duration_minutes': durationMinutes,
+        'structure_config': structureConfig,
+        'is_active': isActive,
+      };
+}
+
+@immutable
+class GeneratedMockExamination {
+  const GeneratedMockExamination({
+    required this.id,
+    required this.blueprintId,
+    required this.title,
+    required this.academicYear,
+    required this.totalMarks,
+    required this.durationMinutes,
+    this.curatedBy,
+    this.status = 'published',
+    required this.createdAt,
+  });
+
+  final String id;
+  final String blueprintId;
+  final String title;
+  final int academicYear;
+  final double totalMarks;
+  final int durationMinutes;
+  final String? curatedBy;
+  final String status;
+  final DateTime createdAt;
+
+  factory GeneratedMockExamination.fromJson(Map<String, dynamic> json) {
+    return GeneratedMockExamination(
+      id: json['id'] as String? ?? '',
+      blueprintId: json['blueprint_id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      academicYear: (json['academic_year'] as num?)?.toInt() ?? 2026,
+      totalMarks: (json['total_marks'] as num?)?.toDouble() ?? 100.0,
+      durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 180,
+      curatedBy: json['curated_by'] as String?,
+      status: json['status'] as String? ?? 'published',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+}
+
+@immutable
+class MockRunnerQuestion {
+  const MockRunnerQuestion({
+    required this.itemId,
+    required this.questionId,
+    required this.sectionCode,
+    required this.orderIndex,
+    required this.marks,
+    required this.questionNumber,
+    this.subPart,
+    required this.questionText,
+    this.diagramUrl,
+    required this.questionType,
+    this.options = const [],
+    this.topicId,
+    this.bloomLevel = 'comprehension',
+    this.difficulty = 'medium',
+  });
+
+  final String itemId;
+  final String questionId;
+  final String sectionCode;
+  final int orderIndex;
+  final double marks;
+  final int questionNumber;
+  final String? subPart;
+  final String questionText;
+  final String? diagramUrl;
+  final String questionType;
+  final List<ExamQuestionOption> options;
+  final String? topicId;
+  final String bloomLevel;
+  final String difficulty;
+
+  String get label => subPart != null && subPart!.isNotEmpty
+      ? 'Sec $sectionCode Q$questionNumber $subPart'
+      : 'Sec $sectionCode Q$questionNumber';
+
+  factory MockRunnerQuestion.fromJson(Map<String, dynamic> json) {
+    final rawOptions = json['options'];
+    final opts = <ExamQuestionOption>[];
+    if (rawOptions is List) {
+      for (final o in rawOptions) {
+        if (o is Map<String, dynamic>) {
+          opts.add(ExamQuestionOption.fromJson(o));
+        }
+      }
+    }
+
+    return MockRunnerQuestion(
+      itemId: json['item_id'] as String? ?? '',
+      questionId: json['question_id'] as String? ?? '',
+      sectionCode: json['section_code'] as String? ?? 'A',
+      orderIndex: (json['order_index'] as num?)?.toInt() ?? 1,
+      marks: (json['marks'] as num?)?.toDouble() ?? 1.0,
+      questionNumber: (json['question_number'] as num?)?.toInt() ?? 1,
+      subPart: json['sub_part'] as String?,
+      questionText: json['question_text'] as String? ?? '',
+      diagramUrl: json['diagram_url'] as String?,
+      questionType: json['question_type'] as String? ?? 'structured',
+      options: opts,
+      topicId: json['topic_id'] as String?,
+      bloomLevel: json['bloom_level'] as String? ?? 'comprehension',
+      difficulty: json['difficulty'] as String? ?? 'medium',
+    );
+  }
+}
+
+@immutable
+class LearnerExamResponseState {
+  const LearnerExamResponseState({
+    required this.questionId,
+    this.learnerAnswer,
+    this.isFlagged = false,
+    this.answeredAt,
+  });
+
+  final String questionId;
+  final String? learnerAnswer;
+  final bool isFlagged;
+  final DateTime? answeredAt;
+
+  factory LearnerExamResponseState.fromJson(
+    String questionId,
+    Map<String, dynamic> json,
+  ) {
+    return LearnerExamResponseState(
+      questionId: questionId,
+      learnerAnswer: json['learner_answer'] as String?,
+      isFlagged: json['is_flagged'] as bool? ?? false,
+      answeredAt: json['answered_at'] != null
+          ? DateTime.tryParse(json['answered_at'] as String)
+          : null,
+    );
+  }
+
+  LearnerExamResponseState copyWith({
+    String? learnerAnswer,
+    bool? isFlagged,
+  }) {
+    return LearnerExamResponseState(
+      questionId: questionId,
+      learnerAnswer: learnerAnswer ?? this.learnerAnswer,
+      isFlagged: isFlagged ?? this.isFlagged,
+      answeredAt: DateTime.now(),
+    );
+  }
+}
+
+@immutable
+class LearnerExamAttemptData {
+  const LearnerExamAttemptData({
+    required this.attemptId,
+    required this.mockExamId,
+    required this.title,
+    required this.status,
+    required this.startedAt,
+    required this.durationMinutes,
+    required this.expiresAt,
+    required this.secondsRemaining,
+    required this.totalPossibleMarks,
+    required this.questions,
+    required this.responses,
+  });
+
+  final String attemptId;
+  final String mockExamId;
+  final String title;
+  final String status;
+  final DateTime startedAt;
+  final int durationMinutes;
+  final DateTime expiresAt;
+  final int secondsRemaining;
+  final double totalPossibleMarks;
+  final List<MockRunnerQuestion> questions;
+  final Map<String, LearnerExamResponseState> responses;
+
+  bool get isCompleted => status == 'completed';
+  bool get isExpired => status == 'expired' || secondsRemaining <= 0;
+
+  factory LearnerExamAttemptData.fromJson(Map<String, dynamic> json) {
+    final rawQuestions = json['questions'] as List<dynamic>? ?? [];
+    final questions = rawQuestions
+        .map((q) => MockRunnerQuestion.fromJson(q as Map<String, dynamic>))
+        .toList();
+
+    final rawResponses = json['responses'] as Map<String, dynamic>? ?? {};
+    final responses = <String, LearnerExamResponseState>{};
+    rawResponses.forEach((qId, val) {
+      if (val is Map<String, dynamic>) {
+        responses[qId] = LearnerExamResponseState.fromJson(qId, val);
+      }
+    });
+
+    return LearnerExamAttemptData(
+      attemptId: json['attempt_id'] as String? ?? '',
+      mockExamId: json['mock_exam_id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      status: json['status'] as String? ?? 'in_progress',
+      startedAt: json['started_at'] != null
+          ? DateTime.tryParse(json['started_at'] as String) ?? DateTime.now()
+          : DateTime.now(),
+      durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 180,
+      expiresAt: json['expires_at'] != null
+          ? DateTime.tryParse(json['expires_at'] as String) ?? DateTime.now()
+          : DateTime.now(),
+      secondsRemaining: (json['seconds_remaining'] as num?)?.toInt() ?? 0,
+      totalPossibleMarks:
+          (json['total_possible_marks'] as num?)?.toDouble() ?? 100.0,
+      questions: questions,
+      responses: responses,
+    );
+  }
+}

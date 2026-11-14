@@ -18,6 +18,7 @@ import '../../features/exams/screens/exam_question_bank_screen.dart';
 import '../../features/exams/screens/exam_question_review_cockpit_screen.dart';
 import '../../features/exams/screens/mock_upload_centre_screen.dart';
 import '../../features/exams/screens/national_examination_centre_screen.dart';
+import '../../features/exams/screens/timed_examination_runner_screen.dart';
 import '../../features/help/help_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learners/learner_screens.dart';
@@ -65,6 +66,7 @@ abstract final class AppRoutes {
   static const examUpload = '/exams/upload';
   static const examBank = '/exams/bank';
   static const examQuestionReview = '/exams/bank/review';
+  static String examRunner(String attemptId) => '/exams/runner/$attemptId';
   static const addLearner = '/account/learners/add';
   static const challenges = '/social/challenges';
   static const communities = '/social/communities';
@@ -352,6 +354,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.examQuestionReview,
             builder: (context, state) =>
                 const ExamQuestionReviewCockpitScreen(),
+          ),
+          GoRoute(
+            path: '/exams/runner/:attemptId',
+            builder: (context, state) => TimedExaminationRunnerScreen(
+              attemptId: state.pathParameters['attemptId']!,
+            ),
           ),
         ],
       ),
