@@ -1,9 +1,13 @@
 -- LearnTZ: Tanzania Standard III (Grade 3) subject catalogue
 -- Metadata-only seed. No TIE syllabus passages, competencies, or lesson text are copied.
--- Source catalogue: TIE, "Muhtasari wa Elimu ya Msingi" (official syllabus listing),
+-- Source: TIE, Curriculum for Primary Education Standard I-VI (2023 translated PDF).
+-- The publicly linked PDF is explicitly marked DRAFT; it is a provisional taxonomy,
+-- not evidence of an approved final curriculum. TIE's syllabus catalogue is also
+-- recorded for subsequent subject-by-subject reconciliation.
+-- https://www.tie.go.tz/uploads/files/Primary%20School%20Curriculum%20Std%20III%20-%20VI.pdf
 -- https://tie.go.tz/publications/syllabus-for-primary-education
--- Keep unpublished until the current curriculum edition, medium-specific offering,
--- and subject status have been checked by the curriculum reviewer.
+-- Keep every row unpublished until the approved current curriculum edition,
+-- school-medium applicability, and subject status are verified by a reviewer.
 
 begin;
 
@@ -51,17 +55,17 @@ subject_catalog (
   code, name, learning_area, offering, display_order
 ) as (
   values
-    ('tie3-kiswahili', 'Kiswahili', 'Language and Communication', 'Core subject', 1),
-    ('tie3-english', 'English', 'Language and Communication', 'Core subject', 2),
-    ('tie3-chinese', 'Chinese', 'Language and Communication', 'Optional language; subject to school capacity', 3),
-    ('tie3-arabic', 'Arabic', 'Language and Communication', 'Optional language; subject to school capacity', 4),
-    ('tie3-french', 'French', 'Language and Communication', 'Optional language; subject to school capacity', 5),
-    ('tie3-mathematics', 'Mathematics', 'Mathematics', 'Core subject', 6),
-    ('tie3-historia-tanzania-maadili', 'Historia ya Tanzania na Maadili', 'Social Science', 'Core subject', 7),
-    ('tie3-geography-environment', 'Geography and Environment', 'Social Science', 'Core subject', 8),
-    ('tie3-religious-education', 'Religious Education', 'Social Science', 'Faith-sensitive offering; school provision to be confirmed', 9),
-    ('tie3-science', 'Science', 'Science and Technology', 'Core subject', 10),
-    ('tie3-arts-sports', 'Arts and Sports', 'Arts and Sports', 'Core subject', 11)
+    ('tie3-kiswahili', 'Kiswahili', 'Language and Communication', 'Listed subject; verify against approved edition', 1),
+    ('tie3-english', 'English', 'Language and Communication', 'Listed subject; verify against approved edition', 2),
+    ('tie3-chinese', 'Chinese', 'Language and Communication', 'Additional foreign language; provision depends on school situation', 3),
+    ('tie3-arabic', 'Arabic', 'Language and Communication', 'Additional foreign language; provision depends on school situation', 4),
+    ('tie3-french', 'French', 'Language and Communication', 'Additional foreign language; provision depends on school situation', 5),
+    ('tie3-mathematics', 'Mathematics', 'Mathematics', 'Listed subject; verify against approved edition', 6),
+    ('tie3-historia-tanzania-maadili', 'Historia ya Tanzania na Maadili', 'Social Science', 'Listed subject; verify against approved edition', 7),
+    ('tie3-geography-environment', 'Geography and Environment', 'Social Science', 'Listed subject; verify against approved edition', 8),
+    ('tie3-religious-education', 'Religious Education', 'Social Science', 'Faith-sensitive subject listed in draft; confirm approved syllabus and school provision', 9),
+    ('tie3-science', 'Science', 'Science and Technology', 'Listed subject; verify against approved edition', 10),
+    ('tie3-arts-sports', 'Arts and Sports', 'Arts and Sports', 'Listed subject; verify against approved edition', 11)
 )
 insert into public.subjects (
   country_code,
@@ -82,7 +86,7 @@ select
   catalog.code,
   catalog.name,
   'Learning area: ' || catalog.learning_area || '. Offering: ' || catalog.offering ||
-    '. Catalogue metadata only; verify against the approved Standard III syllabus before publication.',
+    '. Provisional catalogue metadata based on a TIE document explicitly marked DRAFT; verify against the approved Standard III syllabus before publication.',
   catalog.display_order,
   false
 from grade_scope scope
