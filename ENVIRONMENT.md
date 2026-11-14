@@ -44,6 +44,55 @@ No Supabase credentials or hosted project are configured in this repository. Bac
 
 For deployments, configure verified email delivery, email confirmation, secure password change, allowed callback URLs, and Supabase Auth rate limits. The local configuration sets conservative email, sign-in/sign-up, token-verification, and refresh limits; apply appropriate limits independently to each hosted project. Configure CAPTCHA/abuse protection and monitor Auth logs before public registration. Never reduce these controls to make tests pass.
 
+## Production Hosted Supabase Project (LearnTZ)
+
+The repository is linked to the hosted Supabase production project:
+- **Project Ref:** `jmllsuohmllklzhmhiva`
+- **Project Name:** LearnTZ
+- **Region:** `eu-central-1` (AWS Frankfurt)
+- **Project URL:** `https://jmllsuohmllklzhmhiva.supabase.co`
+- **Publishable Key:** `sb_publishable_bicPB5xPkjcNeKpuG4fVjg_GnpVQtXp`
+- **Database Host (Direct):** `db.jmllsuohmllklzhmhiva.supabase.co:5432`
+- **Connection URI (Direct):** `postgresql://postgres:[YOUR-PASSWORD]@db.jmllsuohmllklzhmhiva.supabase.co:5432/postgres`
+- **Connection URI (Pooler):** `postgresql://postgres.jmllsuohmllklzhmhiva@aws-1-eu-central-1.pooler.supabase.com:5432/postgres`
+
+### Running or Building with Production Configuration
+
+Using `--dart-define-from-file`:
+```sh
+flutter run -d chrome --dart-define-from-file=config/production.json
+flutter build web --release --dart-define-from-file=config/production.json
+```
+
+Or using explicit `--dart-define` flags:
+```sh
+flutter run -d chrome \
+  --dart-define=APP_ENV=production \
+  --dart-define=SUPABASE_URL=https://jmllsuohmllklzhmhiva.supabase.co \
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=sb_publishable_bicPB5xPkjcNeKpuG4fVjg_GnpVQtXp \
+  --dart-define=SUPABASE_AUTH_REDIRECT_URL=https://jmllsuohmllklzhmhiva.supabase.co/auth/v1/callback
+```
+
+### Supabase CLI Link Status
+
+The project is linked to the hosted backend via:
+```sh
+supabase link --project-ref jmllsuohmllklzhmhiva
+```
+
+To inspect migrations on the remote database:
+```sh
+supabase migration list --remote
+```
+
+To push pending local migrations to the remote database:
+```sh
+supabase db push
+```
+*(Requires your Supabase database password for postgres on `db.jmllsuohmllklzhmhiva.supabase.co`)*
+
+---
+
 ## Android release signing
 
 This foundation does not configure release signing and does not reuse the Android debug key for release builds. The APK build is a compilation check, not a distributable release. Configure signing through a protected local or CI mechanism before distribution. Signing properties and keystore files are excluded by `.gitignore`; do not commit them.

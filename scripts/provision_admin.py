@@ -24,6 +24,21 @@ import urllib.request
 from typing import Any
 
 
+def _load_env_file() -> None:
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        os.environ.setdefault(k.strip(), v.strip())
+        except Exception:
+            pass
+
+_load_env_file()
+
 VALID_ROLES = (
     "super_admin",
     "country_admin",
